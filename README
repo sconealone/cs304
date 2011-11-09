@@ -1,0 +1,47 @@
+Github Setup
+November 8, 2011
+Abstract
+Quick guide to getting started in Github. Assumes you've got your
+account set up. Shamelessly copied and pasted from an email by the guy
+who rst taught me to use Github i.e. grammar mistakes aren't my fault.
+1 Setup
+Here's Github in a nutshell.
+This is the link to get GIT setup and SSH keys matched with gitHub
+http://help.github.com/win-set-up-git/
+This is the link to our repository https://github.com/sconealone/jjcmlib,
+which contains the read&write access link git@github.com:sconealone/jjcmlib.git
+Browse to the directory you want to store your local repository (a local direc-
+tory to sync with github). The directory that you want is probably your Eclipse
+project folder (i.e. C:/users/you/Documents/eclipse/workspace/cs304project/).
+In git bash, do: git clone git@github.com:sconealone/jjcmlib.git
+A new folder called 'jjcmlib' will be created (cloning). This folder is your
+local git repository. Rename this folder to 'src'
+**If you do any git commands from a directory that isn't a git repository,
+you will get the error we were getting in class (fatal: Not a git repository...)**
+Change your working directory to src - you will be able to do git commands
+here.
+2 Daily commands
+2.1 Making changes
+Here are some commands for sharing the code you've been working on with the
+rest of the group.
+- git add <filename>: adds a new le to a commit
+- git add . : adds all new les and changes to the commit
+- git commit -a -m 'Commit message' : adds a commit (an entry in a
+change log) with the message "Commit message" - choose a good message
+as this lets other people know what you've changed. Don't commit a whole
+bunch of stu at once: do it in small batches so the commit messages make
+sense for each part that you change.
+Think of a commit as a snapshot you'd like to take when working with a
+class - say you've make a breakthrough or xed a bug in your code. You'd
+denitely want to commit that and document that breakthrough.
+- git push : Takes all the commits (a multiple push can contain more than
+one commit) you've done and puts it on the server
+2.2 Keeping up to date
+Sometimes you will get messages to the eect that you cannot push your work
+because your branch is out of date. You need to have the most up-to-date
+version of the branch before you can push your work.
+git pull : this will get the most recent version of all the les.
+Sometimes, if you're working on the same le as someone else and you both
+try to push, Github will tell you that you need to merge your changes. It marks
+o the problem areas in your code and you need to x the code manually.
+Hopefully we'll get to do a demonstration at the meeting tomorrow.
