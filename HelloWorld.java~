@@ -4,9 +4,4 @@ public class HelloWorld
 	{
 		System.out.println("Hello, world!");
 	}
-    
-    public void test(){
-	int a = 5;
-    }
-
 }
