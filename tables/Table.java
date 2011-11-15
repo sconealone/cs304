@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public interface Table {
 	
-	public void display(String[][] arg);
+	public String[][] display();
 	
 	public void update();
 	
