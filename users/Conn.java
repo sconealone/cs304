@@ -57,6 +57,7 @@ public class Conn {
       catch (SQLException e)
       {
         // handle couldn't find driver
+        System.out.println("Couldn't load the driver: " + e.getMessage());
       }
       // somehow get the username and password
       // get rid of the hard code
@@ -75,6 +76,8 @@ public class Conn {
     catch (SQLException ex) 
     {
       // handle couldn't connect
+      // temporary handler
+      System.out.println("could not connect: " + ex.getMessage());
     }
   }
   
@@ -98,6 +101,7 @@ public class Conn {
     catch (SQLException e)
     {
       // do nothing
+      System.out.println(e.getMessage());
     }
   }
 }
