@@ -69,16 +69,16 @@ public class Conn {
   private void connect(String username, String password)
   {
       String connectURL = "jdbc:oracle:thin:@localhost:1521:ug";
-    try 
-    {
-      conn = DriverManager.getConnection(connectURL, username, password);
-    } 
-    catch (SQLException ex) 
-    {
-      // handle couldn't connect
-      // temporary handler
-      System.out.println("could not connect: " + ex.getMessage());
-    }
+      try 
+      {
+        conn = DriverManager.getConnection(connectURL, username, password);
+      } 
+      catch (SQLException ex) 
+      {
+        // handle couldn't connect
+        // temporary handler
+        System.out.println("could not connect: " + ex.getMessage());
+      }
   }
   
   
