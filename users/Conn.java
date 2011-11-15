@@ -1,17 +1,18 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package users;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * Singleton connection
  * usage:
  * java.sql.Connection conn = Conn.getInstance().getConnection();
+ * 
+ * Need to add actual exception handling and a way to get the username
+ * and password instead of hardcoding it.
  * 
  * @author Mitch
  */
@@ -27,6 +28,16 @@ public class Conn {
   {
     return instance;
   }
+  
+  /**
+   * Accessor for the jdbc connection
+   * @return 
+   */
+  public Connection getConnection()
+  {
+    return conn;
+  }
+  
   
   static
   {
@@ -64,6 +75,29 @@ public class Conn {
     catch (SQLException ex) 
     {
       // handle couldn't connect
+    }
+  }
+  
+  
+  
+  /**
+   * For testing
+   * @param args 
+   */
+  public static void main(String[] args) {
+    Connection conn = Conn.getInstance().getConnection();
+    try
+    {
+      PreparedStatement stat = conn.prepareStatement("SELECT * FROM Borrower");
+      ResultSet rs = stat.executeQuery();
+      while (rs.next())
+      {
+        System.out.println("bid = " + rs.getString(1));
+      }
+    }
+    catch (SQLException e)
+    {
+      // do nothing
     }
   }
 }
