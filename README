@@ -1,6 +1,20 @@
 README is back.
 It will be used to track meeting dates and work assignments.
 
+Next meeting: Friday, November 18
+Discuss any problems we've been having with implementation
+Work assignments:
+Code implementation
+- Jesse: Book class, JUnit test framework
+- Jenny: Borrower class, Borrower functionality
+- Christiaan: BookCopy, HoldRequest classes, Clerk functionality
+- Mitch: Fine, Borrowing classes, System, Librarian functionality
+
+
+==============================================================
+
+Old work:
+
 Next meeting: Monday, November 14
 Work assignments:
 - Jesse: UML class diagram
