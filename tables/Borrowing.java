@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
+import java.util.Collection;
 
 public class Borrowing implements Table {
 
@@ -20,14 +21,15 @@ public class Borrowing implements Table {
 		return null;
 	}
 	
+	
 	@Override
-	public void display(String[][] arg) {
+	public String[][] display() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void ndate() {
+	public void update() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -36,6 +38,18 @@ public class Borrowing implements Table {
 	public boolean delete() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public Collection<Table> getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Table get() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -49,18 +63,6 @@ public class Borrowing implements Table {
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public Table getAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Table get() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

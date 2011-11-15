@@ -14,13 +14,13 @@ public class Book implements Table {
 	private Collection<String> subjects;	
 	
 	@Override
-	public void display(String[][] arg) {
+	public String[][] display() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void ndate() {
+	public void update() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -38,7 +38,7 @@ public class Book implements Table {
 	}
 
 	@Override
-	public Table getAll() {
+	public Collection<Table> getAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

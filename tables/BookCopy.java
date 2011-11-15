@@ -1,5 +1,7 @@
 package tables;
 
+import java.util.Collection;
+
 public class BookCopy implements Table {
 
 	private String copyNo;
@@ -7,13 +9,13 @@ public class BookCopy implements Table {
 	private Book b;
 	
 	@Override
-	public void display(String[][] arg) {
+	public String[][] display() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void ndate() {
+	public void update() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -31,7 +33,7 @@ public class BookCopy implements Table {
 	}
 
 	@Override
-	public Table getAll() {
+	public Collection<Table> getAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

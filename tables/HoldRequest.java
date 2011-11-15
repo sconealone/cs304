@@ -1,6 +1,7 @@
 package tables;
 
 import java.util.Calendar;
+import java.util.Collection;
 
 public class HoldRequest implements Table {
 
@@ -9,14 +10,15 @@ public class HoldRequest implements Table {
 	private Book b;
 	private Borrower borr;
 	
+	
 	@Override
-	public void display(String[][] arg) {
+	public String[][] display() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void ndate() {
+	public void update() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -34,7 +36,7 @@ public class HoldRequest implements Table {
 	}
 
 	@Override
-	public Table getAll() {
+	public Collection<Table> getAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}
