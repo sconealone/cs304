@@ -1,12 +1,17 @@
 package tables;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import users.Conn;
 
@@ -66,8 +71,11 @@ public class Borrowing implements Table {
          * @throws NullPointerException if outDate or borr is not initialized
          */
 	public Calendar getDueDate() {
-          
-		return null;
+          int timeLimitWeeks = borr.getBookTimeLimit();
+          final int DAYS_IN_WEEK = 7;
+          Calendar dueDate = (Calendar) outDate.clone();
+          dueDate.add(Calendar.DATE, timeLimitWeeks*DAYS_IN_WEEK);
+          return dueDate;
 	}
 	
 	/**
@@ -78,8 +86,68 @@ public class Borrowing implements Table {
          */
 	@Override
 	public String[][] display() {
-		// TODO Auto-generated method stub
-		return null;
+          ArrayList<String[]> borrowingGrowable = new ArrayList<String[]>();
+          try
+          {
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM Borrowing");
+            ResultSet rs = ps.executeQuery();
+            ResultSetMetaData md = rs.getMetaData();
+            
+            int numFields = md.getColumnCount();
+            String[] columnNames = new String[numFields];
+            for (int i = 0; i < numFields; i++)
+            {
+              columnNames[i] = md.getColumnName(i + 1);
+            }
+            borrowingGrowable.add(columnNames);
+            
+            DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+            
+            while (rs.next())
+            {
+              String[] row = new String[numFields];
+              // row will contain a tuple from the database
+              int fieldIndex = 0;
+              
+              // these fields are marked not null in database
+              row[fieldIndex] = ""+rs.getInt(fieldIndex + 1);
+              fieldIndex++;
+              row[fieldIndex] = ""+rs.getInt(fieldIndex + 1);
+              fieldIndex++;
+              row[fieldIndex] = rs.getString(fieldIndex + 1);
+              fieldIndex++;
+              row[fieldIndex] = rs.getString(fieldIndex + 1);
+              fieldIndex++;
+              
+              // these fields might be null
+              Date anOutDate = rs.getDate(fieldIndex + 1);
+              row[fieldIndex] = (!rs.wasNull()) ? 
+                      df.format(anOutDate) : "null";
+              fieldIndex++;
+              
+              Date anInDate = rs.getDate(fieldIndex + 1);
+              row[fieldIndex] = (!rs.wasNull()) ? 
+                      df.format(anInDate) : "null";
+              fieldIndex++;
+              
+              
+              borrowingGrowable.add(row);
+            } // end while
+            
+            rs.close();
+          }
+          catch(SQLException e)
+          {
+            // TODO handle exception
+            
+          }
+          int numRows = borrowingGrowable.size();
+          String[][] borrowing = new String[numRows][];
+          for (int i = 0; i < numRows; i++)
+          {
+            borrowing[i] = borrowingGrowable.get(i);
+          }
+          return borrowing;
 	}
 
         /**
@@ -250,17 +318,19 @@ public class Borrowing implements Table {
   
   }
   
-  public static void main(String[] args) {
-    Calendar past = new GregorianCalendar(1983,11,27);
-    Calendar future = new GregorianCalendar(2004, 12, 14);
-    verifyDateOrder(past, future);
-    try
+  public static void main(String[] args) 
+  {
+    Borrowing b = new Borrowing();
+    
+    // display test
+    String[][] table = b.display();
+    for (String[] row : table)
     {
-      verifyDateOrder(future, past);
-    }
-    catch (Exception e)
-    {
-      System.out.println("successfully caught exception");
+      for (String field : row)
+      {
+        System.out.print(field + " ");
+      }
+      System.out.println();
     }
   }
 }
