@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import users.Conn;
 
 /**
@@ -62,6 +63,51 @@ public class Borrowing implements Table {
           this.bc = bc;
           this.borr = borr;
         }
+        
+        /**
+         * Builds a Borrowing object from an open result set
+         * only for use within this object!
+         * Call next() before you pass the ResultSet
+         * @param rs 
+         */
+        private Borrowing(ResultSet rs) throws SQLException
+        {
+          int fieldIndex = 1;
+              borid = rs.getInt(fieldIndex++);
+              
+              borr = new Borrower();
+              borr.setBid(rs.getInt(fieldIndex++));
+              // TODO uncomment when Borrower::get() is implemented
+              //borr = (Borrower) borr.get();
+              
+              // initializing book copy
+              String callNumber = rs.getString(fieldIndex++);
+              String copyNo = rs.getString(fieldIndex++);
+              Book book = new Book();
+              book.setCallNumber(callNumber);
+              // TODO uncomment when Book::get() is implemented
+              //book = (Book) book.get();
+              BookCopy copy = new BookCopy();
+              copy.setB(book);
+              copy.setCopyNo(copyNo);
+              // TODO uncomment when BookCopy::get() is implemented
+              //copy = (BookCopy) copy.get();
+              bc = copy;
+              Date sqlOutDate= rs.getDate(fieldIndex++);
+              outDate = (rs.wasNull()) ?
+                      null : new GregorianCalendar();
+              if (outDate != null)
+              {
+                outDate.setTime(sqlOutDate);
+              }
+              Date sqlInDate = rs.getDate(fieldIndex++);
+              inDate = (rs.wasNull()) ?
+                      null : new GregorianCalendar();
+              if (inDate != null)
+              {
+                inDate.setTime(sqlInDate);
+              }
+        }
 	
         /**
          * Calculates the due date of the Borrowing.
@@ -85,7 +131,8 @@ public class Borrowing implements Table {
          * of the Borrowing table and every column represents a field
          */
 	@Override
-	public String[][] display() {
+	public String[][] display() 
+        {
           ArrayList<String[]> borrowingGrowable = new ArrayList<String[]>();
           try
           {
@@ -101,7 +148,7 @@ public class Borrowing implements Table {
             }
             borrowingGrowable.add(columnNames);
             
-            DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             
             while (rs.next())
             {
@@ -156,7 +203,8 @@ public class Borrowing implements Table {
          * unless you want the field to appear as null in the database.
          */
 	@Override
-	public void update() {
+	public void update() 
+        {
           try
           {
             String sql =
@@ -196,7 +244,8 @@ public class Borrowing implements Table {
          * @return true if the tuple was successfully deleted, otherwise false
          */
 	@Override
-	public boolean delete() {
+	public boolean delete() 
+        {
           String sql = "DELETE FROM Borrowing WHERE borid = " + borid;
           try
           {
@@ -220,12 +269,33 @@ public class Borrowing implements Table {
          * empty.
          * @return a collection containing all the Borrowing objects in the
          * database
+         * TODO there are several calls to get() that are stubbed out
          */
 	@Override
-	public Collection<Table> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<Table> getAll() 
+        {
+          ArrayList<Table> borrowings = new ArrayList<Table>();
+          
+          try
+          {
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM Borrowing");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next())
+            {
+              borrowings.add(new Borrowing(rs));
+              
+            } // end while(rs.next())
+            rs.close();
+          } // end try block
+          catch (SQLException e)
+          {
+            //TODO handle exception
+            e.printStackTrace();
+          }
+          
+          return borrowings;
 	}
+        
 
         /**
          * Gets the tuple from the Borrowing table that corresponds to this
@@ -236,8 +306,22 @@ public class Borrowing implements Table {
          */
 	@Override
 	public Table get() {
-		// TODO Auto-generated method stub
-		return null;
+          try
+          {
+            String sql = "SELECT * FROM Borrowing WHERE borid = "+borid;
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next())
+            {
+              return new Borrowing(rs);
+            }
+          }
+          catch (SQLException e)
+          {
+            // TODO implement error handling
+            e.printStackTrace();
+          }
+          return null;
 	}
 
         /**
@@ -249,16 +333,44 @@ public class Borrowing implements Table {
          * @post this object's borid will be the newest borid in the database
          */
 	@Override
-	public boolean insert() {
-		try {
-			stmt.executeUpdate("INSERT INTO Borrowing VALUES (" + getBorid() + ", " + getOutDate() + ", " +
-			getInDate() + ", " + getBc() + ", " + getBorr() + ")");
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+	public boolean insert() 
+        {
+          String sql = "INSERT INTO Borrowing "
+                  + "VALUES (boridCounter.nextval,"+borr.getBid()+",?,?,?,?)";
+          try
+          {
+            PreparedStatement ps = con.prepareStatement(sql);
+            int paramIndex = 1;
+            ps.setString(paramIndex++, bc.getB().getCallNumber());
+            ps.setString(paramIndex++, bc.getCopyNo());
+            
+            java.sql.Date sqlOutDate = (outDate == null) ?
+                    null : new java.sql.Date(outDate.getTime().getTime());
+            ps.setDate(paramIndex++, sqlOutDate, outDate);
+            
+            java.sql.Date sqlInDate = (inDate == null) ?
+                    null : new java.sql.Date(outDate.getTime().getTime());
+            ps.setDate(paramIndex++, sqlInDate, inDate);
+            
+            int numRowsChanged = ps.executeUpdate();
+            if (numRowsChanged == 1)
+            {
+              ps.close();
+              ps = con.prepareStatement("SELECT boridCounter.currval FROM DUAL");
+              ResultSet rs = ps.executeQuery();
+              if (rs.next())
+              {
+                borid = rs.getInt(1);
+                return true;
+              }
+            }
+          }
+          catch (SQLException e)
+          {
+            // TODO handle exception
+            e.printStackTrace();
+          }
+          return false;
 	}
 
   /**
@@ -349,7 +461,7 @@ public class Borrowing implements Table {
     boolean futureWithoutAPast = past == null/* && future != null*/;
     if (futureWithoutAPast || future.before(past))
     {
-      DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+      DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
       throw new IllegalArgumentException("Time paradox! Cannot return borrowing"
               + "before it is borrowed. (out date: "
               +((past == null) ? "null" : df.format(past.getTime()) )
@@ -358,10 +470,28 @@ public class Borrowing implements Table {
   
   }
   
+  /**
+   * returns a string representation of all the attributes of this
+   * Borrowing object.
+   * @return 
+   */
+  @Override
+  public String toString()
+  {
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    return "borid = " + borid
+            +"\nbid = " + borr.getBid()
+            +"\ncallNumber = " + bc.getB().getCallNumber()
+            +"\ncopyNo = " + bc.getCopyNo()
+            +"\noutDate = " + ((outDate == null) ? null : df.format(outDate.getTime()))
+            +"\ninDate = " + ((inDate == null) ? null : df.format(inDate.getTime()));
+    
+  }
+  
   public static void main(String[] args) 
   {
     Borrowing b = new Borrowing();
-    
+    /*
     // display test
     String[][] table = b.display();
     for (String[] row : table)
@@ -394,5 +524,33 @@ public class Borrowing implements Table {
     // should not crash, should print false
     b.borid = 31;
     System.out.println(b.delete());
+    */
+    // getall
+    Collection<Table> allBorrowings = b.getAll();
+    Iterator<Table> i = allBorrowings.iterator();
+    while (i.hasNext())
+    {
+      System.out.println(((Borrowing) i.next()) + "\n");
+    }
+    
+    //insert
+    b.borid = -1;
+    b.borr = new Borrower();
+    b.borr.setBid(2);
+    b.bc = new BookCopy();
+    b.bc.setB(new Book());
+    b.bc.getB().setCallNumber("MO327 O326 1990");
+    b.bc.setCopyNo("C1");
+    b.outDate = new GregorianCalendar();
+    b.inDate = null;
+    
+    if (b.insert())
+    {
+      System.out.println("auto-generated key: "+b.borid);
+    }
+    else
+    {
+      System.out.println("test failed, not inserted");
+    }
   }
 }
