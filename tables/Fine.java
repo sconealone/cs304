@@ -33,6 +33,7 @@ public class Fine implements Table {
         /**
          * The amount that needs to be paid.
          * Its unit is cents.
+         * It must always be a non-negative number
          */
 	private Integer amount;
         
@@ -40,7 +41,7 @@ public class Fine implements Table {
          * The date the fine was issued.  In general this will be
          * the date that the book was returned.
          */
-	private Calendar issueDate;
+	private Calendar issuedDate;
         
         /**
          * The date that the fine was paid.  Each fine must be paid in full.
@@ -75,7 +76,7 @@ public class Fine implements Table {
          * @param paidDate
          * @param borrowing 
          * @throws IllegalArgumentException if the paidDate comes before
-         *  the issueDate
+         *  the issueDate or if the amount is negative
          */
         public Fine(  Integer fid,
                       Integer amount,
@@ -84,8 +85,13 @@ public class Fine implements Table {
                       Borrowing borrowing)
         {
           this.fid = fid;
+          if (amount != null && amount < 0)
+          {
+            String msg = "Fine amounts must be non-negative";
+            throw new IllegalArgumentException(msg);
+          }
           this.amount = amount;
-          this.issueDate = issueDate;
+          this.issuedDate = issueDate;
           verifyDateOrder(issueDate, paidDate);
           this.paidDate = paidDate;
           this.borrowing = borrowing;
@@ -107,11 +113,11 @@ public class Fine implements Table {
           amount = rs.getInt(colIndex++);
           
           java.sql.Date sqlIssuedDate = rs.getDate(colIndex++);
-          issueDate = (rs.wasNull()) ?
+          issuedDate = (rs.wasNull()) ?
                   null : new GregorianCalendar();
-          if (issueDate != null)
+          if (issuedDate != null)
           {
-            issueDate.setTime(sqlIssuedDate);
+            issuedDate.setTime(sqlIssuedDate);
           }
           
           java.sql.Date sqlpaidDate = rs.getDate(colIndex++);
@@ -141,13 +147,13 @@ public class Fine implements Table {
           return "fid = " + fid + '\n'
                   + "amount = " + nf.format(amount / 100.0) + '\n'
                   + "issuedDate = " 
-                  + ((issueDate == null) ?
-                    "null" : df.format(issueDate.getTime())) 
+                  + ((issuedDate == null) ?
+                    "null" : df.format(issuedDate.getTime())) 
                   + '\n'
                   + "paidDate = "
                   + ((paidDate == null) ?
                     "null" : df.format(paidDate.getTime()))+ '\n'
-                  + "borid = " + borrowing.getBorrower().getBid();
+                  + "borid = " + borrowing.getBorid();
         }
 	
 	/**
@@ -184,11 +190,11 @@ public class Fine implements Table {
               Fine f = new Fine(rs);
               tuple[fieldIndex++] = ""+f.fid;
               tuple[fieldIndex++] = nf.format(f.amount / 100.0);
-              tuple[fieldIndex++] = (f.issueDate == null) ?
-                      "null" : df.format(f.issueDate.getTime());
+              tuple[fieldIndex++] = (f.issuedDate == null) ?
+                      "null" : df.format(f.issuedDate.getTime());
               tuple[fieldIndex++] = (f.paidDate == null) ?
                       "null" : df.format(f.paidDate.getTime());
-              tuple[fieldIndex++] = "" + f.borrowing.getBorrower().getBid();
+              tuple[fieldIndex++] = "" + f.borrowing.getBorid();
               finesGrowable.add(tuple);
             }
           }
@@ -212,11 +218,35 @@ public class Fine implements Table {
          * of this object null unless you want nulls to appear in the database.
          * @pre the fid of this object must match an fid already in the database
          * @post the Fine table in the database is updated
+         * @throws NullPointerException if borrowing is not initialized
          */
 	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-		
+	public void update() 
+        {
+          String sql = "UPDATE Fine SET "
+                  + "amount = "+amount+','
+                  + "issuedDate = ?,"
+                  + "paidDate = ?,"
+                  + "borid = "+borrowing.getBorid()+' '
+                  + "WHERE fid = "+fid;
+          try
+          {
+            PreparedStatement ps = con.prepareStatement(sql);
+            int paramIndex = 1;
+            java.sql.Date sqlIssuedDate = (issuedDate == null) ?
+                    null : new java.sql.Date(issuedDate.getTime().getTime());
+            ps.setDate(paramIndex++, sqlIssuedDate);
+            java.sql.Date sqlPaidDate = (paidDate == null) ?
+                    null : new java.sql.Date(paidDate.getTime().getTime());
+            ps.setDate(paramIndex++, sqlPaidDate);
+            
+            ps.executeUpdate();
+          }
+          catch(SQLException e)
+          {
+            //TODO handle exception
+            e.printStackTrace();
+          }
 	}
 
         /**
@@ -226,8 +256,22 @@ public class Fine implements Table {
          */
 	@Override
 	public boolean delete() {
-		// TODO Auto-generated method stub
-		return false;
+          String sql = "DELETE FROM Fine WHERE fid = "+fid;
+          try
+          {
+            PreparedStatement ps = con.prepareStatement(sql);
+            int numLinesChanged = ps.executeUpdate();
+            if (numLinesChanged == 1)
+            {
+              return true;
+            }
+          }
+          catch (SQLException e)
+          {
+            // TODO handle exceptoin
+            e.printStackTrace();
+          }
+          return false;
 	}
 
         /**
@@ -236,11 +280,45 @@ public class Fine implements Table {
          * generated in the database, and the fid of this object will be mutated
          * to hold the new fid.
          * @return true if the entry was successfully created otherwise false.
+         * @throws NullPointerException if Borrowing is not initialized
          */
 	@Override
 	public boolean insert() {
-		// TODO Auto-generated method stub
-		return false;
+          String sql = "INSERT INTO Fine VALUES("
+                  + "fidCounter.nextval,"
+                  + amount+','
+                  + "?,"
+                  + "?,"
+                  + borrowing.getBorid()+')';
+          try
+          {
+            PreparedStatement ps = con.prepareStatement(sql);
+            int paramIndex = 1;
+            java.sql.Date sqlIssuedDate = (issuedDate == null) ?
+                    null : new java.sql.Date(issuedDate.getTime().getTime());
+            ps.setDate(paramIndex++, sqlIssuedDate);
+            java.sql.Date sqlPaidDate = (paidDate == null) ?
+                    null : new java.sql.Date(paidDate.getTime().getTime());
+            ps.setDate(paramIndex++, sqlPaidDate);
+            int numLinesInserted = ps.executeUpdate();
+            if (numLinesInserted == 1)
+            {
+              ps.close();
+              ps = con.prepareStatement("SELECT fidCounter.currval FROM DUAL");
+              ResultSet rs = ps.executeQuery();
+              if (rs.next())
+              {
+                fid = rs.getInt(1);
+                return true;
+              }
+            }
+          }
+          catch (SQLException e)
+          {
+            // TODO handle exception
+            e.printStackTrace();
+          }
+          return false;
 	}
 
 	@Override
@@ -250,8 +328,22 @@ public class Fine implements Table {
          * @return a collection of all Fines.
          */
 	public Collection<Table> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+          ArrayList<Table> allFines = new ArrayList<Table>();
+          try
+          {
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM Fine");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next())
+            {
+              allFines.add((Table) new Fine(rs));
+            }
+          }
+          catch (SQLException e)
+          {
+            // TODO handle exception
+            e.printStackTrace();
+          }
+          return allFines;
 	}
 
         /**
@@ -305,8 +397,14 @@ public class Fine implements Table {
   /**
    * The amount is in cents.
    * @param amount the amount to set
+   * @throws IllegalArgumentException if the amount is negative
    */
   public void setAmount(Integer amount) {
+    if (amount != null && amount < 0)
+    {
+      String msg = "Fine amounts must be non-negative";
+      throw new IllegalArgumentException(msg);
+    }
     this.amount = amount;
   }
 
@@ -314,14 +412,14 @@ public class Fine implements Table {
    * @return the issueDate
    */
   public Calendar getIssuedDate() {
-    return issueDate;
+    return issuedDate;
   }
 
   /**
    * @param issueDate the issueDate to set
    */
   public void setIssuedDate(Calendar issueDate) {
-    this.issueDate = issueDate;
+    this.issuedDate = issueDate;
   }
 
   /**
@@ -338,7 +436,7 @@ public class Fine implements Table {
    *  the issueDate
    */
   public void setPaidDate(Calendar paidDate) {
-    verifyDateOrder(issueDate, paidDate);
+    verifyDateOrder(issuedDate, paidDate);
     this.paidDate = paidDate;
   }
 
@@ -386,10 +484,50 @@ public class Fine implements Table {
    */
   public static void main(String[] args) {
     // get
+   
     Fine f = new Fine();
-    f.setFid(2);
+    /*
+     * f.setFid(2);
     f = (Fine) f.get();
     System.out.println("fine:\n"+f);
+    
+    f.setFid(4);
+    f.setPaidDate(new GregorianCalendar());
+    f.update();
+    
+    f.setFid(3);
+    if (f.delete())
+    {
+      // do nothing
+    }
+    else
+    {
+      System.out.println("Failed to delete fine 3");
+    }
+    
+    System.out.println((f.delete()) ? "error in delete" : "successfully failed to delete");
+    
+    System.out.println("Should see fine 4 with today's' date for paiddate"
+            + " and should see fine 3 deleted");
+     * 
+     
+    
+    f.fid = -1;
+    f.amount = 1337;
+    f.issuedDate = new GregorianCalendar();
+    f.paidDate = null;
+    f.borrowing = new Borrowing();
+    f.borrowing.setBorid(12);
+    f.insert();
+    System.out.println("expect new fid to be 6"
+            + "\nactual value is: "+f.fid);
+    */
+    
+    for (Table ff : f.getAll())
+    {
+      System.out.println(ff);
+      System.out.println("\n\n");
+    }
     
     String[][] fineTable = f.display();
     for (int i = 0; i < fineTable.length; i++)
