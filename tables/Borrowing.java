@@ -157,7 +157,35 @@ public class Borrowing implements Table {
          */
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
+          try
+          {
+            String sql =
+                    "UPDATE Borrowing "
+                    + "SET bid="+borr.getBid()+", callNumber=?,"
+                      + "copyNo=?, outDate=?, inDate=?" 
+                    + "WHERE borid="+borid;
+            PreparedStatement ps = con.prepareStatement(sql);
+            int paramIndex = 1;
+            ps.setString(paramIndex++, bc.getB().getCallNumber());
+            ps.setString(paramIndex++, bc.getCopyNo());
+            
+            java.sql.Date sqlOutDate = (outDate == null) ?
+                    null : new java.sql.Date(outDate.getTime().getTime());
+            ps.setDate(paramIndex++, sqlOutDate, outDate);
+            
+            java.sql.Date sqlInDate = (inDate == null) ?
+                    null : new java.sql.Date(outDate.getTime().getTime());
+            ps.setDate(paramIndex++, sqlInDate, inDate);
+            
+            ps.executeUpdate();
+            ps.close();
+            
+          }
+          catch (SQLException e)
+          {
+            //TODO handle exception
+            e.printStackTrace();
+          }
 		
 	}
 
@@ -332,5 +360,19 @@ public class Borrowing implements Table {
       }
       System.out.println();
     }
+    
+    // update
+    b.borid = 30;
+    b.borr = new Borrower();
+    b.borr.setBid(42);
+    b.bc = new BookCopy();
+    b.bc.setB(new Book());
+    b.bc.getB().setCallNumber("DJ342 C341 2003");
+    b.bc.setCopyNo("C1");
+    b.outDate = new GregorianCalendar();
+    b.inDate = null;
+    b.update();
+    
+    System.out.println("done updating");
   }
 }
