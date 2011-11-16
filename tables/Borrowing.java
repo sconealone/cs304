@@ -197,8 +197,20 @@ public class Borrowing implements Table {
          */
 	@Override
 	public boolean delete() {
-		// TODO Auto-generated method stub
-		return false;
+          String sql = "DELETE FROM Borrowing WHERE borid = " + borid;
+          try
+          {
+            PreparedStatement ps = con.prepareStatement(sql);
+            int numRowsDeleted = ps.executeUpdate();
+            ps.close();
+            return numRowsDeleted == 1;
+          }
+          catch (SQLException e)
+          {
+             // TODO handle exception
+            e.printStackTrace();
+          }
+          return false;
 	}
 
         /**
@@ -373,6 +385,14 @@ public class Borrowing implements Table {
     b.inDate = null;
     b.update();
     
-    System.out.println("done updating");
+    //delete
+    // deleting borid 29
+    b.borid = 29;
+    b.delete();
+    
+    // trying to delete a tuple that doesn't exist
+    // should not crash, should print false
+    b.borid = 31;
+    System.out.println(b.delete());
   }
 }
