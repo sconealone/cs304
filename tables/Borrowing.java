@@ -133,6 +133,11 @@ public class Borrowing implements Table {
          * of the Borrowing table and every column represents a field
          */
 	@Override
+        // NOTE:  it's probably easiest to implement display using the
+        //        Borrowing(rs:ResultSet) constructor.
+        //        Already finished writing display() before I realized that
+        //        and it's not worth changing now, but useful to know for any
+        //        future class that I need to implement display for.
 	public String[][] display() 
         {
           ArrayList<String[]> borrowingGrowable = new ArrayList<String[]>();
@@ -151,6 +156,7 @@ public class Borrowing implements Table {
             borrowingGrowable.add(columnNames);
             
             DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+            
             
             while (rs.next())
             {
