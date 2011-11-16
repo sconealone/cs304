@@ -14,6 +14,15 @@ import java.sql.SQLException;
  * Need to add actual exception handling and a way to get the username
  * and password instead of hardcoding it.
  * 
+ * Note: when you are implementing user functionality, you will need to
+ * disable auto-commit for java.sql.Connection conn.
+ * eg
+ * 
+ * java.sql.Connection mycon = Conn.getInstance().getConnection();
+ * mycon.setAutoCommit(false);
+ * // your transaction code here
+ * mycon.setAutoCommit(true);
+ * 
  * @author Mitch
  */
 public class Conn {
