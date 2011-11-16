@@ -3,11 +3,13 @@ package tables;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
@@ -50,7 +52,7 @@ public class Fine implements Table {
          * which book copy the fine is for, and the borrower who needs
          * to pay the fine.
          */
-	private Borrowing b;
+	private Borrowing borrowing;
         
         /**
          * A database connection initialized in the constructor
@@ -86,7 +88,7 @@ public class Fine implements Table {
           this.issueDate = issueDate;
           verifyDateOrder(issueDate, paidDate);
           this.paidDate = paidDate;
-          this.b = borrowing;
+          this.borrowing = borrowing;
         }
         
         /**
@@ -121,9 +123,9 @@ public class Fine implements Table {
           }
           
           int borid = rs.getInt(colIndex++);
-          b = new Borrowing();
-          b.setBorid(borid);
-          b = (Borrowing) b.get();          
+          borrowing = new Borrowing();
+          borrowing.setBorid(borid);
+          borrowing = (Borrowing) borrowing.get();          
           
         }
         
@@ -145,7 +147,7 @@ public class Fine implements Table {
                   + "paidDate = "
                   + ((paidDate == null) ?
                     "null" : df.format(paidDate.getTime()))+ '\n'
-                  + "borid = " + b.getBorrower().getBid();
+                  + "borid = " + borrowing.getBorrower().getBid();
         }
 	
 	/**
@@ -157,9 +159,51 @@ public class Fine implements Table {
          *  table
          */
 	@Override
-	public String[][] display() {
-		// TODO Auto-generated method stub
-		return null;
+	public String[][] display() 
+        {
+          ArrayList<String[]> finesGrowable = new ArrayList<String[]>();
+          try
+          {
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM Fine");
+            ResultSet rs = ps.executeQuery();
+            ResultSetMetaData md = rs.getMetaData();
+            int numFields = md.getColumnCount();
+            String[] colNames = new String[numFields];
+            for (int i = 0; i < numFields; i++)
+            {
+              colNames[i] = md.getColumnName(i+1);
+            }
+            finesGrowable.add(colNames);
+            
+            NumberFormat nf = new DecimalFormat("$0.00");
+            DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+            while(rs.next())
+            {
+              String[] tuple = new String[numFields];
+              int fieldIndex = 0;
+              Fine f = new Fine(rs);
+              tuple[fieldIndex++] = ""+f.fid;
+              tuple[fieldIndex++] = nf.format(f.amount / 100.0);
+              tuple[fieldIndex++] = (f.issueDate == null) ?
+                      "null" : df.format(f.issueDate.getTime());
+              tuple[fieldIndex++] = (f.paidDate == null) ?
+                      "null" : df.format(f.paidDate.getTime());
+              tuple[fieldIndex++] = "" + f.borrowing.getBorrower().getBid();
+              finesGrowable.add(tuple);
+            }
+          }
+          catch (SQLException e)
+          {
+            //TODO handle exception
+            e.printStackTrace();
+          }
+          int numRows = finesGrowable.size();
+          String[][] fines = new String[numRows][];
+          for (int i = 0; i < numRows; i++)
+          {
+            fines[i] = finesGrowable.get(i);
+          }
+          return fines;
 	}
 
         /**
@@ -302,14 +346,14 @@ public class Fine implements Table {
    * @return the borrowing
    */
   public Borrowing getBorrowing() {
-    return b;
+    return borrowing;
   }
 
   /**
    * @param b the borrowing to set
    */
   public void setBorrowing(Borrowing b) {
-    this.b = b;
+    this.borrowing = b;
   }
   
   /**
@@ -347,6 +391,15 @@ public class Fine implements Table {
     f = (Fine) f.get();
     System.out.println("fine:\n"+f);
     
+    String[][] fineTable = f.display();
+    for (int i = 0; i < fineTable.length; i++)
+    {
+      for (int j = 0; j < fineTable[i].length; j++)
+      {
+        System.out.print(fineTable[i][j] + '\t');
+      }
+      System.out.println();
+    }
   }
 
 }
