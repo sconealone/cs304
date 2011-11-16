@@ -69,9 +69,11 @@ public class Borrowing implements Table {
          * only for use within this object!
          * Call next() before you pass the ResultSet
          * @param rs 
+         * TODO there are several calls to get() that are stubbed out
          */
         private Borrowing(ResultSet rs) throws SQLException
         {
+          con = Conn.getInstance().getConnection();
           int fieldIndex = 1;
               borid = rs.getInt(fieldIndex++);
               
@@ -148,7 +150,7 @@ public class Borrowing implements Table {
             }
             borrowingGrowable.add(columnNames);
             
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
             
             while (rs.next())
             {
@@ -269,7 +271,6 @@ public class Borrowing implements Table {
          * empty.
          * @return a collection containing all the Borrowing objects in the
          * database
-         * TODO there are several calls to get() that are stubbed out
          */
 	@Override
 	public Collection<Table> getAll() 
@@ -461,7 +462,7 @@ public class Borrowing implements Table {
     boolean futureWithoutAPast = past == null/* && future != null*/;
     if (futureWithoutAPast || future.before(past))
     {
-      DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+      DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
       throw new IllegalArgumentException("Time paradox! Cannot return borrowing"
               + "before it is borrowed. (out date: "
               +((past == null) ? "null" : df.format(past.getTime()) )
@@ -478,7 +479,7 @@ public class Borrowing implements Table {
   @Override
   public String toString()
   {
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
     return "borid = " + borid
             +"\nbid = " + borr.getBid()
             +"\ncallNumber = " + bc.getB().getCallNumber()
