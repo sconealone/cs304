@@ -56,9 +56,9 @@ public class Borrower implements Table {
 	@Override
 	public boolean insert() {
 		try {
-			stmt.executeUpdate("INSERT INTO Borrower VALUES (" + bid + ", " + password + ", " +
-			name + ", " + address + ", " + phone + ", " + emailAddress + ", " +	sinOrStNum + 
-			", " +expiryDate + ", " +bookTimeLimit + ")");
+			stmt.executeUpdate("INSERT INTO Borrower VALUES (" + getBid() + ", " + getPassword() + ", " +
+			getName() + ", " + getAddress() + ", " + getPhone() + ", " + getEmailAddress() + ", " +	getSinOrStNum() + 
+			", " +getExpiryDate() + ", " +getBookTimeLimit() + ")");
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -66,6 +66,132 @@ public class Borrower implements Table {
 		}
 		return true;
 	}
+
+  /**
+   * @return the bid
+   */
+  public Integer getBid() {
+    return bid;
+  }
+
+  /**
+   * @param bid the bid to set
+   */
+  public void setBid(Integer bid) {
+    this.bid = bid;
+  }
+
+  /**
+   * @return the password
+   */
+  public String getPassword() {
+    return password;
+  }
+
+  /**
+   * @param password the password to set
+   */
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  /**
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * @param name the name to set
+   */
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  /**
+   * @return the address
+   */
+  public String getAddress() {
+    return address;
+  }
+
+  /**
+   * @param address the address to set
+   */
+  public void setAddress(String address) {
+    this.address = address;
+  }
+
+  /**
+   * @return the phone
+   */
+  public String getPhone() {
+    return phone;
+  }
+
+  /**
+   * @param phone the phone to set
+   */
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
+
+  /**
+   * @return the emailAddress
+   */
+  public String getEmailAddress() {
+    return emailAddress;
+  }
+
+  /**
+   * @param emailAddress the emailAddress to set
+   */
+  public void setEmailAddress(String emailAddress) {
+    this.emailAddress = emailAddress;
+  }
+
+  /**
+   * @return the sinOrStNum
+   */
+  public Integer getSinOrStNum() {
+    return sinOrStNum;
+  }
+
+  /**
+   * @param sinOrStNum the sinOrStNum to set
+   */
+  public void setSinOrStNum(Integer sinOrStNum) {
+    this.sinOrStNum = sinOrStNum;
+  }
+
+  /**
+   * @return the expiryDate
+   */
+  public Calendar getExpiryDate() {
+    return expiryDate;
+  }
+
+  /**
+   * @param expiryDate the expiryDate to set
+   */
+  public void setExpiryDate(Calendar expiryDate) {
+    this.expiryDate = expiryDate;
+  }
+
+  /**
+   * @return the bookTimeLimit
+   */
+  public Integer getBookTimeLimit() {
+    return bookTimeLimit;
+  }
+
+  /**
+   * @param bookTimeLimit the bookTimeLimit to set
+   */
+  public void setBookTimeLimit(Integer bookTimeLimit) {
+    this.bookTimeLimit = bookTimeLimit;
+  }
 
 
 }

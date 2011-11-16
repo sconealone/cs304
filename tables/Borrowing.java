@@ -66,6 +66,7 @@ public class Borrowing implements Table {
          * @throws NullPointerException if outDate or borr is not initialized
          */
 	public Calendar getDueDate() {
+          
 		return null;
 	}
 	
