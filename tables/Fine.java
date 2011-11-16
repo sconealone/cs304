@@ -1,19 +1,60 @@
 package tables;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import users.Conn;
 
+/**
+ * This class represents a Fine for a borrowing.  A Fine is assessed
+ * when a borrowing is returned.  Several fines may be issued for the same
+ * borrowing; for example one might be an overdue fine, and one might be
+ * fine for a damaged book.  The Fine's amount will always be in cents.
+ * 
+ * @author Mitch
+ */
 public class Fine implements Table {
 
+        /**
+         * The unique identifier for the fine
+         */
 	private Integer fid;
+        
+        /**
+         * The amount that needs to be paid.
+         * Its unit is cents.
+         */
 	private Integer amount;
+        
+        /**
+         * The date the fine was issued.  In general this will be
+         * the date that the book was returned.
+         */
 	private Calendar issueDate;
+        
+        /**
+         * The date that the fine was paid.  Each fine must be paid in full.
+         */
 	private Calendar paidDate;
+        
+        /**
+         * The borrowing that the fine is for.  Contains information about
+         * which book copy the fine is for, and the borrower who needs
+         * to pay the fine.
+         */
 	private Borrowing b;
+        
+        /**
+         * A database connection initialized in the constructor
+         */
         private Connection con;
         
         /**
@@ -46,6 +87,65 @@ public class Fine implements Table {
           verifyDateOrder(issueDate, paidDate);
           this.paidDate = paidDate;
           this.b = borrowing;
+        }
+        
+        /**
+         * Creates a new Fine object based on a result set.  Only for internal
+         * use.  Call next() on the result set before using it to create
+         * and object.
+         * @throws SQLException if the object cannot be created.  The ResultSet
+         * might be closed.
+         */
+        private Fine(ResultSet rs) throws SQLException
+        {
+          con = Conn.getInstance().getConnection();
+          int colIndex = 1;
+          fid = rs.getInt(colIndex++);
+          
+          amount = rs.getInt(colIndex++);
+          
+          java.sql.Date sqlIssuedDate = rs.getDate(colIndex++);
+          issueDate = (rs.wasNull()) ?
+                  null : new GregorianCalendar();
+          if (issueDate != null)
+          {
+            issueDate.setTime(sqlIssuedDate);
+          }
+          
+          java.sql.Date sqlpaidDate = rs.getDate(colIndex++);
+          paidDate = (rs.wasNull()) ?
+                  null : new GregorianCalendar();
+          if (paidDate != null)
+          {
+            paidDate.setTime(sqlpaidDate);
+          }
+          
+          int borid = rs.getInt(colIndex++);
+          b = new Borrowing();
+          b.setBorid(borid);
+          b = (Borrowing) b.get();          
+          
+        }
+        
+        /**
+         * String representation of this object and all its attributes
+         * @return 
+         */
+        @Override
+        public String toString()
+        {
+          DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+          NumberFormat nf = new DecimalFormat("$0.00");
+          return "fid = " + fid + '\n'
+                  + "amount = " + nf.format(amount / 100.0) + '\n'
+                  + "issuedDate = " 
+                  + ((issueDate == null) ?
+                    "null" : df.format(issueDate.getTime())) 
+                  + '\n'
+                  + "paidDate = "
+                  + ((paidDate == null) ?
+                    "null" : df.format(paidDate.getTime()))+ '\n'
+                  + "borid = " + b.getBorrower().getBid();
         }
 	
 	/**
@@ -118,8 +218,22 @@ public class Fine implements Table {
          */
 	@Override
 	public Table get() {
-		// TODO Auto-generated method stub
-		return null;
+          try
+          {
+            String sql = "SELECT * FROM Fine WHERE fid = "+fid;
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next())
+            {
+              return new Fine(rs);
+            }
+          }
+          catch(SQLException e)
+          {
+            // TODO handle exception
+            e.printStackTrace();
+          }        
+          return null;
 	}
 
   /**
@@ -155,14 +269,14 @@ public class Fine implements Table {
   /**
    * @return the issueDate
    */
-  public Calendar getIssueDate() {
+  public Calendar getIssuedDate() {
     return issueDate;
   }
 
   /**
    * @param issueDate the issueDate to set
    */
-  public void setIssueDate(Calendar issueDate) {
+  public void setIssuedDate(Calendar issueDate) {
     this.issueDate = issueDate;
   }
 
@@ -220,6 +334,19 @@ public class Fine implements Table {
               +"; paid date: "+df.format(future.getTime())+")");
     }
   
+  }
+  
+  /**
+   * For testing only
+   * @param args 
+   */
+  public static void main(String[] args) {
+    // get
+    Fine f = new Fine();
+    f.setFid(2);
+    f = (Fine) f.get();
+    System.out.println("fine:\n"+f);
+    
   }
 
 }

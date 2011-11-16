@@ -422,28 +422,28 @@ public class Borrowing implements Table {
   /**
    * @return the bc
    */
-  public BookCopy getBc() {
+  public BookCopy getBookCopy() {
     return bc;
   }
 
   /**
    * @param bc the bc to set
    */
-  public void setBc(BookCopy bc) {
+  public void setBookCopy(BookCopy bc) {
     this.bc = bc;
   }
 
   /**
    * @return the borr
    */
-  public Borrower getBorr() {
+  public Borrower getBorrower() {
     return borr;
   }
 
   /**
    * @param borr the borr to set
    */
-  public void setBorr(Borrower borr) {
+  public void setBorrower(Borrower borr) {
     this.borr = borr;
   }
 
@@ -525,7 +525,7 @@ public class Borrowing implements Table {
     // should not crash, should print false
     b.borid = 31;
     System.out.println(b.delete());
-    */
+    
     // getall
     Collection<Table> allBorrowings = b.getAll();
     Iterator<Table> i = allBorrowings.iterator();
@@ -533,7 +533,7 @@ public class Borrowing implements Table {
     {
       System.out.println(((Borrowing) i.next()) + "\n");
     }
-    
+    */
     //insert
     b.borid = -1;
     b.borr = new Borrower();
