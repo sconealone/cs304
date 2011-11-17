@@ -8,6 +8,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import users.Controller;
@@ -22,11 +23,28 @@ import users.Controller;
  * @author Mitch
  */
 public class ViewFrame extends javax.swing.JFrame {
-  
   /** Creates new form ViewFrame */
   public ViewFrame() 
   {
     this.controller = new Controller(this);
+    state = State.START;
+    statemap = new HashMap<String,State>();
+    statemap.put(START, State.START);
+    statemap.put(TABLES, State.TABLES);
+    statemap.put(SEARCH, State.SEARCH);
+    statemap.put(CHECK_ACCOUNT, State.CHECK_ACCOUNT);
+    statemap.put(HOLD_REQUEST, State.HOLD_REQUEST);
+    statemap.put(PAY_FINE, State.PAY_FINE);
+    statemap.put(ADD_BORROWER, State.ADD_BORROWER);
+    statemap.put(CHECK_OUT, State.CHECK_OUT);
+    statemap.put(CHECK_OVERDUE, State.CHECK_OVERDUE);
+    statemap.put(PROCESS_RETURN, State.PROCESS_RETURN);
+    statemap.put(ADD_BOOK, State.ADD_BOOK);
+    statemap.put(ADD_COPY, State.ADD_COPY);
+    statemap.put(REMOVE_BOOK, State.REMOVE_BOOK);
+    statemap.put(REMOVE_BORROWER, State.REMOVE_BORROWER);
+    statemap.put(REPORT_POPULAR, State.REPORT_POPULAR);
+    statemap.put(REPORT_CHECKED_OUT, State.REPORT_CHECKED_OUT);
     initComponents();
   }
 
@@ -39,8 +57,9 @@ public class ViewFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        mainPanel = new javax.swing.JPanel();
         cardPanel = new javax.swing.JPanel();
-        welcomePanel = new javax.swing.JPanel();
+        startPanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         tablesPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -60,6 +79,9 @@ public class ViewFrame extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         checkOverduePanel = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
+        buttonPanel = new javax.swing.JPanel();
+        doButton = new javax.swing.JButton();
+        clearButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         navigationMenu = new javax.swing.JMenu();
@@ -84,7 +106,7 @@ public class ViewFrame extends javax.swing.JFrame {
         checkedOutReportMenuItem = new javax.swing.JMenuItem();
         popularReportMenuItem = new javax.swing.JMenuItem();
         tableMenuItem = new javax.swing.JMenuItem();
-        welcomeMenuItem = new javax.swing.JMenuItem();
+        startMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         manualMenuItem = new javax.swing.JMenuItem();
 
@@ -97,14 +119,16 @@ public class ViewFrame extends javax.swing.JFrame {
             }
         });
 
+        mainPanel.setLayout(new java.awt.BorderLayout());
+
         cardPanel.setLayout(new java.awt.CardLayout());
 
-        welcomePanel.setLayout(new java.awt.BorderLayout());
+        startPanel.setLayout(new java.awt.BorderLayout());
 
         jLabel6.setText("welcome");
-        welcomePanel.add(jLabel6, java.awt.BorderLayout.CENTER);
+        startPanel.add(jLabel6, java.awt.BorderLayout.CENTER);
 
-        cardPanel.add(welcomePanel, "Welcome page");
+        cardPanel.add(startPanel, "Start");
 
         tablesPanel.setLayout(new java.awt.BorderLayout());
 
@@ -169,7 +193,30 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(checkOverduePanel, "Check overdue books");
 
-        getContentPane().add(cardPanel, java.awt.BorderLayout.CENTER);
+        mainPanel.add(cardPanel, java.awt.BorderLayout.CENTER);
+
+        buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        doButton.setText("Do something");
+        doButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                doButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(doButton);
+
+        clearButton.setText("Clear");
+        clearButton.setHideActionText(true);
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel.add(clearButton);
+
+        mainPanel.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+
+        getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         fileMenu.setText("File");
         menuBar.add(fileMenu);
@@ -178,7 +225,7 @@ public class ViewFrame extends javax.swing.JFrame {
 
         borrowerMenu.setText("Borrower");
 
-        searchMenuItem.setText("Search for book");
+        searchMenuItem.setText(SEARCH);
         searchMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -186,7 +233,7 @@ public class ViewFrame extends javax.swing.JFrame {
         });
         borrowerMenu.add(searchMenuItem);
 
-        checkAccountMenuItem.setText("Check account");
+        checkAccountMenuItem.setText(CHECK_ACCOUNT);
         checkAccountMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -194,7 +241,7 @@ public class ViewFrame extends javax.swing.JFrame {
         });
         borrowerMenu.add(checkAccountMenuItem);
 
-        holdRequestMenuItem.setText("Place hold request");
+        holdRequestMenuItem.setText(HOLD_REQUEST);
         holdRequestMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -202,7 +249,7 @@ public class ViewFrame extends javax.swing.JFrame {
         });
         borrowerMenu.add(holdRequestMenuItem);
 
-        payFineMenuItem.setText("Pay a fine");
+        payFineMenuItem.setText(PAY_FINE);
         payFineMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -214,7 +261,7 @@ public class ViewFrame extends javax.swing.JFrame {
 
         clerkMenu.setText("Clerk");
 
-        addBorrowerMenuItem.setText("Add a new borrower");
+        addBorrowerMenuItem.setText(ADD_BORROWER);
         addBorrowerMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -222,7 +269,7 @@ public class ViewFrame extends javax.swing.JFrame {
         });
         clerkMenu.add(addBorrowerMenuItem);
 
-        checkOutMenuItem.setText("Check-out books");
+        checkOutMenuItem.setText(CHECK_OUT);
         checkOutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -230,7 +277,7 @@ public class ViewFrame extends javax.swing.JFrame {
         });
         clerkMenu.add(checkOutMenuItem);
 
-        processReturnMenuItem.setText("Process a return");
+        processReturnMenuItem.setText(PROCESS_RETURN);
         processReturnMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -238,7 +285,7 @@ public class ViewFrame extends javax.swing.JFrame {
         });
         clerkMenu.add(processReturnMenuItem);
 
-        checkOverdueMenuItem.setText("Check overdue books");
+        checkOverdueMenuItem.setText(CHECK_OVERDUE);
         checkOverdueMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -252,7 +299,7 @@ public class ViewFrame extends javax.swing.JFrame {
 
         addMenu.setText("Add");
 
-        addBookMenuItem.setText("Add new book");
+        addBookMenuItem.setText(ADD_BOOK);
         addBookMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -260,7 +307,7 @@ public class ViewFrame extends javax.swing.JFrame {
         });
         addMenu.add(addBookMenuItem);
 
-        addBookCopyMenuItem.setText("Add new book copy");
+        addBookCopyMenuItem.setText(ADD_COPY);
         addBookCopyMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -272,7 +319,7 @@ public class ViewFrame extends javax.swing.JFrame {
 
         removeMenu.setText("Remove");
 
-        removeBorrowerMenuItem.setText("Remove borrower");
+        removeBorrowerMenuItem.setText(REMOVE_BORROWER);
         removeBorrowerMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -280,7 +327,7 @@ public class ViewFrame extends javax.swing.JFrame {
         });
         removeMenu.add(removeBorrowerMenuItem);
 
-        removeBookMenuItem.setText("Remove books and copies");
+        removeBookMenuItem.setText(REMOVE_BOOK);
         removeBookMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -292,7 +339,7 @@ public class ViewFrame extends javax.swing.JFrame {
 
         reportMenu.setText("Report");
 
-        checkedOutReportMenuItem.setText("Checked-out report");
+        checkedOutReportMenuItem.setText(REPORT_CHECKED_OUT);
         checkedOutReportMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -300,7 +347,7 @@ public class ViewFrame extends javax.swing.JFrame {
         });
         reportMenu.add(checkedOutReportMenuItem);
 
-        popularReportMenuItem.setText("Popular books");
+        popularReportMenuItem.setText(REPORT_POPULAR);
         popularReportMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -312,7 +359,7 @@ public class ViewFrame extends javax.swing.JFrame {
 
         navigationMenu.add(librarianMenu);
 
-        tableMenuItem.setText("View tables");
+        tableMenuItem.setText(TABLES);
         tableMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -320,13 +367,13 @@ public class ViewFrame extends javax.swing.JFrame {
         });
         navigationMenu.add(tableMenuItem);
 
-        welcomeMenuItem.setText("Welcome page");
-        welcomeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        startMenuItem.setText(START);
+        startMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
             }
         });
-        navigationMenu.add(welcomeMenuItem);
+        navigationMenu.add(startMenuItem);
 
         menuBar.add(navigationMenu);
 
@@ -397,22 +444,106 @@ public class ViewFrame extends javax.swing.JFrame {
    */
   private void navigationMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navigationMenuItemActionPerformed
     CardLayout cl = (CardLayout) (cardPanel.getLayout());
-    cl.show(cardPanel, ((JMenuItem) evt.getSource()).getText());
+    String key = ((JMenuItem) evt.getSource()).getText();
+    cl.show(cardPanel, key);
+    state = statemap.get(key);
   }//GEN-LAST:event_navigationMenuItemActionPerformed
 
+  
   /**
-   * Displays the search panel, where the borrower can search for books
+   * Chooses an action based on the current state of the GUI
+   * Executes the functionality that the state is supposed to embody
+   * i.e. In the SEARCH state, this should send a message to the Controller
+   * to search for a book
    * @param evt 
    */
+  private void doButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doButtonActionPerformed
+    String key = ((JMenuItem) evt.getSource()).getText();
+    State state = statemap.get(key);
+    switch (state)
+    {
+      case TABLES:
+              break;
+      case START:
+              break;
+      case SEARCH:
+              break;
+      case CHECK_ACCOUNT:
+              break;
+      case HOLD_REQUEST:
+              break;
+      case PAY_FINE:
+              break;
+      case ADD_BORROWER:
+              break;
+      case CHECK_OUT:
+              break;
+      case CHECK_OVERDUE:
+              break;
+      case PROCESS_RETURN:
+              break;
+      case ADD_BOOK:
+              break;
+      case ADD_COPY:
+              break;
+      case REMOVE_BOOK:
+              break;
+      case REMOVE_BORROWER:
+              break;
+      case REPORT_POPULAR:
+              break;
+      case REPORT_CHECKED_OUT:
+              break;
+      default:
+    }
+  }//GEN-LAST:event_doButtonActionPerformed
+
   /**
-   * Displays the 
+   * Tells the GUI to clear the current panel
    * @param evt 
    */
-  /**
-   * Test
-   * TODO delete this
-   * @param evt 
-   */  
+  private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+    
+    String key = ((JMenuItem) evt.getSource()).getText();
+    State state = statemap.get(key);
+    switch (state)
+    {
+      case TABLES:
+              break;
+      case START:
+              break;
+      case SEARCH:
+              break;
+      case CHECK_ACCOUNT:
+              break;
+      case HOLD_REQUEST:
+              break;
+      case PAY_FINE:
+              break;
+      case ADD_BORROWER:
+              break;
+      case CHECK_OUT:
+              break;
+      case CHECK_OVERDUE:
+              break;
+      case PROCESS_RETURN:
+              break;
+      case ADD_BOOK:
+              break;
+      case ADD_COPY:
+              break;
+      case REMOVE_BOOK:
+              break;
+      case REMOVE_BORROWER:
+              break;
+      case REPORT_POPULAR:
+              break;
+      case REPORT_CHECKED_OUT:
+              break;
+      default:
+    }
+  }//GEN-LAST:event_clearButtonActionPerformed
+
   
   /**
    * @param args the command line arguments
@@ -457,6 +588,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel addBorrowerPanel;
     private javax.swing.JMenu addMenu;
     private javax.swing.JMenu borrowerMenu;
+    private javax.swing.JPanel buttonPanel;
     private javax.swing.JPanel cardPanel;
     private javax.swing.JMenuItem checkAccountMenuItem;
     private javax.swing.JPanel checkAccountPanel;
@@ -465,7 +597,9 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem checkOverdueMenuItem;
     private javax.swing.JPanel checkOverduePanel;
     private javax.swing.JMenuItem checkedOutReportMenuItem;
+    private javax.swing.JButton clearButton;
     private javax.swing.JMenu clerkMenu;
+    private javax.swing.JButton doButton;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
@@ -481,6 +615,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu librarianMenu;
+    private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu navigationMenu;
@@ -495,11 +630,48 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu reportMenu;
     private javax.swing.JMenuItem searchMenuItem;
     private javax.swing.JPanel searchPanel;
+    private javax.swing.JMenuItem startMenuItem;
+    private javax.swing.JPanel startPanel;
     private javax.swing.JMenuItem tableMenuItem;
     private javax.swing.JPanel tablesPanel;
-    private javax.swing.JMenuItem welcomeMenuItem;
-    private javax.swing.JPanel welcomePanel;
     // End of variables declaration//GEN-END:variables
 
     private Controller controller;
+    private State state;
+    private HashMap<String,State> statemap;
+    
+    /**
+     * The possible states that the GUI can be in.  One state for every panel/
+     * functional requirement.  There are 16 states in total.
+     */
+    private enum State {
+        //System functionality
+        TABLES, START,
+        //Borrower functionality
+        SEARCH, CHECK_ACCOUNT, HOLD_REQUEST, PAY_FINE,
+        // Clerk functionality
+        ADD_BORROWER, CHECK_OUT, CHECK_OVERDUE, PROCESS_RETURN,
+        // Librarian functionality
+        ADD_BOOK, ADD_COPY, REMOVE_BOOK, REMOVE_BORROWER,
+        REPORT_POPULAR, REPORT_CHECKED_OUT
+      }
+    
+    private static final String TABLES = "View tables";
+    private static final String START = "Start";
+    private static final String SEARCH = "Search for book";
+    private static final String CHECK_ACCOUNT = "Check account";
+    private static final String HOLD_REQUEST = "Place hold request";
+    private static final String PAY_FINE="Pay a fine";
+    private static final String ADD_BORROWER="Add a new borrower";
+    private static final String CHECK_OUT="Check-out books";
+    private static final String CHECK_OVERDUE="Check overdue books";
+    private static final String PROCESS_RETURN="Process a return";
+    private static final String ADD_BOOK="Add new book";
+    private static final String ADD_COPY="Add new book copy";
+    private static final String REMOVE_BOOK="Remove books and copies";
+    private static final String REMOVE_BORROWER="Remove borrower";
+    private static final String REPORT_POPULAR="Popular books report";
+    private static final String REPORT_CHECKED_OUT="Checked-out report";
+    
+    
 }
