@@ -1,6 +1,7 @@
 package users;
 
 import GUI.ViewFrame;
+import java.sql.Connection;
 import java.util.Collection;
 
 
@@ -34,9 +35,11 @@ public class Controller {
   
   public void shutdown()
   {
+    Connection c = Conn.getInstance().getConnection();
     try
     {
-      Conn.getInstance().getConnection().close();
+      if (c != null)
+        c.close();
     }
     catch (SQLException e)
     {

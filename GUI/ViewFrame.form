@@ -96,6 +96,77 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Librarian"/>
               </Properties>
+              <SubComponents>
+                <Menu class="javax.swing.JMenu" name="addMenu">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Add"/>
+                  </Properties>
+                  <SubComponents>
+                    <MenuItem class="javax.swing.JMenuItem" name="addBookMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Add new book"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="navigationMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="addBookCopyMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Add new book copy"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="navigationMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                  </SubComponents>
+                </Menu>
+                <Menu class="javax.swing.JMenu" name="removeMenu">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Remove"/>
+                  </Properties>
+                  <SubComponents>
+                    <MenuItem class="javax.swing.JMenuItem" name="removeBorrowerMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Remove borrower"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="navigationMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="removeBookMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Remove books and copies"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="navigationMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                  </SubComponents>
+                </Menu>
+                <Menu class="javax.swing.JMenu" name="reportMenu">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Report"/>
+                  </Properties>
+                  <SubComponents>
+                    <MenuItem class="javax.swing.JMenuItem" name="checkedOutReportMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Checked-out report"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="navigationMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="popularReportMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Popular books"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="navigationMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                  </SubComponents>
+                </Menu>
+              </SubComponents>
             </Menu>
             <MenuItem class="javax.swing.JMenuItem" name="tableMenuItem">
               <Properties>
@@ -135,6 +206,10 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="title" type="java.lang.String" value="Library"/>
+    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[800, 600]"/>
+    </Property>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="menuBar"/>

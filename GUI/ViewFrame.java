@@ -74,12 +74,23 @@ public class ViewFrame extends javax.swing.JFrame {
         processReturnMenuItem = new javax.swing.JMenuItem();
         checkOverdueMenuItem = new javax.swing.JMenuItem();
         librarianMenu = new javax.swing.JMenu();
+        addMenu = new javax.swing.JMenu();
+        addBookMenuItem = new javax.swing.JMenuItem();
+        addBookCopyMenuItem = new javax.swing.JMenuItem();
+        removeMenu = new javax.swing.JMenu();
+        removeBorrowerMenuItem = new javax.swing.JMenuItem();
+        removeBookMenuItem = new javax.swing.JMenuItem();
+        reportMenu = new javax.swing.JMenu();
+        checkedOutReportMenuItem = new javax.swing.JMenuItem();
+        popularReportMenuItem = new javax.swing.JMenuItem();
         tableMenuItem = new javax.swing.JMenuItem();
         welcomeMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         manualMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Library");
+        setMinimumSize(new java.awt.Dimension(800, 600));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -238,6 +249,67 @@ public class ViewFrame extends javax.swing.JFrame {
         navigationMenu.add(clerkMenu);
 
         librarianMenu.setText("Librarian");
+
+        addMenu.setText("Add");
+
+        addBookMenuItem.setText("Add new book");
+        addBookMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                navigationMenuItemActionPerformed(evt);
+            }
+        });
+        addMenu.add(addBookMenuItem);
+
+        addBookCopyMenuItem.setText("Add new book copy");
+        addBookCopyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                navigationMenuItemActionPerformed(evt);
+            }
+        });
+        addMenu.add(addBookCopyMenuItem);
+
+        librarianMenu.add(addMenu);
+
+        removeMenu.setText("Remove");
+
+        removeBorrowerMenuItem.setText("Remove borrower");
+        removeBorrowerMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                navigationMenuItemActionPerformed(evt);
+            }
+        });
+        removeMenu.add(removeBorrowerMenuItem);
+
+        removeBookMenuItem.setText("Remove books and copies");
+        removeBookMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                navigationMenuItemActionPerformed(evt);
+            }
+        });
+        removeMenu.add(removeBookMenuItem);
+
+        librarianMenu.add(removeMenu);
+
+        reportMenu.setText("Report");
+
+        checkedOutReportMenuItem.setText("Checked-out report");
+        checkedOutReportMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                navigationMenuItemActionPerformed(evt);
+            }
+        });
+        reportMenu.add(checkedOutReportMenuItem);
+
+        popularReportMenuItem.setText("Popular books");
+        popularReportMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                navigationMenuItemActionPerformed(evt);
+            }
+        });
+        reportMenu.add(popularReportMenuItem);
+
+        librarianMenu.add(reportMenu);
+
         navigationMenu.add(librarianMenu);
 
         tableMenuItem.setText("View tables");
@@ -312,7 +384,10 @@ public class ViewFrame extends javax.swing.JFrame {
    * @param evt 
    */
   private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-    controller.shutdown();
+    if (controller != null)
+    {
+      controller.shutdown();
+    }
   }//GEN-LAST:event_formWindowClosing
 
   /**
@@ -376,8 +451,11 @@ public class ViewFrame extends javax.swing.JFrame {
     });
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem addBookCopyMenuItem;
+    private javax.swing.JMenuItem addBookMenuItem;
     private javax.swing.JMenuItem addBorrowerMenuItem;
     private javax.swing.JPanel addBorrowerPanel;
+    private javax.swing.JMenu addMenu;
     private javax.swing.JMenu borrowerMenu;
     private javax.swing.JPanel cardPanel;
     private javax.swing.JMenuItem checkAccountMenuItem;
@@ -386,6 +464,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel checkOutPanel;
     private javax.swing.JMenuItem checkOverdueMenuItem;
     private javax.swing.JPanel checkOverduePanel;
+    private javax.swing.JMenuItem checkedOutReportMenuItem;
     private javax.swing.JMenu clerkMenu;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
@@ -407,8 +486,13 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu navigationMenu;
     private javax.swing.JMenuItem payFineMenuItem;
     private javax.swing.JPanel payFinePanel;
+    private javax.swing.JMenuItem popularReportMenuItem;
     private javax.swing.JMenuItem processReturnMenuItem;
     private javax.swing.JPanel processReturnPanel;
+    private javax.swing.JMenuItem removeBookMenuItem;
+    private javax.swing.JMenuItem removeBorrowerMenuItem;
+    private javax.swing.JMenu removeMenu;
+    private javax.swing.JMenu reportMenu;
     private javax.swing.JMenuItem searchMenuItem;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JMenuItem tableMenuItem;
