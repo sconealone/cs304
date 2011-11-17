@@ -26,7 +26,7 @@ public class Controller {
   private Borrower systemBorrower;
   private ViewFrame view;
   
-  public void startup()
+  public final void startup()
   {
     // necessary to initialize the connection to the database
     Conn.getInstance();
@@ -46,6 +46,7 @@ public class Controller {
 
   public Controller(ViewFrame view)
   {
+    startup();
     this.view = view;
     holdRequests = new ArrayList<HoldRequest>();
     books = new ArrayList<Book>();
