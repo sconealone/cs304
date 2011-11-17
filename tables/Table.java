@@ -4,7 +4,7 @@ public interface Table {
 	
 	public void display(String[][] arg);
 	
-	public void ndate();
+	public void update();
 	
 	public boolean delete();
 	

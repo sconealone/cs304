@@ -17,7 +17,7 @@ public class Fine implements Table {
 	}
 
 	@Override
-	public void ndate() {
+	public void update() {
 		// TODO Auto-generated method stub
 		
 	}

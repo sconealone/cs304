@@ -2,6 +2,8 @@ package tables;
 
 import java.util.Collection;
 
+import users.Conn;
+
 public class Book implements Table {
 
 	private String callNumber;
@@ -13,14 +15,18 @@ public class Book implements Table {
 	private Collection<String> authors;
 	private Collection<String> subjects;	
 	
+	private Conn c = Conn.getInstance();
+	
+	
 	@Override
 	public void display(String[][] arg) {
 		// TODO Auto-generated method stub
 		
+		
 	}
 
 	@Override
-	public void ndate() {
+	public void update() {
 		// TODO Auto-generated method stub
 		
 	}
