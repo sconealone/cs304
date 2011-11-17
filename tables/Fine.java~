@@ -221,7 +221,11 @@ public class Fine implements Table {
          * @throws NullPointerException if borrowing is not initialized
          */
 	@Override
-
+<<<<<<< HEAD
+	public void update() {
+		// TODO Auto-generated method stub
+		
+=======
 	public void update() 
         {
           String sql = "UPDATE Fine SET "
@@ -248,6 +252,7 @@ public class Fine implements Table {
             //TODO handle exception
             e.printStackTrace();
           }
+>>>>>>> 19e4a9228bdee325dbb84e3b06985d8316103142
 	}
 
         /**

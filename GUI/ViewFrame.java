@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gui;
+package GUI;
 import java.awt.CardLayout;
 import java.awt.Desktop;
 import java.io.IOException;

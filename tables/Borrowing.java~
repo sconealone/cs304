@@ -211,6 +211,10 @@ public class Borrowing implements Table {
          * unless you want the field to appear as null in the database.
          */
 	@Override
+<<<<<<< HEAD
+	public void update() {
+		// TODO Auto-generated method stub
+=======
 	public void update() 
         {
           try
@@ -242,6 +246,8 @@ public class Borrowing implements Table {
             //TODO handle exception
             e.printStackTrace();
           }
+>>>>>>> 19e4a9228bdee325dbb84e3b06985d8316103142
+		
 	}
 
         /**

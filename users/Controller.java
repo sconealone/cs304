@@ -1,6 +1,6 @@
 package users;
 
-import gui.ViewFrame;
+import GUI.ViewFrame;
 import java.util.Collection;
 
 
