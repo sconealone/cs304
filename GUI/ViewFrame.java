@@ -79,6 +79,8 @@ public class ViewFrame extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         checkOverduePanel = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
+        startPanel1 = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
         buttonPanel = new javax.swing.JPanel();
         doButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
@@ -192,6 +194,13 @@ public class ViewFrame extends javax.swing.JFrame {
         checkOverduePanel.add(jLabel10, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(checkOverduePanel, "Check overdue books");
+
+        startPanel1.setLayout(new java.awt.BorderLayout());
+
+        jLabel11.setText("welcome");
+        startPanel1.add(jLabel11, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(startPanel1, "Start");
 
         mainPanel.add(cardPanel, java.awt.BorderLayout.CENTER);
 
@@ -606,6 +615,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel holdRequestPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -632,6 +642,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel searchPanel;
     private javax.swing.JMenuItem startMenuItem;
     private javax.swing.JPanel startPanel;
+    private javax.swing.JPanel startPanel1;
     private javax.swing.JMenuItem tableMenuItem;
     private javax.swing.JPanel tablesPanel;
     // End of variables declaration//GEN-END:variables
