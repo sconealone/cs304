@@ -1,9 +1,10 @@
-
+<<<<<<< HEAD
 /*
 a * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
+=======
+>>>>>>> 19e4a9228bdee325dbb84e3b06985d8316103142
 package users;
 
 import java.sql.Connection;

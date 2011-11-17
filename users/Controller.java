@@ -1,9 +1,11 @@
 package users;
 
+import gui.ViewFrame;
 import java.util.Collection;
 
-import GUI.GUI;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import tables.Book;
 import tables.BookCopy;
 import tables.Borrower;
@@ -13,15 +15,47 @@ import tables.HoldRequest;
 
 public class Controller {
 	
-	private Collection<HoldRequest> cHR;
-	private Collection<Book> cB;
-	private Collection<BookCopy> cBC;
-	private Collection<Fine> cF;
-	private Collection<Borrowing> cBorrowing;
-	private Collection<Borrower> cBorrower;
-	private Clerk SystemClerk;
-	private Librarian SystemLibrarian;
-	private GUI view;
-	
+  private Collection<HoldRequest> holdRequests;
+  private Collection<Book> books;
+  private Collection<BookCopy> bookCopies;
+  private Collection<Fine> fines;
+  private Collection<Borrowing> borrowings;
+  private Collection<Borrower> borrowers;
+  private Clerk systemClerk;
+  private Librarian systemLibrarian;
+  private Borrower systemBorrower;
+  private ViewFrame view;
+  
+  public void startup()
+  {
+    // necessary to initialize the connection to the database
+    Conn.getInstance();
+  }
+  
+  public void shutdown()
+  {
+    try
+    {
+      Conn.getInstance().getConnection().close();
+    }
+    catch (SQLException e)
+    {
+      // do nothing since the System is going to shut down.
+    }
+  }
 
+  public Controller(ViewFrame view)
+  {
+    this.view = view;
+    holdRequests = new ArrayList<HoldRequest>();
+    books = new ArrayList<Book>();
+    bookCopies = new ArrayList<BookCopy>();
+    fines = new ArrayList<Fine>();
+    borrowings = new ArrayList<Borrowing>();
+    borrowers = new ArrayList<Borrower>();
+    systemClerk = new Clerk();
+    systemLibrarian = new Librarian();
+    systemBorrower = new Borrower();
+  }
 }
+

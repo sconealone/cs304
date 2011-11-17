@@ -1,5 +1,7 @@
 package tables;
 
+import java.util.Collection;
+
 public class BookCopy implements Table {
 
 	private String copyNo;
@@ -7,9 +9,9 @@ public class BookCopy implements Table {
 	private Book b;
 	
 	@Override
-	public void display(String[][] arg) {
+	public String[][] display() {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
@@ -31,7 +33,7 @@ public class BookCopy implements Table {
 	}
 
 	@Override
-	public Table getAll() {
+	public Collection<Table> getAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -41,5 +43,47 @@ public class BookCopy implements Table {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+  /**
+   * @return the copyNo
+   */
+  public String getCopyNo() {
+    return copyNo;
+  }
+
+  /**
+   * @param copyNo the copyNo to set
+   */
+  public void setCopyNo(String copyNo) {
+    this.copyNo = copyNo;
+  }
+
+  /**
+   * @return the status
+   */
+  public String getStatus() {
+    return status;
+  }
+
+  /**
+   * @param status the status to set
+   */
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  /**
+   * @return the b
+   */
+  public Book getB() {
+    return b;
+  }
+
+  /**
+   * @param b the b to set
+   */
+  public void setB(Book b) {
+    this.b = b;
+  }
 
 }

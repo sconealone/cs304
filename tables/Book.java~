@@ -21,7 +21,12 @@ public class Book implements Table {
 	@Override
 	public String[][] display() {
 		// TODO Auto-generated method stub
+<<<<<<< HEAD
+		
+		
+=======
 		return null;
+>>>>>>> 19e4a9228bdee325dbb84e3b06985d8316103142
 	}
 
 	@Override
