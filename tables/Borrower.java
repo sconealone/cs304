@@ -1,11 +1,18 @@
 package tables;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.List;
+
+import users.Conn;
 
 public class Borrower implements Table {
 
@@ -19,8 +26,15 @@ public class Borrower implements Table {
 	private Calendar expiryDate;
 	private Integer bookTimeLimit;
 	
-	Connection con;
-	Statement stmt;
+	private Connection con;
+	
+    /**
+     * Creates an empty Borrower
+     */
+    public Borrower()
+    {
+      con = Conn.getInstance().getConnection();
+    }
 	
 	
 	@Override
@@ -35,10 +49,21 @@ public class Borrower implements Table {
 		
 	}
 
+	 /**
+     * Deletes the tuple in the Borrower table whose primary key
+     * corresponds to this Borrower's bid. All other attributes are
+     * ignored.
+     * @return true if the tuple was successfully deleted, otherwise false
+     */
 	@Override
-	public boolean delete() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean delete() throws SQLException {
+        String sql = "DELETE FROM Borrower WHERE bid = " + bid;
+        
+        PreparedStatement ps = con.prepareStatement(sql);
+        int numRowsDeleted = ps.executeUpdate();
+        ps.close();
+        return numRowsDeleted == 1;
+        
 	}
 
 	@Override
@@ -53,18 +78,31 @@ public class Borrower implements Table {
 		return null;
 	}
 
-	@Override
-	public boolean insert() {
+	public boolean insert(int bid, String password, String name, String address, String phone,
+			String email, int sinOrStNo, Calendar expiryDate, String type) throws SQLException {
+		
+		Date sqlDate = new Date(expiryDate.getTimeInMillis());
+		
 		try {
-			stmt.executeUpdate("INSERT INTO Borrower VALUES (" + getBid() + ", " + getPassword() + ", " +
-			getName() + ", " + getAddress() + ", " + getPhone() + ", " + getEmailAddress() + ", " +	getSinOrStNum() + 
-			", " +getExpiryDate() + ", " +getBookTimeLimit() + ")");
+			PreparedStatement ps = con.prepareStatement ("INSERT INTO Borrower " +
+			"(bid,password,name,address,phone,emailAddress,sinOrStNo,expiryDate,type) VALUES (?,?,?,?,?,?,?,?,?)"); 
+
+			ps.setInt(1, bid);
+			ps.setString(2, password);
+			ps.setString(3, name);
+			ps.setString(4, address);
+			ps.setString(5, phone);
+			ps.setString(6, email);
+			ps.setInt(7, sinOrStNo);
+			ps.setDate(8, sqlDate);
+			ps.setString(9, type);
+			ps.executeUpdate();
+			return true;
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			return false;
 		}
-		return true;
 	}
 
   /**
@@ -193,5 +231,59 @@ public class Borrower implements Table {
     this.bookTimeLimit = bookTimeLimit;
   }
 
+  public List<Book> searchBookByTitle(String title) {
+	  try {
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT Book.*, COUNT(status) FROM Book, BookCopy " +
+				"WHERE Book.title=" + title + " AND status=¡¯in¡¯ AND Book.callNumber=BookCopy.callNumber");
+		List<Book> lob;
+		
+		while(rs.next()) {
+			String callNo = rs.getString(1);
+			String isbn = rs.getString(2);
+			String title1 = rs.getString(3);
+			String mainAuthor = rs.getString(4);
+			String publisher = rs.getString(5);
+			int year = rs.getInt(6);
+			int copiesIn = rs.getInt(7);
+			
+			Book b = new Book(callNo,isbn,title1,mainAuthor,publisher,year,copiesIn);
+			lob.add(b);			
+		}
+		
+	} catch (SQLException e) {
+		System.out.println(e.getMessage());
+		e.printStackTrace();
+		return null;
+	}
+	  
+	return null;  
+  }
+
+  public List<Book> searchBookByAuthor(String title) {
+		return null;  
+	  }
+  
+  public List<Book> searchBookBySubject(String title) {
+		return null;  
+	  }
+  
+  public void checkAccount() {
+	  
+  }
+  
+  public void placeHoldRequest(String isbn) {
+	  
+  }
+  
+  public void payFine(Integer borid, Integer amountInCents) {
+	  
+  }
+
+@Override
+public boolean insert() throws SQLException {
+	// TODO Auto-generated method stub
+	return false;
+}
 
 }
