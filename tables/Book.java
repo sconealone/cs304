@@ -1,19 +1,24 @@
 package tables;
 
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import users.Conn;
 
 public class Book implements Table {
 
+
+	//todo: handling not null?
 	private String callNumber;
 	private String isbn;
 	private String title;
 	private String mainAuthor;
 	private String publisher;
-	private Integer year;
-	private Collection<String> authors;
-	private Collection<String> subjects;	
+	private int year;
+	private ArrayList<String> authors;
+	private ArrayList<String> subjects;	
 
 	private Conn c = Conn.getInstance();
 
@@ -24,51 +29,98 @@ public class Book implements Table {
 
 	};
 
+	/**
+	 * Construct a Book object given all it's fields. 
+	 * @param cN
+	 * @param isBun
+	 * @param titleArg
+	 * @param mainAuthorArg
+	 * @param pub
+	 * @param yr
+	 * @param authrs
+	 * @param subjectsArg
+	 */
+	public Book(String cN, String isBun, String titleArg, String mainAuthorArg, 
+			String pub, int yr, ArrayList<String> authrs, ArrayList<String> subjectsArg){
+		callNumber = cN;
+		isbn = isBun;
+		title= titleArg;
+		mainAuthor = mainAuthorArg;
+		publisher = pub;
+		year = yr;
+		authors = authrs;
+		subjects = subjectsArg;
+	}
 
+/**
+ * return a 2d array of strings to display 
+ */
 	@Override
 	public String[][] display() {
-		// TODO Auto-generated method stub
-		return null;
+		int max = Math.max(authors.size(), subjects.size());
+		String[][] stringTable = new String[8][max];
+		stringTable[0][0] = callNumber;
+		stringTable[1][0] = isbn;
+		stringTable[2][0] = title;
+		stringTable[3][0] = mainAuthor;
+		stringTable[4][0] = publisher;
+		stringTable[5][0] = String.valueOf(year);
+		for(int i =0; i< authors.size()-1; i++){
+			stringTable[6][i] = authors.get(i);
+		}
+		for(int i =0; i< subjects.size()-1; i++){
+			stringTable[7][i] = subjects.get(i);
+		}
+		return stringTable;
 	}
 
 	@Override
-	public void update() {
-		// TODO Auto-generated method stub
+	public void update() throws SQLException {
+		
+		Statement stmt = c.getConnection().createStatement();
 
+		//update the corresponding book tuple in the Book Table according to this objects key(callnum)
+		 int rows = stmt.executeUpdate( "UPDATE Book SET callNumber = " +callNumber+",isbn = " +isbn+"," +
+		 		"title = " +title+",mainAuthor = " +mainAuthor+",publisher = " +publisher+",year = " +year+"," +
+		 				" WHERE callNumber = " +callNumber ) ;
 	}
+
+
 
 	@Override
-	public boolean delete() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean delete() throws SQLException {
+		Statement stmt = c.getConnection().createStatement();
+		stmt.execute("DELETE FROM Book WHERE callNumber = "+ callNumber);
+			return true;
 	}
+	
+//	CREATE TABLE Book
+//	(callNumber VARCHAR(32) NOT NULL,
+//	isbn CHAR(13) NOT NULL UNIQUE,
+//	title VARCHAR(32),
+//	mainAuthor VARCHAR(32),
+//	publisher VARCHAR(32),
+//	year INT,
+//	PRIMARY KEY(callNumber));
 
 	@Override
 	/**
 	 * PRE: Assume there is a table in the database called Book
+	 * This method inserts the object Book and it's variables into the database
 	 */
-	public boolean insert(String cN, String i, String t, String mA, String p, int year) throws SQLException{
+	public boolean insert() throws SQLException{
 
-		try{
-			PreparedStatement ps = c.getConnection().prepareStatement ("INSERT INTO Book " +
-					"(callNumber, isbn, title, mainAuthor,publisher,year) VALUES (?, ?, ?,?,?,?)"); 
+		Statement stmt = c.getConnection().createStatement();
+		// stmt is a statement object
+		int rowCount = stmt.executeUpdate("INSERT INTO Book VALUES (" + callNumber + ","+isbn+ ","+title+ ","+mainAuthor+ ","
+				+publisher+ ","+year+ ")"); 
 
-			setString(1, cN);
-			setString(2, i);
-			setString(3, t);
-			setString(4, mA);
-			setString(5, p);
-			setInt(6, year);
-			ps.executeUpdate(); 
-			return true;
+		return true;
 
-		}
-		catch SQLException e{
-			//handle exception
-			System.out.print(e);
-			return false;
-		}
 	}
+
+
+
 
 
 
@@ -178,7 +230,7 @@ public class Book implements Table {
 	/**
 	 * @param authors the authors to set
 	 */
-	public void setAuthors(Collection<String> authors) {
+	public void setAuthors(ArrayList<String> authors) {
 		this.authors = authors;
 	}
 
@@ -192,7 +244,7 @@ public class Book implements Table {
 	/**
 	 * @param subjects the subjects to set
 	 */
-	public void setSubjects(Collection<String> subjects) {
+	public void setSubjects(ArrayList<String> subjects) {
 		this.subjects = subjects;
 	}
 
