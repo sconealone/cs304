@@ -1,16 +1,11 @@
 package tables;
 
 import java.sql.Connection;
-<<<<<<< HEAD
 import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-=======
->>>>>>> 57df0c01f1188664e94da94a1ad8915feb7ac5b4
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -238,7 +233,7 @@ public class Borrower implements Table {
 	  try {
 		Statement stmt = con.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT Book.*, COUNT(status) FROM Book, BookCopy " +
-				"WHERE Book.title=" + title + " AND status=¡¯in¡¯ AND Book.callNumber=BookCopy.callNumber");
+				"WHERE Book.title=" + title + " AND status=ï¿½ï¿½inï¿½ï¿½ AND Book.callNumber=BookCopy.callNumber");
 		List<Book> lob;
 		
 		while(rs.next()) {
