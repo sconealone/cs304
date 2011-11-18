@@ -1,5 +1,7 @@
 package tables;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -20,11 +22,14 @@ public class Book implements Table {
 	private ArrayList<String> authors;
 	private ArrayList<String> subjects;	
 
-	private Conn c = Conn.getInstance();
+	private Connection c;
+	private Statement stmt;
+
 
 	//empty constructor for Book
 	//should connection singleton be "referenced" as part of the class or after each new object is instantiated. It would 
 	//refer to the same object right?
+	//why 2dArray of strings?
 	public Book(){
 
 	};
@@ -50,11 +55,13 @@ public class Book implements Table {
 		year = yr;
 		authors = authrs;
 		subjects = subjectsArg;
+		c = Conn.getInstance().getConnection();
 	}
 
-/**
- * return a 2d array of strings to display 
- */
+	/**
+	 * PRE: assume the values in this object are initialized
+	 * return a 2d array of strings to display 
+	 */
 	@Override
 	public String[][] display() {
 		int max = Math.max(authors.size(), subjects.size());
@@ -74,34 +81,42 @@ public class Book implements Table {
 		return stringTable;
 	}
 
+	/**
+	 * PRE: Assume the tuple exists in the database
+	 * Updates the tuple associated with this object.
+	 */
 	@Override
 	public void update() throws SQLException {
-		
-		Statement stmt = c.getConnection().createStatement();
+
+		stmt = c.createStatement();
 
 		//update the corresponding book tuple in the Book Table according to this objects key(callnum)
-		 int rows = stmt.executeUpdate( "UPDATE Book SET callNumber = " +callNumber+",isbn = " +isbn+"," +
-		 		"title = " +title+",mainAuthor = " +mainAuthor+",publisher = " +publisher+",year = " +year+"," +
-		 				" WHERE callNumber = " +callNumber ) ;
+		int rows = stmt.executeUpdate( "UPDATE Book SET callNumber = " +callNumber+",isbn = " +isbn+"," +
+				"title = " +title+",mainAuthor = " +mainAuthor+",publisher = " +publisher+",year = " +year+"," +
+				" WHERE callNumber = " +callNumber ) ;
 	}
 
 
-
+	/**
+	 * Pre: Assume the tuple exists in the database
+	 * deletes this object from the database
+	 * Note: checks the key of Book - callNumber
+	 */
 	@Override
 	public boolean delete() throws SQLException {
-		Statement stmt = c.getConnection().createStatement();
+		Statement stmt = c.createStatement();
 		stmt.execute("DELETE FROM Book WHERE callNumber = "+ callNumber);
-			return true;
+		return true;
 	}
-	
-//	CREATE TABLE Book
-//	(callNumber VARCHAR(32) NOT NULL,
-//	isbn CHAR(13) NOT NULL UNIQUE,
-//	title VARCHAR(32),
-//	mainAuthor VARCHAR(32),
-//	publisher VARCHAR(32),
-//	year INT,
-//	PRIMARY KEY(callNumber));
+
+	//	CREATE TABLE Book
+	//	(callNumber VARCHAR(32) NOT NULL,
+	//	isbn CHAR(13) NOT NULL UNIQUE,
+	//	title VARCHAR(32),
+	//	mainAuthor VARCHAR(32),
+	//	publisher VARCHAR(32),
+	//	year INT,
+	//	PRIMARY KEY(callNumber));
 
 	@Override
 	/**
@@ -110,7 +125,7 @@ public class Book implements Table {
 	 */
 	public boolean insert() throws SQLException{
 
-		Statement stmt = c.getConnection().createStatement();
+		Statement stmt = c.createStatement();
 		// stmt is a statement object
 		int rowCount = stmt.executeUpdate("INSERT INTO Book VALUES (" + callNumber + ","+isbn+ ","+title+ ","+mainAuthor+ ","
 				+publisher+ ","+year+ ")"); 
@@ -130,10 +145,27 @@ public class Book implements Table {
 		return null;
 	}
 
+	/**
+	 * return the Book tuple corresponding to the callNumber field in this book object updated with the DB values
+	 * @throws SQLException 
+	 */
 	@Override
-	public Table get() {
-		// TODO Auto-generated method stub
-		return null;
+	public Table get() throws SQLException {
+		ResultSet rs = stmt.executeQuery("SELECT * FROM Book WHERE callNumber = "+callNumber);
+
+		if(rs!=null){
+			callNumber = rs.getString(1);
+			isbn = rs.getString(2); 
+			title = rs.getString(3);
+			mainAuthor = rs.getString(4);
+			publisher = rs.getString(5);
+			year = rs.getInt(6);
+			
+			//how to handle authors/subjects?
+			return this;
+		}
+		
+		return this;
 	}
 
 	/**
@@ -246,6 +278,14 @@ public class Book implements Table {
 	 */
 	public void setSubjects(ArrayList<String> subjects) {
 		this.subjects = subjects;
+	}
+
+	public Connection getC() {
+		return c;
+	}
+
+	public void setC(Connection c) {
+		this.c = c;
 	}
 
 }

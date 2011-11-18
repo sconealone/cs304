@@ -51,6 +51,45 @@ public class BorrowerType implements Displayable
   }
   
   /**
+   * Creates a new entry in the database for this BorrowerType table.
+   * A new borrower type will be added to the table along with its time
+   * limit.
+   * @return true if the BorrowerType was successfully inserted
+   * otherwise false
+   */
+  public boolean insert(String type, int limit) throws SQLException {
+	  try {
+			PreparedStatement ps = con.prepareStatement ("INSERT INTO BorrowerType " +
+			"(type,bookTimeLimit) VALUES (?,?)"); 
+			
+			ps.setString(1, type);
+			ps.setInt(2, limit);
+			ps.executeUpdate();
+			return true;
+	  } catch (SQLException e) {
+		  System.out.println(e.getMessage());
+		  e.printStackTrace();
+		  return false;
+	  }
+  }
+  
+  /**
+   * Deletes the tuple in the BorrowerType table whose primary key
+   * corresponds to this BorrowerType's type. All other attributes are
+   * ignored.
+   * @return true if the tuple was successfully deleted, otherwise false
+   */
+	public boolean delete(String type) throws SQLException {
+      String sql = "DELETE FROM BorrowerType WHERE type = " + type;
+      
+      PreparedStatement ps = con.prepareStatement(sql);
+      int numRowsDeleted = ps.executeUpdate();
+      ps.close();
+      return numRowsDeleted == 1;
+      
+	}
+  
+  /**
    * displays the table as a 2D array of Strings. The first row is the 
    * column bookTimeLimits
    * @return
