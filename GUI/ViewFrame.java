@@ -8,10 +8,11 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.HashMap;
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import users.Controller;
 /*
  * ViewFrame.java
@@ -104,6 +105,7 @@ public class ViewFrame extends javax.swing.JFrame {
         clearButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
+        quitMenuItem = new javax.swing.JMenuItem();
         navigationMenu = new javax.swing.JMenu();
         borrowerMenu = new javax.swing.JMenu();
         searchMenuItem = new javax.swing.JMenuItem();
@@ -203,6 +205,7 @@ public class ViewFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        entitiesTable.setRowSelectionAllowed(false);
         viewTablePane.setViewportView(entitiesTable);
 
         tablesPanel.add(viewTablePane, java.awt.BorderLayout.CENTER);
@@ -333,6 +336,15 @@ public class ViewFrame extends javax.swing.JFrame {
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         fileMenu.setText("File");
+
+        quitMenuItem.setText("Quit");
+        quitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                quitMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(quitMenuItem);
+
         menuBar.add(fileMenu);
 
         navigationMenu.setText("Navigation");
@@ -579,8 +591,39 @@ public class ViewFrame extends javax.swing.JFrame {
     switch (state)
     {
       case TABLES:
-        String[][] table = 
-                controller.displayTable((String)tablesComboBox.getSelectedItem());
+        String[][] tableWithHeader = null;
+        try
+        {
+          tableWithHeader =
+              controller.displayTable((String)tablesComboBox.getSelectedItem());
+        }
+        catch (SQLException e)
+        {
+          String msg = "Could not retrieve the table:\n"+e.getMessage();
+          JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+        String[] header = tableWithHeader[0];
+        int numRows = tableWithHeader.length;
+        numRows--;
+        int numCols = tableWithHeader[0].length;
+        String[][] tableWithoutHeader = new String[numRows][];
+        for (int i = 0; i < numRows; i++)
+        {
+          tableWithoutHeader[i] = new String[numCols];
+        }
+        
+        for (int i = 0; i < numRows; i++)
+        {
+          System.arraycopy(tableWithHeader[i+1], 0, tableWithoutHeader[i], 0, numCols);
+        }
+        entitiesTable.setModel(
+                new DefaultTableModel(tableWithoutHeader, header){
+                  public boolean isCellEditable(int rowIndex ,int colIndex){
+                    return false;
+                  }
+                });
+        entitiesTable.repaint();
         break;
       case START:
         CardLayout cl = (CardLayout) (cardPanel.getLayout());
@@ -689,6 +732,8 @@ public class ViewFrame extends javax.swing.JFrame {
     switch (state)
     {
       case TABLES:
+        entitiesTable.setModel(new DefaultTableModel());
+        entitiesTable.repaint();
         break;
       case START:
         navigationComboBox.setSelectedItem(this.START);
@@ -724,6 +769,15 @@ public class ViewFrame extends javax.swing.JFrame {
       default:
     }
   }//GEN-LAST:event_clearButtonActionPerformed
+
+  /**
+   * Quit is selected from the menu
+   * @param evt 
+   */
+  private void quitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitMenuItemActionPerformed
+    formWindowClosing(null);
+    System.exit(0);
+  }//GEN-LAST:event_quitMenuItemActionPerformed
 
   
   /**
@@ -815,6 +869,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel popularReportPanel;
     private javax.swing.JMenuItem processReturnMenuItem;
     private javax.swing.JPanel processReturnPanel;
+    private javax.swing.JMenuItem quitMenuItem;
     private javax.swing.JMenuItem removeBookMenuItem;
     private javax.swing.JPanel removeBookPanel;
     private javax.swing.JMenuItem removeBorrowerMenuItem;

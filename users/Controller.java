@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import tables.Book;
 import tables.BookCopy;
 import tables.Borrower;
+import tables.BorrowerType;
 import tables.Borrowing;
 import tables.Fine;
+import tables.HasAuthor;
+import tables.HasSubject;
 import tables.HoldRequest;
 
 public class Controller {
@@ -107,10 +110,7 @@ public class Controller {
     {
       table = (new Fine()).display();
     }
-    else
-    {
-      table = (new ()).display();
-    }
+    return table;
   }
 }
 
