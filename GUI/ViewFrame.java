@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import users.Controller;
 /*
@@ -127,6 +128,7 @@ public class ViewFrame extends javax.swing.JFrame {
         reportMenu = new javax.swing.JMenu();
         checkedOutReportMenuItem = new javax.swing.JMenuItem();
         popularReportMenuItem = new javax.swing.JMenuItem();
+        navigationSeparator = new javax.swing.JPopupMenu.Separator();
         tableMenuItem = new javax.swing.JMenuItem();
         startMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
@@ -484,6 +486,7 @@ public class ViewFrame extends javax.swing.JFrame {
         librarianMenu.add(reportMenu);
 
         navigationMenu.add(librarianMenu);
+        navigationMenu.add(navigationSeparator);
 
         tableMenuItem.setText(TABLES);
         tableMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -522,6 +525,7 @@ public class ViewFrame extends javax.swing.JFrame {
 
   /**
    * Opens the default browser to a web site hosting the user manual
+   * TODO: replace with actual manual URL
    * @param evt                                             
    * reference:
    * http://docs.oracle.com/javase/tutorial/uiswing/misc/desktop.html
@@ -789,13 +793,16 @@ public class ViewFrame extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
      * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
      */
-    try {
+    try {/*
       for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
         if ("Nimbus".equals(info.getName())) {
           javax.swing.UIManager.setLookAndFeel(info.getClassName());
           break;
         }
-      }
+      }*/
+         UIManager.setLookAndFeel(
+            UIManager.getSystemLookAndFeelClassName());
+      
     } catch (ClassNotFoundException ex) {
       java.util.logging.Logger.getLogger(ViewFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     } catch (InstantiationException ex) {
@@ -863,6 +870,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JComboBox navigationComboBox;
     private javax.swing.JMenu navigationMenu;
+    private javax.swing.JPopupMenu.Separator navigationSeparator;
     private javax.swing.JMenuItem payFineMenuItem;
     private javax.swing.JPanel payFinePanel;
     private javax.swing.JMenuItem popularReportMenuItem;

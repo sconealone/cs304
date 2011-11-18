@@ -168,41 +168,34 @@ public class Fine implements Table {
 	public String[][] display() throws SQLException 
         {
           ArrayList<String[]> finesGrowable = new ArrayList<String[]>();
-          try
+          PreparedStatement ps = con.prepareStatement("SELECT * FROM Fine");
+          ResultSet rs = ps.executeQuery();
+          ResultSetMetaData md = rs.getMetaData();
+          int numFields = md.getColumnCount();
+          String[] colNames = new String[numFields];
+          for (int i = 0; i < numFields; i++)
           {
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM Fine");
-            ResultSet rs = ps.executeQuery();
-            ResultSetMetaData md = rs.getMetaData();
-            int numFields = md.getColumnCount();
-            String[] colNames = new String[numFields];
-            for (int i = 0; i < numFields; i++)
-            {
-              colNames[i] = md.getColumnName(i+1);
-            }
-            finesGrowable.add(colNames);
-            
-            NumberFormat nf = new DecimalFormat("$0.00");
-            DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-            while(rs.next())
-            {
-              String[] tuple = new String[numFields];
-              int fieldIndex = 0;
-              Fine f = new Fine(rs);
-              tuple[fieldIndex++] = ""+f.fid;
-              tuple[fieldIndex++] = nf.format(f.amount / 100.0);
-              tuple[fieldIndex++] = (f.issuedDate == null) ?
-                      "null" : df.format(f.issuedDate.getTime());
-              tuple[fieldIndex++] = (f.paidDate == null) ?
-                      "null" : df.format(f.paidDate.getTime());
-              tuple[fieldIndex++] = "" + f.borrowing.getBorid();
-              finesGrowable.add(tuple);
-            }
+            colNames[i] = md.getColumnName(i+1);
           }
-          catch (SQLException e)
+          finesGrowable.add(colNames);
+
+          NumberFormat nf = new DecimalFormat("$0.00");
+          DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+          while(rs.next())
           {
-            //TODO handle exception
-            e.printStackTrace();
+            String[] tuple = new String[numFields];
+            int fieldIndex = 0;
+            Fine f = new Fine(rs);
+            tuple[fieldIndex++] = ""+f.fid;
+            tuple[fieldIndex++] = nf.format(f.amount / 100.0);
+            tuple[fieldIndex++] = (f.issuedDate == null) ?
+                    "null" : df.format(f.issuedDate.getTime());
+            tuple[fieldIndex++] = (f.paidDate == null) ?
+                    "null" : df.format(f.paidDate.getTime());
+            tuple[fieldIndex++] = "" + f.borrowing.getBorid();
+            finesGrowable.add(tuple);
           }
+          
           int numRows = finesGrowable.size();
           String[][] fines = new String[numRows][];
           for (int i = 0; i < numRows; i++)
