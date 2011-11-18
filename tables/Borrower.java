@@ -1,10 +1,13 @@
 package tables;
 
 import java.sql.Connection;
+<<<<<<< HEAD
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+=======
+>>>>>>> 57df0c01f1188664e94da94a1ad8915feb7ac5b4
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
