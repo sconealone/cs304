@@ -165,7 +165,7 @@ public class Fine implements Table {
          *  table
          */
 	@Override
-	public String[][] display() 
+	public String[][] display() throws SQLException 
         {
           ArrayList<String[]> finesGrowable = new ArrayList<String[]>();
           try
@@ -222,7 +222,7 @@ public class Fine implements Table {
          */
 	@Override
 
-	public void update() 
+	public void update()  throws SQLException
         {
           String sql = "UPDATE Fine SET "
                   + "amount = "+amount+','
@@ -230,24 +230,19 @@ public class Fine implements Table {
                   + "paidDate = ?,"
                   + "borid = "+borrowing.getBorid()+' '
                   + "WHERE fid = "+fid;
-          try
-          {
-            PreparedStatement ps = con.prepareStatement(sql);
-            int paramIndex = 1;
-            java.sql.Date sqlIssuedDate = (issuedDate == null) ?
-                    null : new java.sql.Date(issuedDate.getTime().getTime());
-            ps.setDate(paramIndex++, sqlIssuedDate);
-            java.sql.Date sqlPaidDate = (paidDate == null) ?
-                    null : new java.sql.Date(paidDate.getTime().getTime());
-            ps.setDate(paramIndex++, sqlPaidDate);
-            
-            ps.executeUpdate();
-          }
-          catch(SQLException e)
-          {
-            //TODO handle exception
-            e.printStackTrace();
-          }
+          
+          
+          PreparedStatement ps = con.prepareStatement(sql);
+          int paramIndex = 1;
+          java.sql.Date sqlIssuedDate = (issuedDate == null) ?
+                  null : new java.sql.Date(issuedDate.getTime().getTime());
+          ps.setDate(paramIndex++, sqlIssuedDate);
+          java.sql.Date sqlPaidDate = (paidDate == null) ?
+                  null : new java.sql.Date(paidDate.getTime().getTime());
+          ps.setDate(paramIndex++, sqlPaidDate);
+
+          ps.executeUpdate();
+          
 	}
 
         /**
@@ -256,22 +251,17 @@ public class Fine implements Table {
          * @pre fid must already exist in the database
          */
 	@Override
-	public boolean delete() {
+	public boolean delete()  throws SQLException
+        {
           String sql = "DELETE FROM Fine WHERE fid = "+fid;
-          try
+          
+          PreparedStatement ps = con.prepareStatement(sql);
+          int numLinesChanged = ps.executeUpdate();
+          if (numLinesChanged == 1)
           {
-            PreparedStatement ps = con.prepareStatement(sql);
-            int numLinesChanged = ps.executeUpdate();
-            if (numLinesChanged == 1)
-            {
-              return true;
-            }
+            return true;
           }
-          catch (SQLException e)
-          {
-            // TODO handle exceptoin
-            e.printStackTrace();
-          }
+          
           return false;
 	}
 
@@ -284,41 +274,36 @@ public class Fine implements Table {
          * @throws NullPointerException if Borrowing is not initialized
          */
 	@Override
-	public boolean insert() {
+	public boolean insert()  throws SQLException
+        {
           String sql = "INSERT INTO Fine VALUES("
                   + "fidCounter.nextval,"
                   + amount+','
                   + "?,"
                   + "?,"
                   + borrowing.getBorid()+')';
-          try
+          
+          PreparedStatement ps = con.prepareStatement(sql);
+          int paramIndex = 1;
+          java.sql.Date sqlIssuedDate = (issuedDate == null) ?
+                  null : new java.sql.Date(issuedDate.getTime().getTime());
+          ps.setDate(paramIndex++, sqlIssuedDate);
+          java.sql.Date sqlPaidDate = (paidDate == null) ?
+                  null : new java.sql.Date(paidDate.getTime().getTime());
+          ps.setDate(paramIndex++, sqlPaidDate);
+          int numLinesInserted = ps.executeUpdate();
+          if (numLinesInserted == 1)
           {
-            PreparedStatement ps = con.prepareStatement(sql);
-            int paramIndex = 1;
-            java.sql.Date sqlIssuedDate = (issuedDate == null) ?
-                    null : new java.sql.Date(issuedDate.getTime().getTime());
-            ps.setDate(paramIndex++, sqlIssuedDate);
-            java.sql.Date sqlPaidDate = (paidDate == null) ?
-                    null : new java.sql.Date(paidDate.getTime().getTime());
-            ps.setDate(paramIndex++, sqlPaidDate);
-            int numLinesInserted = ps.executeUpdate();
-            if (numLinesInserted == 1)
+            ps.close();
+            ps = con.prepareStatement("SELECT fidCounter.currval FROM DUAL");
+            ResultSet rs = ps.executeQuery();
+            if (rs.next())
             {
-              ps.close();
-              ps = con.prepareStatement("SELECT fidCounter.currval FROM DUAL");
-              ResultSet rs = ps.executeQuery();
-              if (rs.next())
-              {
-                fid = rs.getInt(1);
-                return true;
-              }
+              fid = rs.getInt(1);
+              return true;
             }
           }
-          catch (SQLException e)
-          {
-            // TODO handle exception
-            e.printStackTrace();
-          }
+          
           return false;
 	}
 
@@ -328,22 +313,16 @@ public class Fine implements Table {
          * All objects are stored in a collection and returned.
          * @return a collection of all Fines.
          */
-	public Collection<Table> getAll() {
+	public Collection<Table> getAll()  throws SQLException
+        {
           ArrayList<Table> allFines = new ArrayList<Table>();
-          try
+          PreparedStatement ps = con.prepareStatement("SELECT * FROM Fine");
+          ResultSet rs = ps.executeQuery();
+          while (rs.next())
           {
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM Fine");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next())
-            {
-              allFines.add((Table) new Fine(rs));
-            }
+            allFines.add((Table) new Fine(rs));
           }
-          catch (SQLException e)
-          {
-            // TODO handle exception
-            e.printStackTrace();
-          }
+          
           return allFines;
 	}
 
@@ -354,22 +333,17 @@ public class Fine implements Table {
          *  with this object's fid.
          */
 	@Override
-	public Table get() {
-          try
+	public Table get() throws SQLException
+        {
+          
+          String sql = "SELECT * FROM Fine WHERE fid = "+fid;
+          PreparedStatement ps = con.prepareStatement(sql);
+          ResultSet rs = ps.executeQuery();
+          if (rs.next())
           {
-            String sql = "SELECT * FROM Fine WHERE fid = "+fid;
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next())
-            {
-              return new Fine(rs);
-            }
+            return new Fine(rs);
           }
-          catch(SQLException e)
-          {
-            // TODO handle exception
-            e.printStackTrace();
-          }        
+          
           return null;
 	}
 
@@ -483,7 +457,7 @@ public class Fine implements Table {
    * For testing only
    * @param args 
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws SQLException {
     // get
    
     Fine f = new Fine();

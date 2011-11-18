@@ -13,7 +13,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import users.Conn;
 
 /**
@@ -138,64 +137,58 @@ public class Borrowing implements Table {
         //        Already finished writing display() before I realized that
         //        and it's not worth changing now, but useful to know for any
         //        future class that I need to implement display for.
-	public String[][] display() 
+	public String[][] display() throws SQLException 
         {
           ArrayList<String[]> borrowingGrowable = new ArrayList<String[]>();
-          try
+          
+          PreparedStatement ps = con.prepareStatement("SELECT * FROM Borrowing");
+          ResultSet rs = ps.executeQuery();
+          ResultSetMetaData md = rs.getMetaData();
+
+          int numFields = md.getColumnCount();
+          String[] columnNames = new String[numFields];
+          for (int i = 0; i < numFields; i++)
           {
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM Borrowing");
-            ResultSet rs = ps.executeQuery();
-            ResultSetMetaData md = rs.getMetaData();
-            
-            int numFields = md.getColumnCount();
-            String[] columnNames = new String[numFields];
-            for (int i = 0; i < numFields; i++)
-            {
-              columnNames[i] = md.getColumnName(i + 1);
-            }
-            borrowingGrowable.add(columnNames);
-            
-            DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-            
-            
-            while (rs.next())
-            {
-              String[] row = new String[numFields];
-              // row will contain a tuple from the database
-              int fieldIndex = 0;
-              
-              // these fields are marked not null in database
-              row[fieldIndex] = ""+rs.getInt(fieldIndex + 1);
-              fieldIndex++;
-              row[fieldIndex] = ""+rs.getInt(fieldIndex + 1);
-              fieldIndex++;
-              row[fieldIndex] = rs.getString(fieldIndex + 1);
-              fieldIndex++;
-              row[fieldIndex] = rs.getString(fieldIndex + 1);
-              fieldIndex++;
-              
-              // these fields might be null
-              Date anOutDate = rs.getDate(fieldIndex + 1);
-              row[fieldIndex] = (!rs.wasNull()) ? 
-                      df.format(anOutDate) : "null";
-              fieldIndex++;
-              
-              Date anInDate = rs.getDate(fieldIndex + 1);
-              row[fieldIndex] = (!rs.wasNull()) ? 
-                      df.format(anInDate) : "null";
-              fieldIndex++;
-              
-              
-              borrowingGrowable.add(row);
-            } // end while
-            
-            rs.close();
+            columnNames[i] = md.getColumnName(i + 1);
           }
-          catch(SQLException e)
+          borrowingGrowable.add(columnNames);
+
+          DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+
+
+          while (rs.next())
           {
-            // TODO handle exception
-            
-          }
+            String[] row = new String[numFields];
+            // row will contain a tuple from the database
+            int fieldIndex = 0;
+
+            // these fields are marked not null in database
+            row[fieldIndex] = ""+rs.getInt(fieldIndex + 1);
+            fieldIndex++;
+            row[fieldIndex] = ""+rs.getInt(fieldIndex + 1);
+            fieldIndex++;
+            row[fieldIndex] = rs.getString(fieldIndex + 1);
+            fieldIndex++;
+            row[fieldIndex] = rs.getString(fieldIndex + 1);
+            fieldIndex++;
+
+            // these fields might be null
+            Date anOutDate = rs.getDate(fieldIndex + 1);
+            row[fieldIndex] = (!rs.wasNull()) ? 
+                    df.format(anOutDate) : "null";
+            fieldIndex++;
+
+            Date anInDate = rs.getDate(fieldIndex + 1);
+            row[fieldIndex] = (!rs.wasNull()) ? 
+                    df.format(anInDate) : "null";
+            fieldIndex++;
+
+
+            borrowingGrowable.add(row);
+          } // end while
+
+          rs.close();
+          
           int numRows = borrowingGrowable.size();
           String[][] borrowing = new String[numRows][];
           for (int i = 0; i < numRows; i++)
@@ -203,7 +196,7 @@ public class Borrowing implements Table {
             borrowing[i] = borrowingGrowable.get(i);
           }
           return borrowing;
-	}
+        }
 
         /**
          * Updates the tuple in the Borrowing table whose primary key corresponds to
@@ -211,37 +204,29 @@ public class Borrowing implements Table {
          * unless you want the field to appear as null in the database.
          */
 	@Override
-	public void update() 
+	public void update() throws SQLException 
         {
-          try
-          {
-            String sql =
-                    "UPDATE Borrowing "
-                    + "SET bid="+borr.getBid()+", callNumber=?,"
-                      + "copyNo=?, outDate=?, inDate=?" 
-                    + "WHERE borid="+borid;
-            PreparedStatement ps = con.prepareStatement(sql);
-            int paramIndex = 1;
-            ps.setString(paramIndex++, bc.getB().getCallNumber());
-            ps.setString(paramIndex++, bc.getCopyNo());
+          String sql =
+                  "UPDATE Borrowing "
+                  + "SET bid="+borr.getBid()+", callNumber=?,"
+                    + "copyNo=?, outDate=?, inDate=?" 
+                  + "WHERE borid="+borid;
+          PreparedStatement ps = con.prepareStatement(sql);
+          int paramIndex = 1;
+          ps.setString(paramIndex++, bc.getB().getCallNumber());
+          ps.setString(paramIndex++, bc.getCopyNo());
+
+          java.sql.Date sqlOutDate = (outDate == null) ?
+                  null : new java.sql.Date(outDate.getTime().getTime());
+          ps.setDate(paramIndex++, sqlOutDate, outDate);
+
+          java.sql.Date sqlInDate = (inDate == null) ?
+                  null : new java.sql.Date(outDate.getTime().getTime());
+          ps.setDate(paramIndex++, sqlInDate, inDate);
+
+          ps.executeUpdate();
+          ps.close();
             
-            java.sql.Date sqlOutDate = (outDate == null) ?
-                    null : new java.sql.Date(outDate.getTime().getTime());
-            ps.setDate(paramIndex++, sqlOutDate, outDate);
-            
-            java.sql.Date sqlInDate = (inDate == null) ?
-                    null : new java.sql.Date(outDate.getTime().getTime());
-            ps.setDate(paramIndex++, sqlInDate, inDate);
-            
-            ps.executeUpdate();
-            ps.close();
-            
-          }
-          catch (SQLException e)
-          {
-            //TODO handle exception
-            e.printStackTrace();
-          }
 	}
 
         /**
@@ -251,22 +236,15 @@ public class Borrowing implements Table {
          * @return true if the tuple was successfully deleted, otherwise false
          */
 	@Override
-	public boolean delete() 
+	public boolean delete() throws SQLException 
         {
           String sql = "DELETE FROM Borrowing WHERE borid = " + borid;
-          try
-          {
-            PreparedStatement ps = con.prepareStatement(sql);
-            int numRowsDeleted = ps.executeUpdate();
-            ps.close();
-            return numRowsDeleted == 1;
-          }
-          catch (SQLException e)
-          {
-             // TODO handle exception
-            e.printStackTrace();
-          }
-          return false;
+          
+          PreparedStatement ps = con.prepareStatement(sql);
+          int numRowsDeleted = ps.executeUpdate();
+          ps.close();
+          return numRowsDeleted == 1;
+          
 	}
 
         /**
@@ -278,26 +256,19 @@ public class Borrowing implements Table {
          * database
          */
 	@Override
-	public Collection<Table> getAll() 
+	public Collection<Table> getAll() throws SQLException 
         {
           ArrayList<Table> borrowings = new ArrayList<Table>();
           
-          try
+         
+          PreparedStatement ps = con.prepareStatement("SELECT * FROM Borrowing");
+          ResultSet rs = ps.executeQuery();
+          while (rs.next())
           {
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM Borrowing");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next())
-            {
-              borrowings.add(new Borrowing(rs));
-              
-            } // end while(rs.next())
-            rs.close();
-          } // end try block
-          catch (SQLException e)
-          {
-            //TODO handle exception
-            e.printStackTrace();
-          }
+            borrowings.add(new Borrowing(rs));
+
+          } // end while(rs.next())
+          rs.close();
           
           return borrowings;
 	}
@@ -311,22 +282,16 @@ public class Borrowing implements Table {
          * the tuple in the database that shares the calling object's borid
          */
 	@Override
-	public Table get() {
-          try
+	public Table get() throws SQLException
+        {
+          String sql = "SELECT * FROM Borrowing WHERE borid = "+borid;
+          PreparedStatement ps = con.prepareStatement(sql);
+          ResultSet rs = ps.executeQuery();
+          if (rs.next())
           {
-            String sql = "SELECT * FROM Borrowing WHERE borid = "+borid;
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next())
-            {
-              return new Borrowing(rs);
-            }
+            return new Borrowing(rs);
           }
-          catch (SQLException e)
-          {
-            // TODO implement error handling
-            e.printStackTrace();
-          }
+          
           return null;
 	}
 
@@ -339,42 +304,35 @@ public class Borrowing implements Table {
          * @post this object's borid will be the newest borid in the database
          */
 	@Override
-	public boolean insert() 
+	public boolean insert() throws SQLException 
         {
           String sql = "INSERT INTO Borrowing "
                   + "VALUES (boridCounter.nextval,"+borr.getBid()+",?,?,?,?)";
-          try
+          
+          PreparedStatement ps = con.prepareStatement(sql);
+          int paramIndex = 1;
+          ps.setString(paramIndex++, bc.getB().getCallNumber());
+          ps.setString(paramIndex++, bc.getCopyNo());
+
+          java.sql.Date sqlOutDate = (outDate == null) ?
+                  null : new java.sql.Date(outDate.getTime().getTime());
+          ps.setDate(paramIndex++, sqlOutDate, outDate);
+
+          java.sql.Date sqlInDate = (inDate == null) ?
+                  null : new java.sql.Date(outDate.getTime().getTime());
+          ps.setDate(paramIndex++, sqlInDate, inDate);
+
+          int numRowsChanged = ps.executeUpdate();
+          if (numRowsChanged == 1)
           {
-            PreparedStatement ps = con.prepareStatement(sql);
-            int paramIndex = 1;
-            ps.setString(paramIndex++, bc.getB().getCallNumber());
-            ps.setString(paramIndex++, bc.getCopyNo());
-            
-            java.sql.Date sqlOutDate = (outDate == null) ?
-                    null : new java.sql.Date(outDate.getTime().getTime());
-            ps.setDate(paramIndex++, sqlOutDate, outDate);
-            
-            java.sql.Date sqlInDate = (inDate == null) ?
-                    null : new java.sql.Date(outDate.getTime().getTime());
-            ps.setDate(paramIndex++, sqlInDate, inDate);
-            
-            int numRowsChanged = ps.executeUpdate();
-            if (numRowsChanged == 1)
+            ps.close();
+            ps = con.prepareStatement("SELECT boridCounter.currval FROM DUAL");
+            ResultSet rs = ps.executeQuery();
+            if (rs.next())
             {
-              ps.close();
-              ps = con.prepareStatement("SELECT boridCounter.currval FROM DUAL");
-              ResultSet rs = ps.executeQuery();
-              if (rs.next())
-              {
-                borid = rs.getInt(1);
-                return true;
-              }
+              borid = rs.getInt(1);
+              return true;
             }
-          }
-          catch (SQLException e)
-          {
-            // TODO handle exception
-            e.printStackTrace();
           }
           return false;
 	}
@@ -494,7 +452,7 @@ public class Borrowing implements Table {
     
   }
   
-  public static void main(String[] args) 
+  public static void main(String[] args) throws SQLException 
   {
     Borrowing b = new Borrowing();
     /*

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import users.Controller;
@@ -27,7 +28,6 @@ public class ViewFrame extends javax.swing.JFrame {
   public ViewFrame() 
   {
     this.controller = new Controller(this);
-    state = State.START;
     statemap = new HashMap<String,State>();
     statemap.put(START, State.START);
     statemap.put(TABLES, State.TABLES);
@@ -46,6 +46,10 @@ public class ViewFrame extends javax.swing.JFrame {
     statemap.put(REPORT_POPULAR, State.REPORT_POPULAR);
     statemap.put(REPORT_CHECKED_OUT, State.REPORT_CHECKED_OUT);
     initComponents();
+    CardLayout cl = (CardLayout) cardPanel.getLayout();
+    state = State.START;
+    cl.show(cardPanel, START);
+    doButton.setText("Go");
   }
 
   /** This method is called from within the constructor to
@@ -60,9 +64,13 @@ public class ViewFrame extends javax.swing.JFrame {
         mainPanel = new javax.swing.JPanel();
         cardPanel = new javax.swing.JPanel();
         startPanel = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
+        startComboBoxPanel = new javax.swing.JPanel();
+        navigationComboBox = new javax.swing.JComboBox();
         tablesPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        tableNamePanel = new javax.swing.JPanel();
+        tablesComboBox = new javax.swing.JComboBox();
+        viewTablePane = new javax.swing.JScrollPane();
+        entitiesTable = new javax.swing.JTable();
         searchPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         checkAccountPanel = new javax.swing.JPanel();
@@ -79,8 +87,18 @@ public class ViewFrame extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         checkOverduePanel = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        startPanel1 = new javax.swing.JPanel();
-        jLabel11 = new javax.swing.JLabel();
+        addNewBookPanel = new javax.swing.JPanel();
+        jLabel20 = new javax.swing.JLabel();
+        addNewCopyPanel = new javax.swing.JPanel();
+        jLabel19 = new javax.swing.JLabel();
+        removeBorrowerPanel = new javax.swing.JPanel();
+        jLabel16 = new javax.swing.JLabel();
+        removeBookPanel = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        popularReportPanel = new javax.swing.JPanel();
+        jLabel15 = new javax.swing.JLabel();
+        checkedOutReportPanel = new javax.swing.JPanel();
+        jLabel13 = new javax.swing.JLabel();
         buttonPanel = new javax.swing.JPanel();
         doButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
@@ -127,15 +145,67 @@ public class ViewFrame extends javax.swing.JFrame {
 
         startPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel6.setText("welcome");
-        startPanel.add(jLabel6, java.awt.BorderLayout.CENTER);
+        startComboBoxPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Choose a transaction"));
+
+        navigationComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
+            START,
+            TABLES,
+            SEARCH,
+            CHECK_ACCOUNT,
+            HOLD_REQUEST,
+            PAY_FINE,
+            ADD_BORROWER,
+            CHECK_OUT,
+            CHECK_OVERDUE,
+            PROCESS_RETURN,
+            ADD_BOOK,
+            ADD_COPY,
+            REMOVE_BOOK,
+            REMOVE_BORROWER,
+            REPORT_POPULAR,
+            REPORT_CHECKED_OUT
+        }));
+        startComboBoxPanel.add(navigationComboBox);
+
+        startPanel.add(startComboBoxPanel, java.awt.BorderLayout.NORTH);
 
         cardPanel.add(startPanel, "Start");
 
         tablesPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setText("tables");
-        tablesPanel.add(jLabel1, java.awt.BorderLayout.CENTER);
+        tableNamePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Choose table to view"));
+
+        tablesComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
+            "Borrower",
+            "BorrowerType",
+            "Book",
+            "HasAuthor",
+            "HasSubject",
+            "BookCopy",
+            "HoldRequest",
+            "Borrowing",
+            "Fine"
+        }));
+        tableNamePanel.add(tablesComboBox);
+
+        tablesPanel.add(tableNamePanel, java.awt.BorderLayout.NORTH);
+
+        entitiesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [0][],
+            new String [0]
+
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        viewTablePane.setViewportView(entitiesTable);
+
+        tablesPanel.add(viewTablePane, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(tablesPanel, "View tables");
 
@@ -195,12 +265,47 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(checkOverduePanel, "Check overdue books");
 
-        startPanel1.setLayout(new java.awt.BorderLayout());
+        addNewBookPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel11.setText("welcome");
-        startPanel1.add(jLabel11, java.awt.BorderLayout.CENTER);
+        jLabel20.setText("add new book");
+        addNewBookPanel.add(jLabel20, java.awt.BorderLayout.CENTER);
 
-        cardPanel.add(startPanel1, "Start");
+        cardPanel.add(addNewBookPanel, "Add new book");
+
+        addNewCopyPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel19.setText("new copy");
+        addNewCopyPanel.add(jLabel19, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(addNewCopyPanel, "Add new book copy");
+
+        removeBorrowerPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel16.setText("remove borrower");
+        removeBorrowerPanel.add(jLabel16, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(removeBorrowerPanel, "Remove borrower");
+
+        removeBookPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel14.setText("remove books and copies");
+        removeBookPanel.add(jLabel14, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(removeBookPanel, "Remove books and copies");
+
+        popularReportPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel15.setText("popular books");
+        popularReportPanel.add(jLabel15, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(popularReportPanel, "Popular books report");
+
+        checkedOutReportPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel13.setText("checked out");
+        checkedOutReportPanel.add(jLabel13, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(checkedOutReportPanel, "Checked-out report");
 
         mainPanel.add(cardPanel, java.awt.BorderLayout.CENTER);
 
@@ -405,7 +510,9 @@ public class ViewFrame extends javax.swing.JFrame {
 
   /**
    * Opens the default browser to a web site hosting the user manual
-   * @param evt 
+   * @param evt                                             
+   * reference:
+   * http://docs.oracle.com/javase/tutorial/uiswing/misc/desktop.html
    */
   private void manualMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manualMenuItemActionPerformed
     //http://docs.oracle.com/javase/tutorial/uiswing/misc/desktop.html
@@ -456,6 +563,7 @@ public class ViewFrame extends javax.swing.JFrame {
     String key = ((JMenuItem) evt.getSource()).getText();
     cl.show(cardPanel, key);
     state = statemap.get(key);
+    doButton.setText(key);
   }//GEN-LAST:event_navigationMenuItemActionPerformed
 
   
@@ -467,88 +575,152 @@ public class ViewFrame extends javax.swing.JFrame {
    * @param evt 
    */
   private void doButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doButtonActionPerformed
-    String key = ((JMenuItem) evt.getSource()).getText();
-    State state = statemap.get(key);
+    //String key = ((JButton) evt.getSource()).getText();
     switch (state)
     {
       case TABLES:
-              break;
+        String[][] table = 
+                controller.displayTable((String)tablesComboBox.getSelectedItem());
+        break;
       case START:
-              break;
+        CardLayout cl = (CardLayout) (cardPanel.getLayout());
+        String key = ((String) navigationComboBox.getSelectedItem());
+        State state = statemap.get(key);
+        cl.show(cardPanel, key);
+        this.state = state;
+        String buttonText = generateButtonText();
+        doButton.setText(buttonText);
+        break;
       case SEARCH:
-              break;
+        break;
       case CHECK_ACCOUNT:
-              break;
+        break;
       case HOLD_REQUEST:
-              break;
+        break;
       case PAY_FINE:
-              break;
+        break;
       case ADD_BORROWER:
-              break;
+        break;
       case CHECK_OUT:
-              break;
+        break;
       case CHECK_OVERDUE:
-              break;
+        break;
       case PROCESS_RETURN:
-              break;
+        break;
       case ADD_BOOK:
-              break;
+        break;
       case ADD_COPY:
-              break;
+        break;
       case REMOVE_BOOK:
-              break;
+        break;
       case REMOVE_BORROWER:
-              break;
+        break;
       case REPORT_POPULAR:
-              break;
+        break;
       case REPORT_CHECKED_OUT:
-              break;
+        break;
       default:
     }
   }//GEN-LAST:event_doButtonActionPerformed
 
+  /**
+   * Generates text for the doButton based on GUI state.
+   * @return 
+   */
+  private String generateButtonText()
+  {
+    String buttonText = null;
+    switch (this.state)
+    {
+      case TABLES:
+        buttonText = "View";
+        break;
+      case START:
+        buttonText = "Go";
+        break;
+      case SEARCH:
+        buttonText = "Search";
+        break;
+      case CHECK_ACCOUNT:
+        buttonText = "Check account";
+        break;
+      case HOLD_REQUEST:
+        buttonText = "Place request";
+        break;
+      case PAY_FINE:
+        buttonText = "Pay";
+        break;
+      case ADD_BORROWER:
+        buttonText = "Add";
+        break;
+      case CHECK_OUT:
+        buttonText = "Check out";
+        break;
+      case CHECK_OVERDUE:
+        buttonText = "Check";
+        break;
+      case PROCESS_RETURN:
+        buttonText = "Process return";
+        break;
+      case ADD_BOOK:
+      case ADD_COPY:
+        buttonText = "Add";
+        break;
+      case REMOVE_BOOK:
+      case REMOVE_BORROWER:
+        buttonText = "Remove";
+        break;
+      case REPORT_POPULAR:
+      case REPORT_CHECKED_OUT:
+        buttonText = "Generate report";
+        break;
+      default:
+    }
+    return buttonText;
+  }
+  
+  
   /**
    * Tells the GUI to clear the current panel
    * @param evt 
    */
   private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
     
-    String key = ((JMenuItem) evt.getSource()).getText();
-    State state = statemap.get(key);
     switch (state)
     {
       case TABLES:
-              break;
+        break;
       case START:
-              break;
+        navigationComboBox.setSelectedItem(this.START);
+        break;
       case SEARCH:
-              break;
+        break;
       case CHECK_ACCOUNT:
-              break;
+        break;
       case HOLD_REQUEST:
-              break;
+        break;
       case PAY_FINE:
-              break;
+        break;
       case ADD_BORROWER:
-              break;
+        break;
       case CHECK_OUT:
-              break;
+        break;
       case CHECK_OVERDUE:
-              break;
+        break;
       case PROCESS_RETURN:
-              break;
+        break;
       case ADD_BOOK:
-              break;
+        break;
       case ADD_COPY:
-              break;
+        break;
       case REMOVE_BOOK:
-              break;
+        break;
       case REMOVE_BORROWER:
-              break;
+        break;
       case REPORT_POPULAR:
-              break;
+        break;
       case REPORT_CHECKED_OUT:
-              break;
+        break;
       default:
     }
   }//GEN-LAST:event_clearButtonActionPerformed
@@ -596,6 +768,8 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem addBorrowerMenuItem;
     private javax.swing.JPanel addBorrowerPanel;
     private javax.swing.JMenu addMenu;
+    private javax.swing.JPanel addNewBookPanel;
+    private javax.swing.JPanel addNewCopyPanel;
     private javax.swing.JMenu borrowerMenu;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JPanel cardPanel;
@@ -606,21 +780,26 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem checkOverdueMenuItem;
     private javax.swing.JPanel checkOverduePanel;
     private javax.swing.JMenuItem checkedOutReportMenuItem;
+    private javax.swing.JPanel checkedOutReportPanel;
     private javax.swing.JButton clearButton;
     private javax.swing.JMenu clerkMenu;
     private javax.swing.JButton doButton;
+    private javax.swing.JTable entitiesTable;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private javax.swing.JPanel holdRequestPanel;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -628,23 +807,30 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JComboBox navigationComboBox;
     private javax.swing.JMenu navigationMenu;
     private javax.swing.JMenuItem payFineMenuItem;
     private javax.swing.JPanel payFinePanel;
     private javax.swing.JMenuItem popularReportMenuItem;
+    private javax.swing.JPanel popularReportPanel;
     private javax.swing.JMenuItem processReturnMenuItem;
     private javax.swing.JPanel processReturnPanel;
     private javax.swing.JMenuItem removeBookMenuItem;
+    private javax.swing.JPanel removeBookPanel;
     private javax.swing.JMenuItem removeBorrowerMenuItem;
+    private javax.swing.JPanel removeBorrowerPanel;
     private javax.swing.JMenu removeMenu;
     private javax.swing.JMenu reportMenu;
     private javax.swing.JMenuItem searchMenuItem;
     private javax.swing.JPanel searchPanel;
+    private javax.swing.JPanel startComboBoxPanel;
     private javax.swing.JMenuItem startMenuItem;
     private javax.swing.JPanel startPanel;
-    private javax.swing.JPanel startPanel1;
     private javax.swing.JMenuItem tableMenuItem;
+    private javax.swing.JPanel tableNamePanel;
+    private javax.swing.JComboBox tablesComboBox;
     private javax.swing.JPanel tablesPanel;
+    private javax.swing.JScrollPane viewTablePane;
     // End of variables declaration//GEN-END:variables
 
     private Controller controller;

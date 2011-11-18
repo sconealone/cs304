@@ -61,5 +61,56 @@ public class Controller {
     systemLibrarian = new Librarian();
     systemBorrower = new Borrower();
   }
+  
+  /**
+   * Gets the 2D representation of a table from the database
+   * @param tableName
+   * @return
+   * @throws SQLException 
+   */
+  public String[][] displayTable(String tableName) throws SQLException
+  {
+    String[][] table = null;
+    if (tableName.equals("Borrower"))
+    {
+      table = (new Borrower()).display();
+    }
+    else if (tableName.equals("BorrowerType"))
+    {
+      table = (new BorrowerType()).display();
+    }
+    else if (tableName.equals("Book"))
+    {
+      table = (new Book()).display();
+    }
+    else if (tableName.equals("HasAuthor"))
+    {
+      table = (new HasAuthor()).display();
+    }
+    else if (tableName.equals("HasSubject"))
+    {
+      table = (new HasSubject()).display();
+    }
+    else if (tableName.equals("BookCopy"))
+    {
+      table = (new BookCopy()).display();
+    }
+    else if (tableName.equals("HoldRequest"))
+    {
+      table = (new HoldRequest()).display();
+    }
+    else if (tableName.equals("Borrowing"))
+    {
+      table = (new Borrowing()).display();
+    }
+    else if (tableName.equals("Fine"))
+    {
+      table = (new Fine()).display();
+    }
+    else
+    {
+      table = (new ()).display();
+    }
+  }
 }
 
