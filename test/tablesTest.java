@@ -44,6 +44,7 @@ public class tablesTest {
 	@Test
 	public void testBookInsert() throws SQLException {
 		assertTrue(b.insert());
+		b.get();
 	}
 
 }
