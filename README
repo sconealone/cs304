@@ -1,6 +1,14 @@
 README is back.
 It will be used to track meeting dates and work assignments.
 
+Next meeting: Monday, November 21
+Work assignments:
+- Finish Table classes and implement user functionality
+
+==============================================================
+
+Old work:
+
 Next meeting: Friday, November 18
 Discuss any problems we've been having with implementation
 Work assignments:
@@ -9,11 +17,6 @@ Code implementation
 - Jenny: Borrower class, Borrower functionality
 - Christiaan: BookCopy, HoldRequest classes, Clerk functionality
 - Mitch: Fine, Borrowing classes, System, Librarian functionality
-
-
-==============================================================
-
-Old work:
 
 Next meeting: Monday, November 14
 Work assignments:
