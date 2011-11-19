@@ -20,9 +20,11 @@ import users.Conn;
  * the overdue ones by changing their statuses to 'overdue'
  * The addition of the 'overdue' status is an assumption on my part that
  * this is the simplest way to flag an overdue item.
+ * TODO uncomment the inheritance of bookcopy when bookcopy is done
+ * 
  * @author Mitch
  */
-public class CheckedOutBookCopy extends BookCopy
+public class CheckedOutBookCopy //extends BookCopy
 {
   private String subjectToFilterBy;
   
@@ -31,7 +33,7 @@ public class CheckedOutBookCopy extends BookCopy
    */
   public CheckedOutBookCopy()
   {
-    super();
+    //super();
   }
   
   /**
@@ -46,7 +48,7 @@ public class CheckedOutBookCopy extends BookCopy
                               Book book,
                               String subjectToFilterBy)
   {
-    super(copyNo, status, book);
+    //super(copyNo, status, book);
     this.subjectToFilterBy = subjectToFilterBy;
   }
   
@@ -82,7 +84,7 @@ public class CheckedOutBookCopy extends BookCopy
    * @return
    * @throws SQLException 
    */
-  @Override
+  //@Override
   public String[][] display() throws SQLException 
   {
     boolean shouldTheResultBeFiltered = subjectToFilterBy != null;
@@ -204,7 +206,7 @@ public class CheckedOutBookCopy extends BookCopy
       System.out.println();
     }
     System.out.println();
-    bc.setSubjectToFilterBy("Agriculture");
+    bc.setSubjectToFilterBy("Science");
     table = bc.display();
     for (int i = 0; i < table.length; i++)
     {
