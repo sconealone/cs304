@@ -44,10 +44,14 @@ public class PopularBookReport implements Displayable
   @Override
   public String[][] display() throws SQLException 
   {
-    String sql = "SELECT callNumber, COUNT(borid) AS timesBorrowed, outDate AS year \n"
-            + "FROM Borrowing\n"
-            + "WHERE to_char(outDate,'YYYY') = '"+year+"'\n"
-            + "GROUP BY callNumber, outDate\n"
+    String sql = "SELECT R.callNumber, "
+            + "title, "
+            + "COUNT(borid) AS timesBorrowed, "
+            + "outDate AS year \n"
+            + "FROM Borrowing R, Book B\n"
+            + "WHERE to_char(outDate,'YYYY') = '"+year+"' AND "
+            + "R.callNumber = B.callNumber\n"
+            + "GROUP BY R.callNumber, title, outDate\n"
             + "ORDER BY timesBorrowed DESC";
     Connection con = Conn.getInstance().getConnection();
     PreparedStatement ps = con.prepareStatement(sql);
@@ -75,6 +79,9 @@ public class PopularBookReport implements Displayable
       
       // call number
       tuple[paramIndex] = ""+rs.getString(paramIndex++);
+      
+      // title
+      tuple[paramIndex] = rs.getString(paramIndex++);
       
       // times borrowed
       tuple[paramIndex] = ""+rs.getString(paramIndex++);
