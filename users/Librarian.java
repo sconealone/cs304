@@ -10,6 +10,7 @@ import tables.Book;
 import tables.BookCopy;
 import tables.Borrower;
 import tables.CheckedOutBookCopy;
+import tables.PopularBookReport;
 
 
 /**
@@ -335,7 +336,8 @@ public class Librarian
   public String[][] getPopularBooks(int year, int n) 
           throws SQLException
   {
-    return null;
+    PopularBookReport br = new PopularBookReport(year, n);
+    return br.display();
   }
   
   /**
@@ -364,6 +366,7 @@ public class Librarian
     display(displayTable);
     displayTable = l.getCheckedOutBooksReport("Science");
     display(displayTable);
+    display(l.getPopularBooks(2005, 5));
     /*
      * won't work until people finish implementing delete
      
