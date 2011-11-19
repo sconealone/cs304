@@ -160,11 +160,11 @@ public class Book implements Table {
 			mainAuthor = rs.getString(4);
 			publisher = rs.getString(5);
 			year = rs.getInt(6);
-			
+
 			//how to handle authors/subjects?
 			return this;
 		}
-		
+
 		return this;
 	}
 
@@ -213,7 +213,7 @@ public class Book implements Table {
 	/**
 	 * @return the mainAuthor
 	 */
-	public String getMainAuthor() {
+ 	public String getMainAuthor() {
 		return mainAuthor;
 	}
 
