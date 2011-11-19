@@ -1,12 +1,14 @@
 package users;
 
 import java.sql.SQLException;
-import java.util.Collection;
 
-import tables.Book;
-import tables.BookCopy;
 
-public class Librarian {
+/**
+ * This class encapsulates the functionality for the Librarian user.
+ * @author Mitch
+ */
+public class Librarian 
+{
 	
   /**
    * Adds a new book to the library catalogue.  
