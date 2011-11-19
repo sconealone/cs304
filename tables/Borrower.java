@@ -245,8 +245,8 @@ public class Borrower implements Table {
 			int year = rs.getInt(6);
 			int copiesIn = rs.getInt(7);
 			
-			Book b = new Book(callNo,isbn,title1,mainAuthor,publisher,year,copiesIn);
-			lob.add(b);			
+			//Book b = new Book(callNo,isbn,title1,mainAuthor,publisher,year,copiesIn);
+			//lob.add(b);			
 		}
 		
 	} catch (SQLException e) {

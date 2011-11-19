@@ -15,6 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import users.Controller;
+import javax.swing.JSplitPane;
+import java.awt.BorderLayout;
 /*
  * ViewFrame.java
  *
@@ -48,9 +50,9 @@ public class ViewFrame extends javax.swing.JFrame {
     statemap.put(REPORT_POPULAR, State.REPORT_POPULAR);
     statemap.put(REPORT_CHECKED_OUT, State.REPORT_CHECKED_OUT);
     initComponents();
-    CardLayout cl = (CardLayout) cardPanel.getLayout();
+    CardLayout cl_cardPanel = (CardLayout) cardPanel.getLayout();
     state = State.START;
-    cl.show(cardPanel, START);
+    cl_cardPanel.show(cardPanel, START);
     doButton.setText("Go");
   }
 
@@ -174,6 +176,9 @@ public class ViewFrame extends javax.swing.JFrame {
         startPanel.add(startComboBoxPanel, java.awt.BorderLayout.NORTH);
 
         cardPanel.add(startPanel, "Start");
+        
+        splitPane = new JSplitPane();
+        startPanel.add(splitPane, BorderLayout.CENTER);
 
         tablesPanel.setLayout(new java.awt.BorderLayout());
 
@@ -932,6 +937,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private static final String REMOVE_BORROWER="Remove borrower";
     private static final String REPORT_POPULAR="Popular books report";
     private static final String REPORT_CHECKED_OUT="Checked-out report";
+    private JSplitPane splitPane;
     
     
 }

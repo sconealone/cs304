@@ -1,11 +1,14 @@
 package tables;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import users.Conn;
 
@@ -61,24 +64,89 @@ public class Book implements Table {
 	/**
 	 * PRE: assume the values in this object are initialized
 	 * return a 2d array of strings to display 
+	 * @throws SQLException 
 	 */
 	@Override
-	public String[][] display() {
-		int max = Math.max(authors.size(), subjects.size());
-		String[][] stringTable = new String[8][max];
-		stringTable[0][0] = callNumber;
-		stringTable[1][0] = isbn;
-		stringTable[2][0] = title;
-		stringTable[3][0] = mainAuthor;
-		stringTable[4][0] = publisher;
-		stringTable[5][0] = String.valueOf(year);
-		for(int i =0; i< authors.size()-1; i++){
-			stringTable[6][i] = authors.get(i);
+	public String[][] display() throws SQLException {
+
+		//thanks Mitch! v   
+		ArrayList<String[]> borrowingGrowable = new ArrayList<String[]>();
+
+		PreparedStatement ps = c.prepareStatement("SELECT * FROM Book");
+		ResultSet rs = ps.executeQuery();
+
+		ResultSetMetaData md = rs.getMetaData();
+		int numFields = md.getColumnCount();
+		String[] columnNames = new String[numFields];
+		for (int i = 0; i < numFields; i++)
+		{
+			columnNames[i] = md.getColumnName(i + 1);
 		}
-		for(int i =0; i< subjects.size()-1; i++){
-			stringTable[7][i] = subjects.get(i);
+		borrowingGrowable.add(columnNames);
+		
+		//		int max = Math.max(authors.size(), subjects.size());
+		//		String[][] stringTable = new String[8][max];
+		//		stringTable[0][0] = callNumber;
+		//		stringTable[1][0] = isbn;
+		//		stringTable[2][0] = title;
+		//		stringTable[3][0] = mainAuthor;
+		//		stringTable[4][0] = publisher;
+		//		stringTable[5][0] = String.valueOf(year);
+		//		//		for(int i =0; i< authors.size()-1; i++){
+		//		//			stringTable[6][i] = authors.get(i);
+		//		//		}
+		//		//		for(int i =0; i< subjects.size()-1; i++){
+		//		//			stringTable[7][i] = subjects.get(i);
+		//		//		}
+		//		return stringTable;
+
+		while (rs.next())
+		{
+			String[] row = new String[numFields];
+			// row will contain a tuple from the database
+			int fieldIndex = 0;
+
+			// these fields are marked not null in database
+			//callNumber
+			row[fieldIndex] = rs.getString(fieldIndex + 1);
+			fieldIndex++;
+			//isbn
+			row[fieldIndex] = rs.getString(fieldIndex + 1);
+			fieldIndex++;
+
+			//possibly null
+			//title
+			String tempVal = rs.getString(fieldIndex + 1);
+			if(rs.wasNull()) row[fieldIndex] = "null";
+			else row[fieldIndex] = tempVal;
+			fieldIndex++;
+			//mainAuthor
+			tempVal = rs.getString(fieldIndex + 1);
+			if(rs.wasNull()) row[fieldIndex] = "null";
+			else row[fieldIndex] = tempVal;
+			fieldIndex++;
+
+			//publisher
+			tempVal = rs.getString(fieldIndex + 1);
+			if(rs.wasNull()) row[fieldIndex] = "null";
+			else row[fieldIndex] = tempVal;
+			fieldIndex++;
+			//year
+			int temp = rs.getInt(fieldIndex + 1);
+			if(rs.wasNull()) row[fieldIndex]= "null";
+			else row[fieldIndex] = Integer.toString(temp);
+
+
+			borrowingGrowable.add(row);
+		} 
+		rs.close();
+		int numRows = borrowingGrowable.size();
+		String[][] borrowing = new String[numRows][];
+		for (int i = 0; i < numRows; i++)
+		{
+			borrowing[i] = borrowingGrowable.get(i);
 		}
-		return stringTable;
+		return borrowing;
 	}
 
 	/**
@@ -125,11 +193,29 @@ public class Book implements Table {
 	 */
 	public boolean insert() throws SQLException{
 
+		String sql = "INSERT INTO Book VALUES ("
+				+ callNumber 
+				+ ","
+				+isbn
+				+ ","
+				+title
+				+ ","
+				+mainAuthor
+				+ ","
+				+publisher
+				+ ","
+				+year
+				+","
+				+ callNumber
+				+")";
+		
 		Statement stmt = c.createStatement();
 		// stmt is a statement object
-		int rowCount = stmt.executeUpdate("INSERT INTO Book VALUES (" + callNumber + ","+isbn+ ","+title+ ","+mainAuthor+ ","
-				+publisher+ ","+year+ ")"); 
+		//int rowCount = stmt.executeUpdate(sql); 
+		
+		
 
+		//stmt.executeUpdate("INSERT INTO branch VALUES (20, 'Richmond Main', " + "'18122 No.5 Road', 'Richmond', 5252738)");
 		return true;
 
 	}
@@ -213,7 +299,7 @@ public class Book implements Table {
 	/**
 	 * @return the mainAuthor
 	 */
- 	public String getMainAuthor() {
+	public String getMainAuthor() {
 		return mainAuthor;
 	}
 
