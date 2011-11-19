@@ -16,7 +16,6 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import users.Controller;
 import javax.swing.JSplitPane;
-import java.awt.BorderLayout;
 /*
  * ViewFrame.java
  *
@@ -64,6 +63,7 @@ public class ViewFrame extends javax.swing.JFrame {
   @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         mainPanel = new javax.swing.JPanel();
         cardPanel = new javax.swing.JPanel();
@@ -100,7 +100,14 @@ public class ViewFrame extends javax.swing.JFrame {
         removeBookPanel = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         popularReportPanel = new javax.swing.JPanel();
-        jLabel15 = new javax.swing.JLabel();
+        popularReportOptionsPanel = new javax.swing.JPanel();
+        popularReportYearSelectLabel = new javax.swing.JLabel();
+        popularReportYearTextField = new javax.swing.JTextField();
+        popularReportNSelectLabel = new javax.swing.JLabel();
+        popularReportNTextField = new javax.swing.JTextField();
+        popularReportTablePanel = new javax.swing.JPanel();
+        popularReportTablePane = new javax.swing.JScrollPane();
+        popularReportTable = new javax.swing.JTable();
         checkedOutReportPanel = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         buttonPanel = new javax.swing.JPanel();
@@ -176,9 +183,6 @@ public class ViewFrame extends javax.swing.JFrame {
         startPanel.add(startComboBoxPanel, java.awt.BorderLayout.NORTH);
 
         cardPanel.add(startPanel, "Start");
-        
-        splitPane = new JSplitPane();
-        startPanel.add(splitPane, BorderLayout.CENTER);
 
         tablesPanel.setLayout(new java.awt.BorderLayout());
 
@@ -305,8 +309,52 @@ public class ViewFrame extends javax.swing.JFrame {
 
         popularReportPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel15.setText("popular books");
-        popularReportPanel.add(jLabel15, java.awt.BorderLayout.CENTER);
+        popularReportOptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Options"));
+        popularReportOptionsPanel.setLayout(new java.awt.GridBagLayout());
+
+        popularReportYearSelectLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        popularReportYearSelectLabel.setText("Year to report on:");
+        popularReportYearSelectLabel.setName("Year to report on"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        popularReportOptionsPanel.add(popularReportYearSelectLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 50;
+        popularReportOptionsPanel.add(popularReportYearTextField, gridBagConstraints);
+
+        popularReportNSelectLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        popularReportNSelectLabel.setText("Number of books in report:");
+        popularReportNSelectLabel.setName("Number of books in report"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        popularReportOptionsPanel.add(popularReportNSelectLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 50;
+        popularReportOptionsPanel.add(popularReportNTextField, gridBagConstraints);
+
+        popularReportPanel.add(popularReportOptionsPanel, java.awt.BorderLayout.PAGE_START);
+
+        popularReportTablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Report"));
+        popularReportTablePanel.setLayout(new java.awt.BorderLayout());
+
+        popularReportTable.setModel(new javax.swing.table.DefaultTableModel(
+
+        ));
+        popularReportTablePane.setViewportView(popularReportTable);
+
+        popularReportTablePanel.add(popularReportTablePane, java.awt.BorderLayout.CENTER);
+
+        popularReportPanel.add(popularReportTablePanel, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(popularReportPanel, "Popular books report");
 
@@ -596,11 +644,28 @@ public class ViewFrame extends javax.swing.JFrame {
    * @param evt 
    */
   private void doButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doButtonActionPerformed
-    //String key = ((JButton) evt.getSource()).getText();
+    /**
+     * A TableModel where you cant edit the cells
+     */
+    class UneditableTableModel extends DefaultTableModel
+    {
+      public UneditableTableModel (String[][] table, String[] header)
+      {
+        super(table,header);
+      }
+      @Override
+      public boolean isCellEditable(int rowIndex ,int colIndex)
+      {
+        return false;
+      }
+    }
+    String[][] tableWithHeader = null;
+    String[][] tableWithoutHeader = null;
+    String[] header = null;
+    int numRows, numCols;
     switch (state)
     {
       case TABLES:
-        String[][] tableWithHeader = null;
         try
         {
           tableWithHeader =
@@ -612,11 +677,11 @@ public class ViewFrame extends javax.swing.JFrame {
           JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
           return;
         }
-        String[] header = tableWithHeader[0];
-        int numRows = tableWithHeader.length;
+        header = tableWithHeader[0];
+        numRows = tableWithHeader.length;
         numRows--;
-        int numCols = tableWithHeader[0].length;
-        String[][] tableWithoutHeader = new String[numRows][];
+        numCols = tableWithHeader[0].length;
+        tableWithoutHeader = new String[numRows][];
         for (int i = 0; i < numRows; i++)
         {
           tableWithoutHeader[i] = new String[numCols];
@@ -627,11 +692,7 @@ public class ViewFrame extends javax.swing.JFrame {
           System.arraycopy(tableWithHeader[i+1], 0, tableWithoutHeader[i], 0, numCols);
         }
         entitiesTable.setModel(
-                new DefaultTableModel(tableWithoutHeader, header){
-                  public boolean isCellEditable(int rowIndex ,int colIndex){
-                    return false;
-                  }
-                });
+                new UneditableTableModel(tableWithoutHeader, header));
         entitiesTable.repaint();
         break;
       case START:
@@ -668,6 +729,74 @@ public class ViewFrame extends javax.swing.JFrame {
       case REMOVE_BORROWER:
         break;
       case REPORT_POPULAR:
+        int reportYear = -1;
+        int reportN = -1;
+        try
+        {
+          // begin error checking text fields
+          boolean reportYearError = true;
+          boolean reportNError = true;
+          
+          try
+          {
+            reportYear = 
+                    Integer.parseInt(popularReportYearTextField.getText());
+            reportYearError = false;
+          }
+          catch (NumberFormatException e)
+          {
+            // do nothing
+          }
+          try
+          {
+            reportN =
+                    Integer.parseInt(popularReportNTextField.getText());
+            reportNError = false;
+          }
+          catch (NumberFormatException e)
+          {
+            // do nothing
+          }
+          
+          if (reportYearError || reportNError)
+          {
+            String msg = "There are errors in the following fields:\n"
+                    + ((reportYearError) ? 
+                      '\t'+popularReportYearSelectLabel.getName() + '\n' : "")
+                    + ((reportNError) ?
+                      '\t'+popularReportNSelectLabel.getName() + '\n' : "")
+                    + "Please correct them and resubmit.";
+            JOptionPane.showMessageDialog(this, msg, "Input error", JOptionPane.ERROR_MESSAGE);
+            return;
+          }
+          
+          // end error checking text fields
+          
+          tableWithHeader =
+              controller.getSystemLibrarian().getPopularBooks(reportYear, reportN);
+        }
+        catch (SQLException e)
+        {
+          String msg = "Could not retrieve the table:\n"+e.getMessage();
+          JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+        header = tableWithHeader[0];
+        numRows = tableWithHeader.length;
+        numRows--;
+        numCols = tableWithHeader[0].length;
+        tableWithoutHeader = new String[numRows][];
+        for (int i = 0; i < numRows; i++)
+        {
+          tableWithoutHeader[i] = new String[numCols];
+        }
+        
+        for (int i = 0; i < numRows; i++)
+        {
+          System.arraycopy(tableWithHeader[i+1], 0, tableWithoutHeader[i], 0, numCols);
+        }
+        popularReportTable.setModel(new UneditableTableModel(tableWithoutHeader,header));
+        popularReportTable.repaint();
         break;
       case REPORT_CHECKED_OUT:
         break;
@@ -772,6 +901,10 @@ public class ViewFrame extends javax.swing.JFrame {
       case REMOVE_BORROWER:
         break;
       case REPORT_POPULAR:
+        popularReportYearTextField.setText("");
+        popularReportNTextField.setText("");
+        popularReportTable.setModel(new DefaultTableModel());
+        popularReportTable.repaint();
         break;
       case REPORT_CHECKED_OUT:
         break;
@@ -858,7 +991,6 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
@@ -879,7 +1011,15 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem payFineMenuItem;
     private javax.swing.JPanel payFinePanel;
     private javax.swing.JMenuItem popularReportMenuItem;
+    private javax.swing.JLabel popularReportNSelectLabel;
+    private javax.swing.JTextField popularReportNTextField;
+    private javax.swing.JPanel popularReportOptionsPanel;
     private javax.swing.JPanel popularReportPanel;
+    private javax.swing.JTable popularReportTable;
+    private javax.swing.JScrollPane popularReportTablePane;
+    private javax.swing.JPanel popularReportTablePanel;
+    private javax.swing.JLabel popularReportYearSelectLabel;
+    private javax.swing.JTextField popularReportYearTextField;
     private javax.swing.JMenuItem processReturnMenuItem;
     private javax.swing.JPanel processReturnPanel;
     private javax.swing.JMenuItem quitMenuItem;
