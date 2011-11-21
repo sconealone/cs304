@@ -22,9 +22,8 @@ public class Book implements Table {
 	private String mainAuthor;
 	private String publisher;
 	private int year;
-	private ArrayList<String> authors;
-	private ArrayList<String> subjects;	
-
+ 	private ArrayList<String> subjects;	
+ 	private ArrayList<String> authors;
 	private Connection c;
 	private Statement stmt;
 
@@ -211,7 +210,7 @@ public class Book implements Table {
 		
 		Statement stmt = c.createStatement();
 		// stmt is a statement object
-		//int rowCount = stmt.executeUpdate(sql); 
+		int rowCount = stmt.executeUpdate(sql); 
 		
 		
 

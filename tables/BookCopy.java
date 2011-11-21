@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 
+import users.Conn;
+
 public class BookCopy implements Table {
 
 	private String copyNo;
