@@ -2,6 +2,11 @@
 ###################
 *.txt
 
+#NBFiles#
+###################
+*.properties
+*.mf
+*.xml
 
 # Compiled source #
 ###################
