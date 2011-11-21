@@ -192,27 +192,26 @@ public class Book implements Table {
 	 */
 	public boolean insert() throws SQLException{
 
-		String sql = "INSERT INTO Book VALUES ("
-				+ callNumber 
-				+ ","
+		String sql = "INSERT INTO Book VALUES ('"
+				+callNumber 
+				+"','"
 				+isbn
-				+ ","
+				+"','"
 				+title
-				+ ","
+				+"','"
 				+mainAuthor
-				+ ","
+				+"','"
 				+publisher
-				+ ","
+				+"',"
 				+year
-				+","
-				+ callNumber
 				+")";
+		
+		String sql1 = "INSERT INTO Book VALUES('1234','123','teilte','mainsss','pubb',1929)";
 		
 		Statement stmt = c.createStatement();
 		// stmt is a statement object
-		int rowCount = stmt.executeUpdate(sql); 
-		
-		
+		int rowCount = stmt.executeUpdate(sql1); 
+		int rowCount1 = stmt.executeUpdate(sql); 
 
 		//stmt.executeUpdate("INSERT INTO branch VALUES (20, 'Richmond Main', " + "'18122 No.5 Road', 'Richmond', 5252738)");
 		return true;

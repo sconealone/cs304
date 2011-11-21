@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Collection;
 
+import users.Conn;
+
 public class HoldRequest implements Table {
 
 	private Integer hid;
