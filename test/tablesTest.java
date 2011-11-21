@@ -24,10 +24,10 @@ public class tablesTest {
 
 
 	//@Test Methods always run after @Before method  ( setup() ) 
-	
-	
+
+
 	//Also, the clearDataBaseAfterTests() method clears the database of any changes, but leaves the structure
-	
+
 
 
 
@@ -36,15 +36,45 @@ public class tablesTest {
 
 	@Test
 	public void testBookInsert() throws SQLException {
+
+		//create a book object
+		String cN = "123456789";
+		String isBun = "123412341234A";
+		String titleArg = "The Most Amazing Book";
+		String mainAuthorArg = "The Most Amazing Author";
+		String pub = "the most super publisher";
+		int yr= 2012;
+		ArrayList<String> authrs = new ArrayList<String>();
+		authrs.add("someone boring");
+		authrs.add("an even more boring person");
+
+		ArrayList<String> subjectsArg = new ArrayList<String>();
+		subjectsArg.add("astrobiology");
+		subjectsArg.add("teutonicEpidemiology");
+
+		b= new Book(cN,isBun,titleArg,mainAuthorArg,pub,yr,authrs,subjectsArg);
+		//String sql1 = "INSERT INTO Book VALUES('1234','123','teilte','mainsss','pubb',1929)";
+		//{"1234", "123          ","teilte","mainsss","pubb","1929"},
+
+
+		//add rest of tables to database
+
 		assertTrue(b.insert());
-
-
 		String test[][] = {
-				{"test", "test2"},
-				{"af23", "3sf"},
-				{"fa2", "gg2"}};
+				{"CALLNUMBER", "ISBN", "TITLE", "MAINAUTHOR", "PUBLISHER","YEAR"},
+				{"123456789", "123412341234A","The Most Amazing Book","The Most Amazing Author","the most super publisher","2012"}};
+		
+		String test1[][] = b.display();
+		assertArrayEquals(test1,test);
+		
+		//try changing a field in b
+		b.setMainAuthor("fake author");
+		//assert that calling get updates b with the appropriate fields
+		b = b.get();
 
-		//assertArrayEquals(test,b.display());
+		assertEquals(b.getMainAuthor(),"The Most Amazing Author");
+		
+		
 
 	}
 
@@ -52,12 +82,12 @@ public class tablesTest {
 	public void stub() throws SQLException{
 		assertEquals(1,1);
 		assertTrue(true);
-		
+
 		String test[][] = {
 				{"test", "test2"},
 				{"af23", "3sf"},
 				{"fa2", "gg2"}};
-		
+
 		String test1[][] = {
 				{"test", "test2"},
 				{"af23", "3sf"},
@@ -65,7 +95,7 @@ public class tablesTest {
 		assertArrayEquals(test,test1);
 	}
 
-	
+
 	@Before
 	public void setup(){
 
@@ -151,25 +181,7 @@ public class tablesTest {
 			s.printStackTrace();
 		}
 
-		//create a book object
-		String cN = "123456789";
-		String isBun = "123412341234A";
-		String titleArg = "The Most Amazing Book";
-		String mainAuthorArg = "The Most Amazing Author";
-		String pub = "the most super publisher";
-		int yr= 2012;
-		ArrayList<String> authrs = new ArrayList<String>();
-		authrs.add("someone boring");
-		authrs.add("an even more boring person");
 
-		ArrayList<String> subjectsArg = new ArrayList<String>();
-		subjectsArg.add("astrobiology");
-		subjectsArg.add("teutonicEpidemiology");
-
-		b= new Book(cN,isBun,titleArg,mainAuthorArg,pub,yr,authrs,subjectsArg);
-
-
-		//add rest of tables to database
 	}
 
 

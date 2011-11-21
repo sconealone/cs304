@@ -61,8 +61,8 @@ public class Book implements Table {
 	}
 
 	/**
-	 * PRE: assume the values in this object are initialized
-	 * return a 2d array of strings to display 
+	 *
+	 * return a 2d array of strings, each row represents a tuple in the database
 	 * @throws SQLException 
 	 */
 	@Override
@@ -206,11 +206,10 @@ public class Book implements Table {
 				+year
 				+")";
 		
-		String sql1 = "INSERT INTO Book VALUES('1234','123','teilte','mainsss','pubb',1929)";
 		
 		Statement stmt = c.createStatement();
 		// stmt is a statement object
-		int rowCount = stmt.executeUpdate(sql1); 
+		//int rowCount = stmt.executeUpdate(sql1); 
 		int rowCount1 = stmt.executeUpdate(sql); 
 
 		//stmt.executeUpdate("INSERT INTO branch VALUES (20, 'Richmond Main', " + "'18122 No.5 Road', 'Richmond', 5252738)");
@@ -234,10 +233,11 @@ public class Book implements Table {
 	 * @throws SQLException 
 	 */
 	@Override
-	public Table get() throws SQLException {
+	public Book get() throws SQLException {
+		stmt = c.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM Book WHERE callNumber = "+callNumber);
 
-		if(rs!=null){
+		if(rs!=null && rs.next()){
 			callNumber = rs.getString(1);
 			isbn = rs.getString(2); 
 			title = rs.getString(3);
