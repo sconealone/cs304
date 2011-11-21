@@ -193,36 +193,44 @@ public class Borrower implements Table {
 	}
 	
 	@Override
-	public Table get() {
-		// TODO Auto-generated method stub
-		return null;
+	public Table get() throws SQLException {
+        String sql = "SELECT * FROM Borrower WHERE bid = " + bid;
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        
+        if (rs.next()) {
+        	return new Borrower(rs);
+        }
+        else
+        	return null;
 	}
 
-	public boolean insert(int bid, String password, String name, String address, String phone,
-			String email, int sinOrStNo, Calendar expiryDate, String type) throws SQLException {
+	public boolean insert() throws SQLException {
 		
 		Date sqlDate = new Date(expiryDate.getTimeInMillis());
 		
-		try {
-			PreparedStatement ps = con.prepareStatement ("INSERT INTO Borrower " +
-			"(bid,password,name,address,phone,emailAddress,sinOrStNo,expiryDate,type) VALUES (?,?,?,?,?,?,?,?,?)"); 
+		PreparedStatement ps = con.prepareStatement ("INSERT INTO Borrower " +
+		"(bid,password,name,address,phone,emailAddress,sinOrStNo,expiryDate,type) VALUES (bidCounter.nextval,?,?,?,?,?,?,?,?)"); 
 
-			ps.setInt(1, bid);
-			ps.setString(2, password);
-			ps.setString(3, name);
-			ps.setString(4, address);
-			ps.setString(5, phone);
-			ps.setString(6, email);
-			ps.setInt(7, sinOrStNo);
-			ps.setDate(8, sqlDate);
-			ps.setString(9, type);
-			ps.executeUpdate();
-			return true;
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-			return false;
+		ps.setString(2, password);
+		ps.setString(3, name);
+		ps.setString(4, address);
+		ps.setString(5, phone);
+		ps.setString(6, emailAddress);
+		ps.setInt(7, sinOrStNum);
+		ps.setDate(8, sqlDate);
+		ps.setString(9, type);
+		int numRowsChanged = ps.executeUpdate();
+		if(numRowsChanged==1){
+			ps.close();
+			ps = con.prepareStatement("SELECT bidCounter.currval FROM DUAL");
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				bid = rs.getInt(1);
+				return true;
+			}
 		}
+		return false; 
 	}
 
   /**
@@ -448,7 +456,6 @@ public class Borrower implements Table {
 			h = h.get();
 			loh.add(h);
 	  }
-	  
   }
   
   public void placeHoldRequest(String isbn) throws SQLException {
@@ -477,8 +484,13 @@ public class Borrower implements Table {
 		  System.out.println("Amount paid in full.");
 	  }
 	  else {
-		  
+		  Statement stmt = con.createStatement();
+		  String sql = "UPDATE fine SET amount='" + (f.getAmount() - amountInCents) + "' " +
+		  		"FROM Fine f INNER JOIN Borrowing bor ON f.borid=bor.borid " +
+		  		"INNER JOIN Borrower b ON bor.bid=b.bid" ;
+		  ResultSet rs = stmt.executeQuery(sql);
+		  System.out.println("You have paid '" + amountInCents + "' cents, still owing '" + 
+				  f.getAmount() + "' cents.");
 	  }
   }
-
 }
