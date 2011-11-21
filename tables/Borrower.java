@@ -4,11 +4,15 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import users.Conn;
@@ -24,6 +28,7 @@ public class Borrower implements Table {
 	private Integer sinOrStNum;
 	private Calendar expiryDate;
 	private Integer bookTimeLimit;
+	private String type;
 	
 	private Connection con;
 	
@@ -35,20 +40,122 @@ public class Borrower implements Table {
       con = Conn.getInstance().getConnection();
     }
 	
-	
-	@Override
-	public String[][] display() {
-		// TODO Auto-generated method stub
-		return null;
+    /**
+     * Builds a Borrower object from an open result set
+     * only for use within this object!
+     * Call next() before you pass the ResultSet
+     * @param rs 
+     * TODO there are several calls to get() that are stubbed out
+     * @throws SQLException 
+     */
+	public Borrower(ResultSet rs) throws SQLException {
+		con = Conn.getInstance().getConnection();
+		int fieldIndex = 1;
+        bid = rs.getInt(fieldIndex++);
+        String pw = rs.getString(fieldIndex++);
+        password = (rs.wasNull()) ? null : pw;
+        String n = rs.getString(fieldIndex++);
+        name = (rs.wasNull()) ? null : n;
+        String addr = rs.getString(fieldIndex++);
+        address = (rs.wasNull()) ? null : addr;
+        String p = rs.getString(fieldIndex++);
+        phone = (rs.wasNull()) ? null : p;
+        String email = rs.getString(fieldIndex++);
+        emailAddress = (rs.wasNull()) ? null : email;
+        int sos = rs.getInt(fieldIndex++);
+        sinOrStNum = (rs.wasNull()) ? null : sos;
+        Date sqlExpiryDate= rs.getDate(fieldIndex++);
+        expiryDate = (rs.wasNull()) ? null : new GregorianCalendar();
+        if (expiryDate != null) {
+          expiryDate.setTime(sqlExpiryDate);
+        }
+        String t = rs.getString(fieldIndex++);
+        type = (rs.wasNull()) ? null : t;
 	}
 
+
 	@Override
-	public void update() {
-		// TODO Auto-generated method stub
+	public String[][] display() throws SQLException {
+    
+            ArrayList<String[]> borrowerGrowable = new ArrayList<String[]>();
+            
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM Borrower");
+            ResultSet rs = ps.executeQuery();
+            ResultSetMetaData md = rs.getMetaData();
+
+            int numFields = md.getColumnCount();
+            String[] columnNames = new String[numFields];
+            for (int i = 0; i < numFields; i++) {
+              columnNames[i] = md.getColumnName(i + 1);
+            }
+            borrowerGrowable.add(columnNames);
+
+            DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+            
+            while (rs.next()) {
+              String[] tuple = new String[numFields];
+              int fieldIndex = 0;
+
+              // the bid field is marked not null in database
+              tuple[fieldIndex] = ""+rs.getInt(fieldIndex + 1);
+              fieldIndex++;
+
+              // these fields might be null
+              String password = rs.getString(fieldIndex + 1);
+              tuple[fieldIndex] = (!rs.wasNull()) ? password : "null";
+              fieldIndex++;
+
+              String name = rs.getString(fieldIndex + 1);
+              tuple[fieldIndex] = (!rs.wasNull()) ? name : "null";
+              fieldIndex++;
+              
+              String address = rs.getString(fieldIndex + 1);
+              tuple[fieldIndex] = (!rs.wasNull()) ? address : "null";
+              fieldIndex++;
+
+              String phone = rs.getString(fieldIndex + 1);
+              tuple[fieldIndex] = (!rs.wasNull()) ? phone : "null";
+              fieldIndex++;
+
+              String emailAddress = rs.getString(fieldIndex + 1);
+              tuple[fieldIndex] = (!rs.wasNull()) ? emailAddress : "null";
+              fieldIndex++;
+              
+              String sinOrStNo = rs.getString(fieldIndex + 1);
+              tuple[fieldIndex] = (!rs.wasNull()) ? sinOrStNo : "null";
+              fieldIndex++;
+              
+              String expiryDate = rs.getString(fieldIndex + 1);
+              tuple[fieldIndex] = (!rs.wasNull()) ? df.format(expiryDate) : "null";
+              fieldIndex++;
+              
+              String type = rs.getString(fieldIndex + 1);
+              tuple[fieldIndex] = (!rs.wasNull()) ? type : "null";
+
+              borrowerGrowable.add(tuple);
+            } // end while
+
+            rs.close();
+            
+            int numRows = borrowerGrowable.size();
+            String[][] borrower = new String[numRows][];
+            for (int i = 0; i < numRows; i++) {
+              borrower[i] = borrowerGrowable.get(i);
+            }
+            return borrower;
+          }
+
+	@Override
+	public void update() throws SQLException {
+		Statement stmt = con.createStatement();
 		
+		// updating the corresponding tuple in Borrower table
+		stmt.executeUpdate("UPDATE Borrwer SET bid = " + bid + ", password = " + password + ", name = "
+				+ name + ", address = " + address + ", phone = " + phone + ", emailAddress = " + emailAddress
+				+ ", sinOrStNo = " + sinOrStNum + ", expiryDate = " + expiryDate + ", type = " + type);
 	}
 
-	 /**
+	/**
      * Deletes the tuple in the Borrower table whose primary key
      * corresponds to this Borrower's bid. All other attributes are
      * ignored.
@@ -56,21 +163,35 @@ public class Borrower implements Table {
      */
 	@Override
 	public boolean delete() throws SQLException {
-        String sql = "DELETE FROM Borrower WHERE bid = " + bid;
         
-        PreparedStatement ps = con.prepareStatement(sql);
-        int numRowsDeleted = ps.executeUpdate();
-        ps.close();
-        return numRowsDeleted == 1;
+		String sql = "DELETE FROM Borrower WHERE bid = " + bid;
+        Statement stmt = con.createStatement();
+        stmt.executeQuery(sql);
+        stmt.close();
+        return true;
         
 	}
 
+	/** 
+	 * Gets every Borrower from database and create  each Borrower object.
+	 * If there are no Borrowers in the database the collection will be empty.
+	 * @return a collection containing all the Borrower objects in the database
+	 * @throws SQLException 
+	 */
 	@Override
-	public Collection<Table> getAll() {
-		// TODO Auto-generated method stub
+	public Collection<Table> getAll() throws SQLException {
+		ArrayList<Table> borrowers = new ArrayList<Table>();
+		
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM Borrwer");
+		while(rs.next()) {
+			borrowers.add(new Borrower(rs));
+		}
+		stmt.close();
+		
 		return null;
 	}
-
+	
 	@Override
 	public Table get() {
 		// TODO Auto-generated method stub
@@ -230,77 +351,134 @@ public class Borrower implements Table {
     this.bookTimeLimit = bookTimeLimit;
   }
 
-  public List<Book> searchBookByTitle(String title) {
-	  try {
+
+  public List<Book> searchBookByTitle(String title) throws SQLException {
 		Statement stmt = con.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT Book.*, COUNT(status) FROM Book, BookCopy " +
-				"WHERE Book.title=" + title + " AND status=��in�� AND Book.callNumber=BookCopy.callNumber");
-		List<Book> lob;
-		
+				"WHERE Book.title=" + title + " AND Book.callNumber=BookCopy.callNumber");
+		ArrayList<Book> lob = new ArrayList<Book>();
+
 		while(rs.next()) {
 			String callNo = rs.getString(1);
-			String isbn = rs.getString(2);
-			String title1 = rs.getString(3);
-			String mainAuthor = rs.getString(4);
-			String publisher = rs.getString(5);
-			int year = rs.getInt(6);
-			int copiesIn = rs.getInt(7);
+//			String isbn = rs.getString(2);
+//			String title1 = rs.getString(3);
+//			String mainAuthor = rs.getString(4);
+//			String publisher = rs.getString(5);
+//			int year = rs.getInt(6);
+//			int copiesIn = rs.getInt(7);
 			
-			//Book b = new Book(callNo,isbn,title1,mainAuthor,publisher,year,copiesIn);
-			//lob.add(b);			
-		}
-		
-	} catch (SQLException e) {
-		System.out.println(e.getMessage());
-		e.printStackTrace();
-		return null;
-	}
-	  
-	return null;  
+			Book b = new Book();
+			b.setCallNumber(callNo);
+			b = b.get();
+			lob.add(b);			
+		}	  
+	return lob;  
   }
 
-  public List<Book> searchBookByAuthor(String title) {
-		return null;  
+
+  public List<Book> searchBookByAuthor(String author) throws SQLException {
+	  Statement stmt = con.createStatement();
+	  String sql = "SELECT Book.* FROM Book, HasAuthor " +
+	  		"WHERE Book.callNumber=HasAuthor.callNumber AND HasAuthor.name='" + author + "'";
+	  ResultSet rs = stmt.executeQuery(sql);
+	  ArrayList<Book> lob = new ArrayList<Book>();
+	  while(rs.next()) {
+		  String callNo = rs.getString(1);
+		  Book b = new Book();
+		  b.setCallNumber(callNo);
+		  b = b.get();
+		  lob.add(b);
 	  }
+	  return lob;
+  }
   
-  public List<Book> searchBookBySubject(String title) {
-	  try{
+  public List<Book> searchBookBySubject(String subject) throws SQLException {
 	  Statement stmt = Conn.getInstance().getConnection().createStatement();
-	  String sql = "Select Book.CallNumber FROM Book, HasSubject WHERE Book.CallNumber = HasSubject.CallNumber AND HasSubject.subject = '"+title+"'";
+	  String sql = "Select Book.CallNumber FROM Book, HasSubject " +
+	  		"WHERE Book.CallNumber = HasSubject.CallNumber AND HasSubject.subject = '" + subject + "'";
 	  ResultSet rs = stmt.executeQuery(sql);
 	  ArrayList<Book> lob = new ArrayList<Book>();
 	  while(rs.next()) {
 			String callNo = rs.getString(1);
 			Book b = new Book();
 			b.setCallNumber(callNo);
-			b=b.get();
+			b = b.get();
 			lob.add(b);
 	  }
 	  return lob;
-	  
-	  
-  }catch (SQLException S){
-	  S.printStackTrace();
-	  return null;
-  }
   }
   
-  public void checkAccount() {
+  public void checkAccount() throws SQLException {
+	  Statement stmt1 = con.createStatement();
+	  String sql1 = "SELECT Book.callNumber FROM Borrower, Book, Borrowing, BookCopy " +
+	  		"WHERE Book.callNumber=Borrowing.callNumber AND Borrower.bid=Borrowing.bid " +
+	  		"AND BookCopy.callNumber=Book.callNumber And BookCopy.status='out'";
+	  ResultSet rsCheckedOut = stmt1.executeQuery(sql1);
+	  ArrayList<Book> lob = new ArrayList<Book>();
+	  while(rsCheckedOut.next()) {
+			String callNo = rsCheckedOut.getString(1);
+			Book b = new Book();
+			b.setCallNumber(callNo);
+			b = b.get();
+			lob.add(b);
+	  }
+	  
+	  Statement stmt2 = con.createStatement();
+	  String sql2 = "SELECT Fine.fid FROM Borrower, Fine, Borrowing " +
+	  		"WHERE Borrower.bid=Borrowing.bid AND Borrowing.borid=Fine.borid";
+	  ResultSet rsFines = stmt2.executeQuery(sql2);
+	  ArrayList<Fine> lof = new ArrayList<Fine>();
+	  while(rsFines.next()) {
+			int fid = rsFines.getInt(1);
+			Fine f = new Fine();
+			f.setFid(fid);
+			f = f.get();
+			lof.add(f);
+	  }
+	  
+	  Statement stmt3 = con.createStatement();
+	  String sql3 = "SELECT HoldRequest.hid FROM Borrower, HoldRequest " +
+	  		"WHERE Borrower.bid=HoldRequest.bid";
+	  ResultSet rsHolds = stmt3.executeQuery(sql3);
+	  ArrayList<HoldRequest> loh = new ArrayList<HoldRequest>();
+	  while(rsHolds.next()) {
+			int hid = rsHolds.getInt(1);
+			HoldRequest h = new HoldRequest();
+			h.setHid(hid);
+			h = h.get();
+			loh.add(h);
+	  }
 	  
   }
   
-  public void placeHoldRequest(String isbn) {
+  public void placeHoldRequest(String isbn) throws SQLException {
+	  Book b = new Book();
+	  b.setIsbn(isbn);
+	  b = b.get();
+	  String call = b.getCallNumber();
 	  
+	  Statement stmt = con.createStatement();
+	  HoldRequest h;
+	  String sql = "INSERT INTO HoldRequest (hid, bid, callNumber, issueDate) " +
+	  		"VALUES ('RANDHID'," + this.bid + "'" + call + "', GETDATE())";
+	  ResultSet rs = stmt.executeQuery(sql);
   }
   
-  public void payFine(Integer borid, Integer amountInCents) {
-	  
+  public void payFine(Integer borid, Integer amountInCents) throws SQLException {
+	  Fine f = new Fine();
+	  f.setAmount(amountInCents);
+	  f = f.get();
+	  if(amountInCents==f.getAmount()) {
+		  Statement stmt = con.createStatement();
+		  String sql = "DELETE FROM Fine WHERE EXISTS " +
+		  		"(SELECT Borrower.bid FROM Borrower, Fine, Borrowing " +
+		  		"WHERE Borrower.bid=Borrowing.bid AND Fine.borid=" + borid + ")";
+		  ResultSet rs = stmt.executeQuery(sql);
+		  System.out.println("Amount paid in full.");
+	  }
+	  else {
+		  
+	  }
   }
-
-@Override
-public boolean insert() throws SQLException {
-	// TODO Auto-generated method stub
-	return false;
-}
 
 }
