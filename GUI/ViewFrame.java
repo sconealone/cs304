@@ -762,9 +762,9 @@ public class ViewFrame extends javax.swing.JFrame {
           {
             String msg = "There are errors in the following fields:\n"
                     + ((reportYearError) ? 
-                      '\t'+popularReportYearSelectLabel.getName() + '\n' : "")
+                      '-'+popularReportYearSelectLabel.getName() + '\n' : "")
                     + ((reportNError) ?
-                      '\t'+popularReportNSelectLabel.getName() + '\n' : "")
+                      '-'+popularReportNSelectLabel.getName() + '\n' : "")
                     + "Please correct them and resubmit.";
             JOptionPane.showMessageDialog(this, msg, "Input error", JOptionPane.ERROR_MESSAGE);
             return;
