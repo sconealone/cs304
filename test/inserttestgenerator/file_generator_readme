@@ -1,0 +1,6 @@
+Usage:
+
+The main program is located in InsertFileGenerator.  
+You can use the command line arguments to specify values for 
+number of Borrower, Book, Borrowing, Fine, and Hold Requests.
+If you don't then a default number is used.

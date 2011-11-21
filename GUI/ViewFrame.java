@@ -28,6 +28,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 /*
  * ViewFrame.java
  *
@@ -236,63 +238,6 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(searchPanel, "Search for book");
         searchPanel.setLayout(null);
-        
-        titleTextField = new JTextField();
-        titleTextField.setBounds(36, 34, 200, 20);
-        searchPanel.add(titleTextField);
-        titleTextField.setColumns(10);
-        
-        subjectTextField = new JTextField();
-        subjectTextField.setBounds(298, 34, 200, 20);
-        searchPanel.add(subjectTextField);
-        subjectTextField.setColumns(10);
-        
-        authorTextField = new JTextField();
-        authorTextField.setBounds(573, 34, 200, 20);
-        searchPanel.add(authorTextField);
-        authorTextField.setColumns(10);
-        
-        JButton searchTitle = new JButton("Search");
-        searchTitle.addMouseListener(new MouseAdapter() {
-        	@Override
-        	public void mouseClicked(MouseEvent arg0) {
-        		//search by title.. note text input from txtpnSearchByTitle
-        		//String txt = txtpnSearchByTitle
-        		
-        	}
-        });
-        searchTitle.setBounds(35, 66, 117, 29);
-        searchPanel.add(searchTitle);
-        
-        JButton searchSubject = new JButton("Search");
-        searchSubject.setBounds(298, 66, 117, 29);
-        searchPanel.add(searchSubject);
-        
-        JButton searchAuthor = new JButton("Search");
-        searchAuthor.setBounds(573, 66, 117, 29);
-        searchPanel.add(searchAuthor);
-        
-        JTextPane txtpnSearchByTitle = new JTextPane();
-        txtpnSearchByTitle.setText("Search By Title");
-        txtpnSearchByTitle.setBounds(36, 6, 200, 16);
-        searchPanel.add(txtpnSearchByTitle);
-        
-        JTextPane txtpnSearchBySubject = new JTextPane();
-        txtpnSearchBySubject.setText("Search By Subject");
-        txtpnSearchBySubject.setBounds(298, 6, 200, 16);
-        searchPanel.add(txtpnSearchBySubject);
-        
-        JTextPane txtpnSearchByAuthor = new JTextPane();
-        txtpnSearchByAuthor.setText("Search By Author");
-        txtpnSearchByAuthor.setBounds(573, 6, 200, 16);
-        searchPanel.add(txtpnSearchByAuthor);
-        
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(6, 107, 788, 404);
-        searchPanel.add(scrollPane);
-        
-        table_1 = new JTable();
-        scrollPane.setColumnHeaderView(table_1);
 
         checkAccountPanel.setLayout(new java.awt.BorderLayout());
 
@@ -826,9 +771,9 @@ public class ViewFrame extends javax.swing.JFrame {
           {
             String msg = "There are errors in the following fields:\n"
                     + ((reportYearError) ? 
-                      '\t'+popularReportYearSelectLabel.getName() + '\n' : "")
+                      '-'+popularReportYearSelectLabel.getName() + '\n' : "")
                     + ((reportNError) ?
-                      '\t'+popularReportNSelectLabel.getName() + '\n' : "")
+                      '-'+popularReportNSelectLabel.getName() + '\n' : "")
                     + "Please correct them and resubmit.";
             JOptionPane.showMessageDialog(this, msg, "Input error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -1141,8 +1086,4 @@ public class ViewFrame extends javax.swing.JFrame {
     private static final String REPORT_POPULAR="Popular books report";
     private static final String REPORT_CHECKED_OUT="Checked-out report";
     private JSplitPane splitPane;
-    private JTextField subjectTextField;
-    private JTextField titleTextField;
-    private JTextField authorTextField;
-    private JTable table_1;
 }
