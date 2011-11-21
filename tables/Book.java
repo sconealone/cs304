@@ -22,8 +22,8 @@ public class Book implements Table {
 	private String mainAuthor;
 	private String publisher;
 	private int year;
- 	private ArrayList<String> subjects;	
- 	private ArrayList<String> authors;
+	private ArrayList<String> subjects;	
+	private ArrayList<String> authors;
 	private Connection c;
 	private Statement stmt;
 
@@ -82,7 +82,7 @@ public class Book implements Table {
 			columnNames[i] = md.getColumnName(i + 1);
 		}
 		borrowingGrowable.add(columnNames);
-		
+
 		//		int max = Math.max(authors.size(), subjects.size());
 		//		String[][] stringTable = new String[8][max];
 		//		stringTable[0][0] = callNumber;
@@ -205,14 +205,19 @@ public class Book implements Table {
 				+"',"
 				+year
 				+")";
-		
-		
+
+
 		Statement stmt = c.createStatement();
-		// stmt is a statement object
-		//int rowCount = stmt.executeUpdate(sql1); 
 		int rowCount1 = stmt.executeUpdate(sql); 
 
-		//stmt.executeUpdate("INSERT INTO branch VALUES (20, 'Richmond Main', " + "'18122 No.5 Road', 'Richmond', 5252738)");
+		for(int i=0;i<subjects.size();i++){
+		HasSubject hS = new HasSubject(subjects.get(i),callNumber);
+			i++;
+		}
+		for(int i=0;i<authors.size();i++){
+			HasAuthor hA = new HasAuthor(authors.get(i),callNumber);
+			i++;
+		}
 		return true;
 
 	}
@@ -234,8 +239,8 @@ public class Book implements Table {
 	 */
 	@Override
 	public Book get() throws SQLException {
-		stmt = c.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM Book WHERE callNumber = "+callNumber);
+		Statement stmt1 = Conn.getInstance().getConnection().createStatement();
+		ResultSet rs = stmt1.executeQuery("SELECT * FROM Book WHERE callNumber = "+callNumber);
 
 		if(rs!=null && rs.next()){
 			callNumber = rs.getString(1);
@@ -246,6 +251,7 @@ public class Book implements Table {
 			year = rs.getInt(6);
 
 			//how to handle authors/subjects?
+			//c.close();
 			return this;
 		}
 

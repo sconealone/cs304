@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import users.Conn;
 
@@ -49,6 +50,23 @@ public class HasSubject implements Displayable
     subject = rs.getString(paramIndex++);
     
   }
+  
+  /**
+   * create a HasSubject object and add it to the database
+   * 
+   * @param subArg
+   * @param callNumArg
+   * @throws SQLException
+   */
+  public HasSubject(String subArg, String callNumArg) throws SQLException{
+	  con = Conn.getInstance().getConnection();
+	  String sql = "INSERT INTO HasSubject VALUES('" +callNumArg + "','" +subArg+"')";
+	  Statement stmt = con.createStatement();
+	  stmt.execute(sql);
+	  callNumber = callNumArg;
+	  subject = subArg;
+  }
+  
   
   /**
    * displays the table as a 2D array of Strings. The first row is the 

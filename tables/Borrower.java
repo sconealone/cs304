@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -263,8 +264,26 @@ public class Borrower implements Table {
 	  }
   
   public List<Book> searchBookBySubject(String title) {
-		return null;  
+	  try{
+	  Statement stmt = Conn.getInstance().getConnection().createStatement();
+	  String sql = "Select Book.CallNumber FROM Book, HasSubject WHERE Book.CallNumber = HasSubject.CallNumber AND HasSubject.subject = '"+title+"'";
+	  ResultSet rs = stmt.executeQuery(sql);
+	  ArrayList<Book> lob = new ArrayList<Book>();
+	  while(rs.next()) {
+			String callNo = rs.getString(1);
+			Book b = new Book();
+			b.setCallNumber(callNo);
+			b=b.get();
+			lob.add(b);
 	  }
+	  return lob;
+	  
+	  
+  }catch (SQLException S){
+	  S.printStackTrace();
+	  return null;
+  }
+  }
   
   public void checkAccount() {
 	  

@@ -6,12 +6,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import tables.Book;
+import tables.Borrower;
 import users.Conn;
 
 public class tablesTest {
@@ -34,6 +36,14 @@ public class tablesTest {
 	Book b;
 	Connection c = Conn.getInstance().getConnection();
 
+	
+	@Test
+	public void testSearchBySubject() throws SQLException{
+		testBookInsert();
+		Borrower bor = new Borrower();
+		List<Book> lob = bor.searchBookBySubject("astrobiology");
+		assertEquals(lob.get(0).getCallNumber(), "123456789");
+	}
 	@Test
 	public void testBookInsert() throws SQLException {
 
