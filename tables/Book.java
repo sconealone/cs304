@@ -22,8 +22,8 @@ public class Book implements Table {
 	private String mainAuthor;
 	private String publisher;
 	private int year;
- 	private ArrayList<String> subjects;	
- 	private ArrayList<String> authors;
+	private ArrayList<String> subjects;	
+	private ArrayList<String> authors;
 	private Connection c;
 	private Statement stmt;
 
@@ -61,8 +61,8 @@ public class Book implements Table {
 	}
 
 	/**
-	 * PRE: assume the values in this object are initialized
-	 * return a 2d array of strings to display 
+	 *
+	 * return a 2d array of strings, each row represents a tuple in the database
 	 * @throws SQLException 
 	 */
 	@Override
@@ -82,7 +82,7 @@ public class Book implements Table {
 			columnNames[i] = md.getColumnName(i + 1);
 		}
 		borrowingGrowable.add(columnNames);
-		
+
 		//		int max = Math.max(authors.size(), subjects.size());
 		//		String[][] stringTable = new String[8][max];
 		//		stringTable[0][0] = callNumber;
@@ -192,29 +192,32 @@ public class Book implements Table {
 	 */
 	public boolean insert() throws SQLException{
 
-		String sql = "INSERT INTO Book VALUES ("
-				+ callNumber 
-				+ ","
+		String sql = "INSERT INTO Book VALUES ('"
+				+callNumber 
+				+"','"
 				+isbn
-				+ ","
+				+"','"
 				+title
-				+ ","
+				+"','"
 				+mainAuthor
-				+ ","
+				+"','"
 				+publisher
-				+ ","
+				+"',"
 				+year
-				+","
-				+ callNumber
 				+")";
-		
-		Statement stmt = c.createStatement();
-		// stmt is a statement object
-		int rowCount = stmt.executeUpdate(sql); 
-		
-		
 
-		//stmt.executeUpdate("INSERT INTO branch VALUES (20, 'Richmond Main', " + "'18122 No.5 Road', 'Richmond', 5252738)");
+
+		Statement stmt = c.createStatement();
+		int rowCount1 = stmt.executeUpdate(sql); 
+
+		for(int i=0;i<subjects.size();i++){
+		HasSubject hS = new HasSubject(subjects.get(i),callNumber);
+			i++;
+		}
+		for(int i=0;i<authors.size();i++){
+			HasAuthor hA = new HasAuthor(authors.get(i),callNumber);
+			i++;
+		}
 		return true;
 
 	}
@@ -235,10 +238,11 @@ public class Book implements Table {
 	 * @throws SQLException 
 	 */
 	@Override
-	public Table get() throws SQLException {
-		ResultSet rs = stmt.executeQuery("SELECT * FROM Book WHERE callNumber = "+callNumber);
+	public Book get() throws SQLException {
+		Statement stmt1 = Conn.getInstance().getConnection().createStatement();
+		ResultSet rs = stmt1.executeQuery("SELECT * FROM Book WHERE callNumber = "+callNumber);
 
-		if(rs!=null){
+		if(rs!=null && rs.next()){
 			callNumber = rs.getString(1);
 			isbn = rs.getString(2); 
 			title = rs.getString(3);
@@ -247,6 +251,7 @@ public class Book implements Table {
 			year = rs.getInt(6);
 
 			//how to handle authors/subjects?
+			//c.close();
 			return this;
 		}
 
