@@ -47,7 +47,7 @@ public class tablesTest {
 		
 		assertEquals(5,5);
 		//assertEquals("15",b.display());
-		//assertTrue(b.insert());
+		assertTrue(b.insert());
 		//b.get();
 	}
 
