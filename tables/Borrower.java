@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import tables.Book;
+import tables.Table;
 import users.Conn;
 
 public class Borrower implements Table {
