@@ -63,6 +63,9 @@ public class Controller {
     systemClerk = new Clerk();
     systemLibrarian = new Librarian();
     systemBorrower = new Borrower();
+   
+
+
   }
   
   /**
@@ -111,6 +114,27 @@ public class Controller {
       table = (new Fine()).display();
     }
     return table;
+  }
+
+  /**
+   * @return the systemClerk
+   */
+  public Clerk getSystemClerk() {
+    return systemClerk;
+  }
+
+  /**
+   * @return the systemLibrarian
+   */
+  public Librarian getSystemLibrarian() {
+    return systemLibrarian;
+  }
+
+  /**
+   * @return the systemBorrower
+   */
+  public Borrower getSystemBorrower() {
+    return systemBorrower;
   }
 }
 

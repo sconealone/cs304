@@ -45,7 +45,7 @@ public class Clerk {
 		borr.setBid(borid);
 		borr = (Borrower) borr.get();
 
-		if (borr.getValid()) {
+		if (borr.) {
 			for (int i = 0; i < callNos.length; i++) {
 				Book b = new Book(callNos[i]);
 				if (b.isAvail()) {

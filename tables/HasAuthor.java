@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import users.Conn;
 
@@ -48,6 +49,20 @@ public class HasAuthor implements Displayable
     callNumber = rs.getString(paramIndex++);
     name = rs.getString(paramIndex++);
     
+  }
+  /**
+   * create a HasAuthor object and add it to the database
+   * @param nameArg
+   * @param callNumArg
+   * @throws SQLException
+   */
+  public HasAuthor(String nameArg, String callNumArg) throws SQLException{
+	  con =Conn.getInstance().getConnection();
+	  String sql = "INSERT INTO HasAuthor VALUES('" +callNumArg + "','" +nameArg+"')";
+	  Statement stmt = con.createStatement();
+	  stmt.execute(sql);
+	  callNumber = callNumArg;
+	  name = nameArg;
   }
   
   /**

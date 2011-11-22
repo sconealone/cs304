@@ -1,12 +1,24 @@
 package users;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import tables.Book;
 import tables.BookCopy;
+import tables.Borrower;
+import tables.CheckedOutBookCopy;
+import tables.PopularBookReport;
 
-public class Librarian {
+
+/**
+ * This class encapsulates the functionality for the Librarian user.
+ * @author Mitch
+ */
+public class Librarian 
+{
 	
   /**
    * Adds a new book to the library catalogue.  
@@ -20,6 +32,7 @@ public class Librarian {
    * @param title The book's title
    * @param mainAuthor The main author of the book
    * @param publisher The publisher of the book
+   * @param year the year the book was published
    * @param additionalAuthors 0..n additional authors.  The main author
    * must not be repeated here, and there must not be any dupicate authors
    * @param subjects 1..n subjects that the book is about
@@ -30,11 +43,23 @@ public class Librarian {
                               String title,
                               String mainAuthor,
                               String publisher,
+                              int year,
                               String[] additionalAuthors,
                               String[] subjects)
           throws SQLException
   {
-    return false;
+    ArrayList<String> additionalAuthorsList = 
+            new ArrayList<String>(Arrays.asList(additionalAuthors));
+    ArrayList<String> subjectsList = 
+            new ArrayList<String>(Arrays.asList(subjects));
+    return (new Book( callNumber, 
+                      isbn, 
+                      title, 
+                      mainAuthor, 
+                      publisher,
+                      year,
+                      additionalAuthorsList,
+                      subjectsList)).insert();
   }
 
   /**
@@ -49,6 +74,7 @@ public class Librarian {
    * @param title The book's title
    * @param mainAuthor The main author of the book
    * @param publisher The publisher of the book
+   * @param year the year the book was published
    * @param additionalAuthors 0..n additional authors.  The main author
    * must not be repeated here, and there must not be any dupicate authors
    * @param subjects 1..n subjects that the book is about
@@ -56,18 +82,51 @@ public class Librarian {
    * @pre numCopies is a non-negative number
    * @return a list of the new copy numbers that were generated
    * @throws SQLException if the book could not be added to the database
+   * or any copy could not be added to the database
+   * 
+   * assumes that Book::insert() also updates the hasauthor and hassubject
+   * tables
    */
   public String[] addNewBook( String callNumber,
                               String isbn,
                               String title,
                               String mainAuthor,
                               String publisher,
+                              int year,
                               String[] additionalAuthors,
                               String[] subjects,
                               int numCopies)
           throws SQLException
   {
-    return null;
+    
+    ArrayList<String> additionalAuthorsList = 
+            new ArrayList<String>(Arrays.asList(additionalAuthors));
+    ArrayList<String> subjectsList = 
+            new ArrayList<String>(Arrays.asList(subjects));
+    
+    
+    
+    Connection con = Conn.getInstance().getConnection();
+    con.setAutoCommit(false);
+    try
+    {
+      Book newBook =  new Book( callNumber, 
+                                isbn, 
+                                title, 
+                                mainAuthor, 
+                                publisher,
+                                year,
+                                additionalAuthorsList,
+                                subjectsList);
+      newBook.insert();
+      
+      return addNewCopiesToBookWithLatestCopyNumber(numCopies, newBook, null);
+    } // end try
+    finally
+    {
+      con.setAutoCommit(true);
+    }
+    
   }
   
   /**
@@ -79,11 +138,68 @@ public class Librarian {
    * @param numCopies the number of copies to add. must be a positive number
    * @return the copy numbers of the new copies added
    * @throws SQLException 
+   * 
+   * TODO move the commented block to the BookCopy class when the BookCopy
+   * class is stable
    */
   public String[] addNewCopies(String callNumber, int numCopies)
           throws SQLException
   {
-    return null;
+    Book book = new Book();
+    book.setCallNumber(callNumber);
+    
+    // move this block to BookCopy class and call that method
+    String latestCopyNumber;
+    String sql = "SELECT MAX(copyNo) "
+            + "FROM BookCopy "
+            + "WHERE callNumber = ?"
+            + "GROUP BY callNumber";
+    Connection con = Conn.getInstance().getConnection();
+    PreparedStatement ps = con.prepareStatement(sql);
+    ps.setString(1, callNumber);
+    ResultSet rs = ps.executeQuery();
+    latestCopyNumber = (rs.next()) ? rs.getString(1) : null;
+    // end move this block to BookCopy class and call that method
+    
+    return addNewCopiesToBookWithLatestCopyNumber(  numCopies, 
+                                                    book, 
+                                                    latestCopyNumber);
+  }
+  
+  /**
+   * Adds n new copies of and existing book that already has copies to the library.
+   * @param numCopies number of copies to add
+   * @param book the book to add copies of
+   * @param latestCopyNo the copy number of the book's most recent copy
+   * @return a list of the copy numbers that were added
+   * @throws SQLException 
+   */
+  private String[] addNewCopiesToBookWithLatestCopyNumber ( int numCopies, 
+                                                            Book book,
+                                                            String latestCopyNo)
+          throws SQLException
+  {
+    int copyNoAsInt = (latestCopyNo==null) ?
+            0 : Integer.parseInt(latestCopyNo.substring(1));
+    copyNoAsInt++;
+    ArrayList<String> copyNumbersGrowable = new ArrayList<String>();
+    for (int i = 0; i < numCopies; i++)
+    {
+      String copyNoAsString = "C"+copyNoAsInt;
+      BookCopy newBookCopy = new BookCopy(copyNoAsString,"in",book);
+      if (newBookCopy.insert())
+      {
+        copyNumbersGrowable.add(copyNoAsString);
+        copyNoAsInt++;
+      }
+      else
+      {
+        String msg = "Insertion of copyNo "+copyNoAsString+" failed.";
+        throw new SQLException(msg);
+      }
+    }
+    
+    return (String[]) copyNumbersGrowable.toArray();
   }
 	
   /**
@@ -96,7 +212,9 @@ public class Librarian {
    */
   public boolean removeBook(String callNumber) throws SQLException
   {
-    return false;
+    Book book = new Book();
+    book.setCallNumber(callNumber);
+    return book.delete();
   }
 
   /**
@@ -111,7 +229,12 @@ public class Librarian {
   public boolean removeBookCopy(String callNumber, String copyNo)
           throws SQLException
   {
-    return false;
+    Book book = new Book();
+    book.setCallNumber(callNumber);
+    BookCopy bookCopy = new BookCopy();
+    bookCopy.setB(book);
+    bookCopy.setCopyNo(copyNo);
+    return bookCopy.delete();
   }
   
   /**
@@ -128,7 +251,25 @@ public class Librarian {
   public boolean removeBookCopy(String callNumber, String[] copyNos) 
           throws SQLException
   {
-    return false;
+    Connection con = Conn.getInstance().getConnection();
+    boolean wereAllDeletesSuccessful = true;
+    con.setAutoCommit(false);
+    try
+    {
+      int numCopiesToDelete = copyNos.length;
+      int index = 0;
+      while (wereAllDeletesSuccessful && index < numCopiesToDelete)
+      {
+        wereAllDeletesSuccessful =
+                wereAllDeletesSuccessful && removeBookCopy(callNumber, copyNos[index]);
+        index++;
+      }
+      return wereAllDeletesSuccessful;
+    }
+    finally
+    {
+      con.setAutoCommit(true);
+    }
   }
 
   /**
@@ -140,7 +281,9 @@ public class Librarian {
   public boolean removeBorrower(int bid)
           throws SQLException
   {
-    return false;
+    Borrower borrower = new Borrower();
+    borrower.setBid(bid);
+    return borrower.delete();
   }
 
   /**
@@ -155,7 +298,9 @@ public class Librarian {
   public String[][] getCheckedOutBooksReport() 
           throws SQLException
   {
-    return null;
+    CheckedOutBookCopy co = new CheckedOutBookCopy();
+    co.flagOverdue();
+    return co.display();
   }
 
   /**
@@ -171,7 +316,10 @@ public class Librarian {
   public String[][] getCheckedOutBooksReport(String subject)
           throws SQLException
   {
-    return null;
+    CheckedOutBookCopy co = new CheckedOutBookCopy();
+    co.setSubjectToFilterBy(subject);
+    co.flagOverdue();
+    return co.display();
   }
   
   /**
@@ -185,10 +333,68 @@ public class Librarian {
    * column names as the first row.
    * @throws SQLException 
    */
-  public String[][] getPopularBOoks(int year, int n) 
+  public String[][] getPopularBooks(int year, int n) 
           throws SQLException
   {
-    return null;
+    PopularBookReport br = new PopularBookReport(year, n);
+    return br.display();
+  }
+  
+  /**
+   * only for testing
+   * @param args 
+   */
+  public static void main(String[] args) throws Exception {
+    Librarian l = new Librarian();
+    /* 
+     * won't work until people finish implementing insert
+     
+    String[] additionalAuthors = {"Foo Bar", "Foo Baz"};
+    String[] subjects = {"Science"};
+    l.addNewBook("QA111 M100 2011","12345","The adventures of Mitch",
+            "Foo Bat", "McGraw Mountain",2011,additionalAuthors,
+            subjects);
+    
+    l.addNewBook("QA112 M100 2011","12346","The further adventures of Mitch",
+            "Foo Bat", "McGraw Mountain",2011,additionalAuthors,
+            subjects, 5);
+    
+    l.addNewCopies("QA111 M100 2011", 2);
+    */
+    String[][] displayTable;
+    displayTable = l.getCheckedOutBooksReport();
+    display(displayTable);
+    displayTable = l.getCheckedOutBooksReport("Science");
+    display(displayTable);
+    display(l.getPopularBooks(2005, 5));
+    /*
+     * won't work until people finish implementing delete
+     
+    Book b = new Book();
+    BookCopy bc = new BookCopy();
+    l.removeBook("QA111 M100 2011");
+    display(b.display());
+    display(bc.display());
+    l.removeBookCopy("QA112 M100 2011", "C3");
+    display(bc.display());
+    String[] copyNos = {"C4","C5"};
+    l.removeBookCopy("QA111 M100 2011", copyNos);
+    display(bc.display());
+    l.removeBook("QA111 M100 2011");
+    display(bc.display());
+     */
+  }
+  
+  private static void display(String[][] displayTable)
+  {
+    for (String[] a : displayTable)
+    {
+      for (String b: a)
+      {
+        System.out.print(b + '\t');
+      }
+      System.out.println();
+    }
   }
 	
 }

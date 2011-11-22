@@ -14,6 +14,7 @@ import users.Conn;
  * @author Christiaan Fernando
  *
  */
+
 public class BookCopy implements Table {
 
 	private String copyNo;
