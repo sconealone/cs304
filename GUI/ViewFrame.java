@@ -88,6 +88,11 @@ public class ViewFrame extends javax.swing.JFrame {
         viewTablePane = new javax.swing.JScrollPane();
         entitiesTable = new javax.swing.JTable();
         searchPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jComboBox1 = new javax.swing.JComboBox();
+        jTextField1 = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         checkAccountPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         payFinePanel = new javax.swing.JPanel();
@@ -234,65 +239,22 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(tablesPanel, "View tables");
 
+        searchPanel.setLayout(new java.awt.BorderLayout());
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Title", "Subject", "Author" }));
+        jPanel1.add(jComboBox1);
+
+        jTextField1.setText("jTextField1");
+        jPanel1.add(jTextField1);
+
+        searchPanel.add(jPanel1, java.awt.BorderLayout.PAGE_START);
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel());
+        jScrollPane1.setViewportView(jTable1);
+
+        searchPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
         cardPanel.add(searchPanel, "Search for book");
-        searchPanel.setLayout(null);
-        
-        titleTextField = new JTextField();
-        titleTextField.setBounds(36, 34, 200, 20);
-        searchPanel.add(titleTextField);
-        titleTextField.setColumns(10);
-        
-        subjectTextField = new JTextField();
-        subjectTextField.setBounds(298, 34, 200, 20);
-        searchPanel.add(subjectTextField);
-        subjectTextField.setColumns(10);
-        
-        authorTextField = new JTextField();
-        authorTextField.setBounds(573, 34, 200, 20);
-        searchPanel.add(authorTextField);
-        authorTextField.setColumns(10);
-        
-        JButton searchTitle = new JButton("Search");
-        searchTitle.addMouseListener(new MouseAdapter() {
-        	@Override
-        	public void mouseClicked(MouseEvent arg0) {
-        		//search by title.. note text input from txtpnSearchByTitle
-        		//String txt = txtpnSearchByTitle
-        		
-        	}
-        });
-        searchTitle.setBounds(35, 66, 117, 29);
-        searchPanel.add(searchTitle);
-        
-        JButton searchSubject = new JButton("Search");
-        searchSubject.setBounds(298, 66, 117, 29);
-        searchPanel.add(searchSubject);
-        
-        JButton searchAuthor = new JButton("Search");
-        searchAuthor.setBounds(573, 66, 117, 29);
-        searchPanel.add(searchAuthor);
-        
-        JTextPane txtpnSearchByTitle = new JTextPane();
-        txtpnSearchByTitle.setText("Search By Title");
-        txtpnSearchByTitle.setBounds(36, 6, 200, 16);
-        searchPanel.add(txtpnSearchByTitle);
-        
-        JTextPane txtpnSearchBySubject = new JTextPane();
-        txtpnSearchBySubject.setText("Search By Subject");
-        txtpnSearchBySubject.setBounds(298, 6, 200, 16);
-        searchPanel.add(txtpnSearchBySubject);
-        
-        JTextPane txtpnSearchByAuthor = new JTextPane();
-        txtpnSearchByAuthor.setText("Search By Author");
-        txtpnSearchByAuthor.setBounds(573, 6, 200, 16);
-        searchPanel.add(txtpnSearchByAuthor);
-        
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(6, 107, 788, 404);
-        searchPanel.add(scrollPane);
-        
-        table_1 = new JTable();
-        scrollPane.setColumnHeaderView(table_1);
 
         checkAccountPanel.setLayout(new java.awt.BorderLayout());
 
@@ -1052,6 +1014,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private javax.swing.JPanel holdRequestPanel;
+    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -1064,6 +1027,10 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
