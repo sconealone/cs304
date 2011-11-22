@@ -814,9 +814,12 @@ public class ViewFrame extends javax.swing.JFrame {
         String searchTextField = SearchTextField.getText();
         String searchGetSelection = (String)SearchComboBox.getSelectedItem();
        // List<Book> lob = new ArrayList<Book>();
-        String[][] TwoDArrayToPrint;
+        
+        
+        String[][] TwoDArrayToPrint=null;
         Book b = new Book();
         Borrower bor = new Borrower();
+        
             if(searchGetSelection.equals("Subject")){
                 TwoDArrayToPrint=bor.searchBookBySubject(searchTextField);
             }
@@ -828,7 +831,7 @@ public class ViewFrame extends javax.swing.JFrame {
             }
             
             String[] header1 = TwoDArrayToPrint[0];
-            String[][] TwoDMinusHeader = new String[TwoDArrayToPrint.length-1][];
+            String[][] TwoDMinusHeader = new String[TwoDArrayToPrint.length-1][TwoDArrayToPrint[0].length];
             for(int i =0;i<TwoDArrayToPrint.length-1;i++){
                 TwoDMinusHeader[i]=TwoDArrayToPrint[i+1];
             }
