@@ -240,7 +240,7 @@ public class Book implements Table {
 	@Override
 	public Book get() throws SQLException {
 		Statement stmt1 = Conn.getInstance().getConnection().createStatement();
-		ResultSet rs = stmt1.executeQuery("SELECT * FROM Book WHERE callNumber = "+callNumber);
+		ResultSet rs = stmt1.executeQuery("SELECT * FROM Book WHERE callNumber ='"+callNumber+"'");
 
 		if(rs!=null && rs.next()){
 			callNumber = rs.getString(1);

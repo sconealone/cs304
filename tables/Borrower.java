@@ -568,7 +568,7 @@ public class Borrower implements Table {
 			twoDArray[0][i]= columnNames[i];
 		}
 
-		for(int i=1;i<=numRows;i++) {
+		for(int i=1;i<numRows;i++) {
 			// populate row[i] with the (i-1)th Book from lob
 			Book b = lob.get(i-1);
 			twoDArray[i][0] = b.getCallNumber().toString();
@@ -580,7 +580,7 @@ public class Borrower implements Table {
 			
 			// Counts number of copies of specific book that are in
 			Statement stmt = con.createStatement();
-			String sql = "SELECT COUNT(BookCopy) AS copiesIn FROM BookCopy " +
+			String sql = "SELECT COUNT(COPYNO) AS copiesIn FROM BookCopy " +
 					"WHERE BookCopy.callNumber='" + b.getCallNumber() + "' AND BookCopy.status='in'";
 			ResultSet rs = stmt.executeQuery(sql);
 			
@@ -593,7 +593,7 @@ public class Borrower implements Table {
 			
 			// Counts number of copies of specific book that are out
 			Statement stmt2 = con.createStatement();
-			String sql2 = "SELECT COUNT(BookCopy) AS totalCopies FROM Book, BookCopy " +
+			String sql2 = "SELECT COUNT(COPYNO) AS totalCopies FROM Book, BookCopy " +
 					"WHERE BookCopy.callNumber='" + b.getCallNumber() + "' AND BookCopy.status<>'in'";
 			ResultSet rs2 = stmt2.executeQuery(sql2);
 			

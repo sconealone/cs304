@@ -837,12 +837,13 @@ public class ViewFrame extends javax.swing.JFrame {
             }
             
             //print 2d array
-            UneditableTableModel uTM = new UneditableTableModel(TwoDArrayToPrint,header1);
+            UneditableTableModel uTM = new UneditableTableModel(TwoDMinusHeader,header1);
             SearchTable.setModel(uTM);
             SearchTable.repaint();
         }
         catch(SQLException S){
             S.printStackTrace();
+            
         }
         break;
       case CHECK_ACCOUNT:
