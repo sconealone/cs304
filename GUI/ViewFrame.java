@@ -807,7 +807,7 @@ public class ViewFrame extends javax.swing.JFrame {
         break;
       case SEARCH:
         String searchTextField = SearchTextField.getText();
-        String searchGetAlbumCommand = SearchComboBox.getActionCommand();
+        String searchGetSelection = (String)SearchComboBox.getSelectedItem();
         break;
       case CHECK_ACCOUNT:
         break;
