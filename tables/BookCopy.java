@@ -8,6 +8,13 @@ import java.util.Collection;
 
 import users.Conn;
 
+/**
+ * This class represents the BookCopy table in the database.
+ * 
+ * @author Christiaan Fernando
+ *
+ */
+
 public class BookCopy implements Table {
 
 	private String copyNo;
@@ -17,10 +24,19 @@ public class BookCopy implements Table {
 	private Connection c;
 	private Statement stmt;
 
+	/**
+	 * Default Constructor
+	 */
 	public BookCopy() {
 		c = Conn.getInstance().getConnection();
 	}
 
+	/**
+	 * 
+	 * @param copyNo
+	 * @param status
+	 * @param b
+	 */
 	public BookCopy(String copyNo, String status, Book b) {
 		this.copyNo = copyNo;
 		this.status = status;
