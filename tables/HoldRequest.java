@@ -4,11 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.List;
 
 import users.Conn;
 
@@ -84,7 +82,37 @@ public class HoldRequest implements Table {
 			borr.setBid(rs.getInt(4));
 			borr = (Borrower) borr.get();
 		}
-		
+
+		c = Conn.getInstance().getConnection();
+	}
+
+	/**
+	 * HoldRequest Constructor.
+	 * 
+	 * This constructor takes in a Borrower and a Book and finds the HoldRequest
+	 * entry in the SQL table that has these two values. This assumes the entry
+	 * already exists. If it does not, this will call the default constructor.
+	 * 
+	 * @param borr
+	 *            Borrower whose bid is shared with the HoldRequest
+	 * @param b
+	 *            Book whose callNo is shared with the HoldRequest
+	 * @throws SQLException
+	 */
+	public HoldRequest(Borrower borr, Book b) throws SQLException {
+		ps = c.prepareStatement("SELECT * FROM HoldRequest WHERE bid = ?, callNo = ?");
+		ps.setInt(1, borr.getBid());
+		ps.setString(2, b.getCallNumber());
+
+		rs = ps.executeQuery();
+
+		if (rs.next()) {
+			this.hid = rs.getInt(1);
+			this.issueDate.setTime(rs.getDate(2));
+			this.b = b;
+			this.borr = borr;
+		}
+
 		c = Conn.getInstance().getConnection();
 	}
 
@@ -97,8 +125,8 @@ public class HoldRequest implements Table {
 	/**
 	 * Updates the SQL table.
 	 * 
-	 * This updates this HoldRequest item in the HoldRequest table. This assumes
-	 * the item already exists.
+	 * This updates this HoldRequest object in the HoldRequest table. This
+	 * assumes the item already exists.
 	 */
 	@Override
 	public void update() throws SQLException {
@@ -120,7 +148,7 @@ public class HoldRequest implements Table {
 	/**
 	 * Deletes from the SQL table.
 	 * 
-	 * This deletes the HoldRequest item from the HoldRequest table.
+	 * This deletes the HoldRequest object from the HoldRequest table.
 	 */
 	@Override
 	public boolean delete() throws SQLException {
@@ -140,7 +168,7 @@ public class HoldRequest implements Table {
 	/**
 	 * Inserts into the SQL table.
 	 * 
-	 * This inserts the HoldRequest item into the HoldRequest table. This
+	 * This inserts the HoldRequest object into the HoldRequest table. This
 	 * assumes the item doesn't already exist.
 	 */
 	@Override
@@ -175,7 +203,7 @@ public class HoldRequest implements Table {
 	}
 
 	/**
-	 * Return the HoldRequest corresponding with the set id.
+	 * Return the HoldRequest object corresponding with the set id.
 	 * 
 	 * Given a HoldRequest object with an initialized id field, this returns the
 	 * HoldRequest object with that id field that exists in the SQL database.
@@ -188,30 +216,101 @@ public class HoldRequest implements Table {
 	 */
 	@Override
 	public Table get() throws SQLException {
-		return (new HoldRequest((Integer) hid));
+		if (hid != null)
+			return (new HoldRequest((Integer) hid));
+		else if (borr != null && b != null) {
+			return (new HoldRequest(borr, b));
+		}
+		return null;
 	}
 
 	/**
-	 * Return all HoldRequest items from a given Borrower.
+	 * Return all HoldRequest objects from a given Borrower.
 	 * 
-	 * Given a borrower's id, this returns all the HoldRequests made by that
+	 * Given a borrower, this returns all the HoldRequests made by that
 	 * borrower.
 	 * 
-	 * @param borid
-	 *            Borrower id
+	 * @param borr
+	 *            Borrower whose bid is shared with the HoldRequest
 	 * @return ArrayList of HoldRequests
 	 * @throws SQLException
 	 */
-	public Collection<Table> getAll(int borid) throws SQLException {
+	public Collection<Table> getAll(Borrower borr) throws SQLException {
 		Collection<Table> holdRequests = new ArrayList<Table>();
 		ps = c.prepareStatement("SELECT * FROM HoldRequest WHERE bid = ?");
-		ps.setInt(1, borid);
+		ps.setInt(1, borr.getBid());
 
 		rs = ps.executeQuery();
 
 		while (rs.next()) {
-			holdRequests.add(new HoldRequest(rs.getInt(4)));
+			HoldRequest hr = new HoldRequest();
+			Book b = new Book();
+
+			b.setCallNumber(rs.getString(3));
+			b = (Book) b.get();
+
+			hr.setHid(rs.getInt(1));
+			hr.setB(b);
+			hr.setBorr(borr);
+			hr.getIssueDate().setTime(rs.getDate(4));
+			holdRequests.add(hr);
 		}
+
+		return holdRequests;
+	}
+
+	/**
+	 * Return all HoldRequest objects for a given Book.
+	 * 
+	 * Given a book, this returns all the HoldRequests for a particular book.
+	 * 
+	 * @param b
+	 *            Book whose callNo is shared with the HoldRequest
+	 * @return ArrayList of HoldRequests
+	 * @throws SQLException
+	 */
+	public Collection<Table> getAll(Book b) throws SQLException {
+		Collection<Table> holdRequests = new ArrayList<Table>();
+		ps = c.prepareStatement("SELECT * FROM HoldRequest WHERE callNo = ?");
+		ps.setString(1, b.getCallNumber());
+
+		rs = ps.executeQuery();
+
+		while (rs.next()) {
+			HoldRequest hr = new HoldRequest();
+			Borrower borr = new Borrower();
+
+			borr.setBid(rs.getInt(2));
+			borr = (Borrower) borr.get();
+
+			hr.setHid(rs.getInt(1));
+			hr.setB(b);
+			hr.setBorr(borr);
+			hr.getIssueDate().setTime(rs.getDate(4));
+			holdRequests.add(hr);
+		}
+
+		return holdRequests;
+	}
+
+	/**
+	 * Return all HoldRequest objects made by a given Borrower for a given Book.
+	 * 
+	 * Given a borrower and a book, this returns all the HoldRequests for that
+	 * borrower and that book. Technically, this is supposed to return only one
+	 * HoldRequest.
+	 * 
+	 * @param borr
+	 *            Borrower whose bid is shared with the HoldRequest
+	 * @param b
+	 *            Book whose callNo is shared with the HoldRequest
+	 * @return ArrayList of HoldRequests
+	 * @throws SQLException
+	 */
+	public Collection<Table> getAll(Borrower borr, Book b) throws SQLException {
+		Collection<Table> holdRequests = new ArrayList<Table>();
+		holdRequests.addAll(getAll(borr));
+		holdRequests.retainAll(getAll(b));
 
 		return holdRequests;
 	}
