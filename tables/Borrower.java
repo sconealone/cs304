@@ -561,15 +561,16 @@ public class Borrower implements Table {
 
 		int copiesIn,copiesOut;
 		int numColumns = 8;
-		int numRows = lob.size();
+		int numRows = lob.size() + 1;
 		String[][] twoDArray = new String[numRows][numColumns];
 		String[] columnNames = {"callNumber","isbn","title","mainAuthor","publisher","year","copiesIn","copiesOut"};
 		for(int i=0;i<numColumns;i++) {
 			twoDArray[0][i]= columnNames[i];
 		}
 
-		for(int i=1;i<numRows;i++) {
-			Book b = lob.get(i);
+		for(int i=1;i<=numRows;i++) {
+			// populate row[i] with the (i-1)th Book from lob
+			Book b = lob.get(i-1);
 			twoDArray[i][0] = b.getCallNumber().toString();
 			twoDArray[i][1] = b.getIsbn();
 			twoDArray[i][2] = b.getTitle();
