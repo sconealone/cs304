@@ -241,6 +241,78 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(tablesPanel, "View tables");
 
+        checkAccountPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel3.setText("check account");
+        checkAccountPanel.add(jLabel3, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(checkAccountPanel, "Check account");
+
+        payFinePanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel4.setText("pay fine");
+        payFinePanel.add(jLabel4, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(payFinePanel, "Pay a fine");
+
+        holdRequestPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel5.setText("hold request");
+        holdRequestPanel.add(jLabel5, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(holdRequestPanel, "Place hold request");
+
+        checkOutPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel7.setText("check out");
+        checkOutPanel.add(jLabel7, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(checkOutPanel, "Check-out books");
+
+        processReturnPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel8.setText("process returns");
+        processReturnPanel.add(jLabel8, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(processReturnPanel, "Process a return");
+
+        addBorrowerPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel9.setText("add new borrower");
+        addBorrowerPanel.add(jLabel9, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(addBorrowerPanel, "Add a new borrower");
+
+        checkOverduePanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel10.setText("check overdue items");
+        checkOverduePanel.add(jLabel10, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(checkOverduePanel, "Check overdue books");
+
+        addNewBookPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel20.setText("add new book");
+        addNewBookPanel.add(jLabel20, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(addNewBookPanel, "Add new book");
+
+        addNewCopyPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel19.setText("new copy");
+        addNewCopyPanel.add(jLabel19, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(addNewCopyPanel, "Add new book copy");
+
+        removeBorrowerPanel.setLayout(new java.awt.BorderLayout());
+
+        jLabel16.setText("remove borrower");
+        removeBorrowerPanel.add(jLabel16, java.awt.BorderLayout.CENTER);
+
+        cardPanel.add(removeBorrowerPanel, "Remove borrower");
+
+        removeBookPanel.setLayout(new java.awt.BorderLayout());
+
         searchPanel.setLayout(new java.awt.BorderLayout());
 
         SearchComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Title", "Subject", "Author"}));
@@ -251,7 +323,7 @@ public class ViewFrame extends javax.swing.JFrame {
 
         searchPanel.add(SearchTopPanel, java.awt.BorderLayout.PAGE_START);
 
-        SearchTable.setModel(new javax.swing.table.DefaultTableModel();
+        SearchTable.setModel(new javax.swing.table.DefaultTableModel());
             jScrollPane1.setViewportView(SearchTable);
 
             searchPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);

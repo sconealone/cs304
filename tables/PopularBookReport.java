@@ -63,9 +63,18 @@ public class PopularBookReport implements Displayable
     String[] header = new String[numCols];
     int i = 0;
     header[i++] = "RANK";
+    //callno
     header[i] = md.getColumnName(i++);
+    
+    // title
     header[i] = md.getColumnName(i++);
+    
+    // times borrowed
     header[i] = md.getColumnName(i++);
+    
+    // year
+    header[i++] = "YEAR";
+    
     reportGrowable.add(header);
     
     int j= 1;
