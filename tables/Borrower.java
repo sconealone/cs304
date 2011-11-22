@@ -526,7 +526,7 @@ public class Borrower implements Table {
 		}
 	}
 
-	public boolean isVald() throws SQLException {
+	public boolean isValid() throws SQLException {
 	  // if Borrower has unpaid fines
 	  Statement stmt = con.createStatement();
 	  String sql = "SELECT B.bid FROM Borrower B WHERE EXISTS " +

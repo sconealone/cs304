@@ -324,8 +324,11 @@ public class ViewFrame extends javax.swing.JFrame {
         searchPanel.add(SearchTopPanel, java.awt.BorderLayout.PAGE_START);
 
         SearchTable.setModel(new javax.swing.table.DefaultTableModel());
-
+<<<<<<< HEAD
         jScrollPane1.setViewportView(SearchTable);
+=======
+            jScrollPane1.setViewportView(SearchTable);
+>>>>>>> 6ae477081b9dd58ec79a3d201ea842f69c693d96
 
         searchPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -807,7 +810,7 @@ public class ViewFrame extends javax.swing.JFrame {
         break;
       case SEARCH:
         String searchTextField = SearchTextField.getText();
-        String searchGetSelection = (String)SearchComboBox.getSelectedItem();
+        String searchGetAlbumCommand = SearchComboBox.getActionCommand();
         break;
       case CHECK_ACCOUNT:
         break;
