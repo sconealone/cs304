@@ -87,12 +87,6 @@ public class ViewFrame extends javax.swing.JFrame {
         tablesComboBox = new javax.swing.JComboBox();
         viewTablePane = new javax.swing.JScrollPane();
         entitiesTable = new javax.swing.JTable();
-        searchPanel = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox();
-        jTextField1 = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         checkAccountPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         payFinePanel = new javax.swing.JPanel();
@@ -238,23 +232,6 @@ public class ViewFrame extends javax.swing.JFrame {
         tablesPanel.add(viewTablePane, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(tablesPanel, "View tables");
-
-        searchPanel.setLayout(new java.awt.BorderLayout());
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Title", "Subject", "Author" }));
-        jPanel1.add(jComboBox1);
-
-        jTextField1.setText("jTextField1");
-        jPanel1.add(jTextField1);
-
-        searchPanel.add(jPanel1, java.awt.BorderLayout.PAGE_START);
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel());
-        jScrollPane1.setViewportView(jTable1);
-
-        searchPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(searchPanel, "Search for book");
 
         checkAccountPanel.setLayout(new java.awt.BorderLayout());
 
@@ -1014,7 +991,6 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private javax.swing.JPanel holdRequestPanel;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -1027,10 +1003,6 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
@@ -1060,7 +1032,6 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu removeMenu;
     private javax.swing.JMenu reportMenu;
     private javax.swing.JMenuItem searchMenuItem;
-    private javax.swing.JPanel searchPanel;
     private javax.swing.JPanel startComboBoxPanel;
     private javax.swing.JMenuItem startMenuItem;
     private javax.swing.JPanel startPanel;
