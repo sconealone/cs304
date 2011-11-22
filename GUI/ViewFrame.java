@@ -28,6 +28,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 /*
  * ViewFrame.java
  *
@@ -87,6 +89,12 @@ public class ViewFrame extends javax.swing.JFrame {
         tablesComboBox = new javax.swing.JComboBox();
         viewTablePane = new javax.swing.JScrollPane();
         entitiesTable = new javax.swing.JTable();
+        searchPanel = new javax.swing.JPanel();
+        SearchTopPanel = new javax.swing.JPanel();
+        SearchComboBox = new javax.swing.JComboBox();
+        SearchTextField = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        SearchTable = new javax.swing.JTable();
         checkAccountPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         payFinePanel = new javax.swing.JPanel();
@@ -305,279 +313,368 @@ public class ViewFrame extends javax.swing.JFrame {
 
         removeBookPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel14.setText("remove books and copies");
-        removeBookPanel.add(jLabel14, java.awt.BorderLayout.CENTER);
+        searchPanel.setLayout(new java.awt.BorderLayout());
 
-        cardPanel.add(removeBookPanel, "Remove books and copies");
+        SearchComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Title", "Subject", "Author"}));
+        SearchTopPanel.add(SearchComboBox);
 
-        popularReportPanel.setLayout(new java.awt.BorderLayout());
+        SearchTextField.setText("jTextField1");
+        SearchTopPanel.add(SearchTextField);
 
-        popularReportOptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Options"));
-        popularReportOptionsPanel.setLayout(new java.awt.GridBagLayout());
+        searchPanel.add(SearchTopPanel, java.awt.BorderLayout.PAGE_START);
 
-        popularReportYearSelectLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        popularReportYearSelectLabel.setText("Year to report on:");
-        popularReportYearSelectLabel.setName("Year to report on"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        popularReportOptionsPanel.add(popularReportYearSelectLabel, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 50;
-        popularReportOptionsPanel.add(popularReportYearTextField, gridBagConstraints);
+        SearchTable.setModel(new javax.swing.table.DefaultTableModel());
+            jScrollPane1.setViewportView(SearchTable);
 
-        popularReportNSelectLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        popularReportNSelectLabel.setText("Number of books in report:");
-        popularReportNSelectLabel.setName("Number of books in report"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        popularReportOptionsPanel.add(popularReportNSelectLabel, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 50;
-        popularReportOptionsPanel.add(popularReportNTextField, gridBagConstraints);
+            searchPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        popularReportPanel.add(popularReportOptionsPanel, java.awt.BorderLayout.PAGE_START);
+            cardPanel.add(searchPanel, "Search for book");
 
-        popularReportTablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Report"));
-        popularReportTablePanel.setLayout(new java.awt.BorderLayout());
+            checkAccountPanel.setLayout(new java.awt.BorderLayout());
 
-        popularReportTable.setModel(new javax.swing.table.DefaultTableModel(
+            jLabel3.setText("check account");
+            checkAccountPanel.add(jLabel3, java.awt.BorderLayout.CENTER);
 
-        ));
-        popularReportTablePane.setViewportView(popularReportTable);
+            cardPanel.add(checkAccountPanel, "Check account");
 
-        popularReportTablePanel.add(popularReportTablePane, java.awt.BorderLayout.CENTER);
+            payFinePanel.setLayout(new java.awt.BorderLayout());
 
-        popularReportPanel.add(popularReportTablePanel, java.awt.BorderLayout.CENTER);
+            jLabel4.setText("pay fine");
+            payFinePanel.add(jLabel4, java.awt.BorderLayout.CENTER);
 
-        cardPanel.add(popularReportPanel, "Popular books report");
+            cardPanel.add(payFinePanel, "Pay a fine");
 
-        checkedOutReportPanel.setLayout(new java.awt.BorderLayout());
+            holdRequestPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel13.setText("checked out");
-        checkedOutReportPanel.add(jLabel13, java.awt.BorderLayout.CENTER);
+            jLabel5.setText("hold request");
+            holdRequestPanel.add(jLabel5, java.awt.BorderLayout.CENTER);
 
-        cardPanel.add(checkedOutReportPanel, "Checked-out report");
+            cardPanel.add(holdRequestPanel, "Place hold request");
 
-        mainPanel.add(cardPanel, java.awt.BorderLayout.CENTER);
+            checkOutPanel.setLayout(new java.awt.BorderLayout());
 
-        buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+            jLabel7.setText("check out");
+            checkOutPanel.add(jLabel7, java.awt.BorderLayout.CENTER);
 
-        doButton.setText("Do something");
-        doButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                doButtonActionPerformed(evt);
-            }
-        });
-        buttonPanel.add(doButton);
+            cardPanel.add(checkOutPanel, "Check-out books");
 
-        clearButton.setText("Clear");
-        clearButton.setHideActionText(true);
-        clearButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearButtonActionPerformed(evt);
-            }
-        });
-        buttonPanel.add(clearButton);
+            processReturnPanel.setLayout(new java.awt.BorderLayout());
 
-        mainPanel.add(buttonPanel, java.awt.BorderLayout.SOUTH);
+            jLabel8.setText("process returns");
+            processReturnPanel.add(jLabel8, java.awt.BorderLayout.CENTER);
 
-        getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
+            cardPanel.add(processReturnPanel, "Process a return");
 
-        fileMenu.setText("File");
+            addBorrowerPanel.setLayout(new java.awt.BorderLayout());
 
-        quitMenuItem.setText("Quit");
-        quitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                quitMenuItemActionPerformed(evt);
-            }
-        });
-        fileMenu.add(quitMenuItem);
+            jLabel9.setText("add new borrower");
+            addBorrowerPanel.add(jLabel9, java.awt.BorderLayout.CENTER);
 
-        menuBar.add(fileMenu);
+            cardPanel.add(addBorrowerPanel, "Add a new borrower");
 
-        navigationMenu.setText("Navigation");
+            checkOverduePanel.setLayout(new java.awt.BorderLayout());
 
-        borrowerMenu.setText("Borrower");
+            jLabel10.setText("check overdue items");
+            checkOverduePanel.add(jLabel10, java.awt.BorderLayout.CENTER);
 
-        searchMenuItem.setText(SEARCH);
-        searchMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        borrowerMenu.add(searchMenuItem);
+            cardPanel.add(checkOverduePanel, "Check overdue books");
 
-        checkAccountMenuItem.setText(CHECK_ACCOUNT);
-        checkAccountMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        borrowerMenu.add(checkAccountMenuItem);
+            addNewBookPanel.setLayout(new java.awt.BorderLayout());
 
-        holdRequestMenuItem.setText(HOLD_REQUEST);
-        holdRequestMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        borrowerMenu.add(holdRequestMenuItem);
+            jLabel20.setText("add new book");
+            addNewBookPanel.add(jLabel20, java.awt.BorderLayout.CENTER);
 
-        payFineMenuItem.setText(PAY_FINE);
-        payFineMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        borrowerMenu.add(payFineMenuItem);
+            cardPanel.add(addNewBookPanel, "Add new book");
 
-        navigationMenu.add(borrowerMenu);
+            addNewCopyPanel.setLayout(new java.awt.BorderLayout());
 
-        clerkMenu.setText("Clerk");
+            jLabel19.setText("new copy");
+            addNewCopyPanel.add(jLabel19, java.awt.BorderLayout.CENTER);
 
-        addBorrowerMenuItem.setText(ADD_BORROWER);
-        addBorrowerMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        clerkMenu.add(addBorrowerMenuItem);
+            cardPanel.add(addNewCopyPanel, "Add new book copy");
 
-        checkOutMenuItem.setText(CHECK_OUT);
-        checkOutMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        clerkMenu.add(checkOutMenuItem);
+            removeBorrowerPanel.setLayout(new java.awt.BorderLayout());
 
-        processReturnMenuItem.setText(PROCESS_RETURN);
-        processReturnMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        clerkMenu.add(processReturnMenuItem);
+            jLabel16.setText("remove borrower");
+            removeBorrowerPanel.add(jLabel16, java.awt.BorderLayout.CENTER);
 
-        checkOverdueMenuItem.setText(CHECK_OVERDUE);
-        checkOverdueMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        clerkMenu.add(checkOverdueMenuItem);
+            cardPanel.add(removeBorrowerPanel, "Remove borrower");
 
-        navigationMenu.add(clerkMenu);
+            removeBookPanel.setLayout(new java.awt.BorderLayout());
 
-        librarianMenu.setText("Librarian");
+            jLabel14.setText("remove books and copies");
+            removeBookPanel.add(jLabel14, java.awt.BorderLayout.CENTER);
 
-        addMenu.setText("Add");
+            cardPanel.add(removeBookPanel, "Remove books and copies");
 
-        addBookMenuItem.setText(ADD_BOOK);
-        addBookMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        addMenu.add(addBookMenuItem);
+            popularReportPanel.setLayout(new java.awt.BorderLayout());
 
-        addBookCopyMenuItem.setText(ADD_COPY);
-        addBookCopyMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        addMenu.add(addBookCopyMenuItem);
+            popularReportOptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Options"));
+            popularReportOptionsPanel.setLayout(new java.awt.GridBagLayout());
 
-        librarianMenu.add(addMenu);
+            popularReportYearSelectLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+            popularReportYearSelectLabel.setText("Year to report on:");
+            popularReportYearSelectLabel.setName("Year to report on"); // NOI18N
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+            gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+            popularReportOptionsPanel.add(popularReportYearSelectLabel, gridBagConstraints);
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.gridy = 0;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints.ipadx = 50;
+            popularReportOptionsPanel.add(popularReportYearTextField, gridBagConstraints);
 
-        removeMenu.setText("Remove");
+            popularReportNSelectLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+            popularReportNSelectLabel.setText("Number of books in report:");
+            popularReportNSelectLabel.setName("Number of books in report"); // NOI18N
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 1;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+            gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+            popularReportOptionsPanel.add(popularReportNSelectLabel, gridBagConstraints);
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.gridy = 1;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints.ipadx = 50;
+            popularReportOptionsPanel.add(popularReportNTextField, gridBagConstraints);
 
-        removeBorrowerMenuItem.setText(REMOVE_BORROWER);
-        removeBorrowerMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        removeMenu.add(removeBorrowerMenuItem);
+            popularReportPanel.add(popularReportOptionsPanel, java.awt.BorderLayout.PAGE_START);
 
-        removeBookMenuItem.setText(REMOVE_BOOK);
-        removeBookMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        removeMenu.add(removeBookMenuItem);
+            popularReportTablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Report"));
+            popularReportTablePanel.setLayout(new java.awt.BorderLayout());
 
-        librarianMenu.add(removeMenu);
+            popularReportTable.setModel(new javax.swing.table.DefaultTableModel(
 
-        reportMenu.setText("Report");
+            ));
+            popularReportTablePane.setViewportView(popularReportTable);
 
-        checkedOutReportMenuItem.setText(REPORT_CHECKED_OUT);
-        checkedOutReportMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        reportMenu.add(checkedOutReportMenuItem);
+            popularReportTablePanel.add(popularReportTablePane, java.awt.BorderLayout.CENTER);
 
-        popularReportMenuItem.setText(REPORT_POPULAR);
-        popularReportMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        reportMenu.add(popularReportMenuItem);
+            popularReportPanel.add(popularReportTablePanel, java.awt.BorderLayout.CENTER);
 
-        librarianMenu.add(reportMenu);
+            cardPanel.add(popularReportPanel, "Popular books report");
 
-        navigationMenu.add(librarianMenu);
-        navigationMenu.add(navigationSeparator);
+            checkedOutReportPanel.setLayout(new java.awt.BorderLayout());
 
-        tableMenuItem.setText(TABLES);
-        tableMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        navigationMenu.add(tableMenuItem);
+            jLabel13.setText("checked out");
+            checkedOutReportPanel.add(jLabel13, java.awt.BorderLayout.CENTER);
 
-        startMenuItem.setText(START);
-        startMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navigationMenuItemActionPerformed(evt);
-            }
-        });
-        navigationMenu.add(startMenuItem);
+            cardPanel.add(checkedOutReportPanel, "Checked-out report");
 
-        menuBar.add(navigationMenu);
+            mainPanel.add(cardPanel, java.awt.BorderLayout.CENTER);
 
-        helpMenu.setText("Help");
+            buttonPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        manualMenuItem.setText("User manual");
-        manualMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                manualMenuItemActionPerformed(evt);
-            }
-        });
-        helpMenu.add(manualMenuItem);
+            doButton.setText("Do something");
+            doButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    doButtonActionPerformed(evt);
+                }
+            });
+            buttonPanel.add(doButton);
 
-        menuBar.add(helpMenu);
+            clearButton.setText("Clear");
+            clearButton.setHideActionText(true);
+            clearButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    clearButtonActionPerformed(evt);
+                }
+            });
+            buttonPanel.add(clearButton);
 
-        setJMenuBar(menuBar);
+            mainPanel.add(buttonPanel, java.awt.BorderLayout.SOUTH);
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+            getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
+
+            fileMenu.setText("File");
+
+            quitMenuItem.setText("Quit");
+            quitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    quitMenuItemActionPerformed(evt);
+                }
+            });
+            fileMenu.add(quitMenuItem);
+
+            menuBar.add(fileMenu);
+
+            navigationMenu.setText("Navigation");
+
+            borrowerMenu.setText("Borrower");
+
+            searchMenuItem.setText(SEARCH);
+            searchMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            borrowerMenu.add(searchMenuItem);
+
+            checkAccountMenuItem.setText(CHECK_ACCOUNT);
+            checkAccountMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            borrowerMenu.add(checkAccountMenuItem);
+
+            holdRequestMenuItem.setText(HOLD_REQUEST);
+            holdRequestMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            borrowerMenu.add(holdRequestMenuItem);
+
+            payFineMenuItem.setText(PAY_FINE);
+            payFineMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            borrowerMenu.add(payFineMenuItem);
+
+            navigationMenu.add(borrowerMenu);
+
+            clerkMenu.setText("Clerk");
+
+            addBorrowerMenuItem.setText(ADD_BORROWER);
+            addBorrowerMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            clerkMenu.add(addBorrowerMenuItem);
+
+            checkOutMenuItem.setText(CHECK_OUT);
+            checkOutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            clerkMenu.add(checkOutMenuItem);
+
+            processReturnMenuItem.setText(PROCESS_RETURN);
+            processReturnMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            clerkMenu.add(processReturnMenuItem);
+
+            checkOverdueMenuItem.setText(CHECK_OVERDUE);
+            checkOverdueMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            clerkMenu.add(checkOverdueMenuItem);
+
+            navigationMenu.add(clerkMenu);
+
+            librarianMenu.setText("Librarian");
+
+            addMenu.setText("Add");
+
+            addBookMenuItem.setText(ADD_BOOK);
+            addBookMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            addMenu.add(addBookMenuItem);
+
+            addBookCopyMenuItem.setText(ADD_COPY);
+            addBookCopyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            addMenu.add(addBookCopyMenuItem);
+
+            librarianMenu.add(addMenu);
+
+            removeMenu.setText("Remove");
+
+            removeBorrowerMenuItem.setText(REMOVE_BORROWER);
+            removeBorrowerMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            removeMenu.add(removeBorrowerMenuItem);
+
+            removeBookMenuItem.setText(REMOVE_BOOK);
+            removeBookMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            removeMenu.add(removeBookMenuItem);
+
+            librarianMenu.add(removeMenu);
+
+            reportMenu.setText("Report");
+
+            checkedOutReportMenuItem.setText(REPORT_CHECKED_OUT);
+            checkedOutReportMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            reportMenu.add(checkedOutReportMenuItem);
+
+            popularReportMenuItem.setText(REPORT_POPULAR);
+            popularReportMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            reportMenu.add(popularReportMenuItem);
+
+            librarianMenu.add(reportMenu);
+
+            navigationMenu.add(librarianMenu);
+            navigationMenu.add(navigationSeparator);
+
+            tableMenuItem.setText(TABLES);
+            tableMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            navigationMenu.add(tableMenuItem);
+
+            startMenuItem.setText(START);
+            startMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    navigationMenuItemActionPerformed(evt);
+                }
+            });
+            navigationMenu.add(startMenuItem);
+
+            menuBar.add(navigationMenu);
+
+            helpMenu.setText("Help");
+
+            manualMenuItem.setText("User manual");
+            manualMenuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    manualMenuItemActionPerformed(evt);
+                }
+            });
+            helpMenu.add(manualMenuItem);
+
+            menuBar.add(helpMenu);
+
+            setJMenuBar(menuBar);
+
+            pack();
+        }// </editor-fold>//GEN-END:initComponents
 
   /**
    * Opens the default browser to a web site hosting the user manual
@@ -708,6 +805,8 @@ public class ViewFrame extends javax.swing.JFrame {
         doButton.setText(buttonText);
         break;
       case SEARCH:
+        String searchTextField = SearchTextField.getText();
+        String searchGetAlbumCommand = SearchComboBox.getActionCommand();
         break;
       case CHECK_ACCOUNT:
         break;
@@ -965,6 +1064,10 @@ public class ViewFrame extends javax.swing.JFrame {
     });
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox SearchComboBox;
+    private javax.swing.JTable SearchTable;
+    private javax.swing.JTextField SearchTextField;
+    private javax.swing.JPanel SearchTopPanel;
     private javax.swing.JMenuItem addBookCopyMenuItem;
     private javax.swing.JMenuItem addBookMenuItem;
     private javax.swing.JMenuItem addBorrowerMenuItem;
@@ -1003,6 +1106,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
@@ -1032,6 +1136,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu removeMenu;
     private javax.swing.JMenu reportMenu;
     private javax.swing.JMenuItem searchMenuItem;
+    private javax.swing.JPanel searchPanel;
     private javax.swing.JPanel startComboBoxPanel;
     private javax.swing.JMenuItem startMenuItem;
     private javax.swing.JPanel startPanel;
@@ -1079,8 +1184,4 @@ public class ViewFrame extends javax.swing.JFrame {
     private static final String REPORT_POPULAR="Popular books report";
     private static final String REPORT_CHECKED_OUT="Checked-out report";
     private JSplitPane splitPane;
-    private JTextField subjectTextField;
-    private JTextField titleTextField;
-    private JTextField authorTextField;
-    private JTable table_1;
 }

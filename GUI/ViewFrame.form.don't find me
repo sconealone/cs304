@@ -413,6 +413,8 @@
                 </Container>
               </SubComponents>
             </Container>
+<<<<<<< HEAD
+=======
             <Container class="javax.swing.JPanel" name="searchPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
@@ -468,6 +470,7 @@
                 </Container>
               </SubComponents>
             </Container>
+>>>>>>> 9492ccd2b1090d9013fded95f9ad027a9485d68e
             <Container class="javax.swing.JPanel" name="checkAccountPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">

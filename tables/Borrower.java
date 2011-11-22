@@ -416,18 +416,18 @@ public class Borrower implements Table {
 	  return lob;
   }
   
-  public void checkAccount() throws SQLException {
+  public ArrayList<ArrayList<Table>> checkAccount() throws SQLException {
 	  Statement stmt1 = con.createStatement();
-	  String sql1 = "SELECT Book.callNumber FROM Borrower, Book, Borrowing, BookCopy " +
+	  String sql1 = "SELECT Borrowing.borid FROM Borrower, Book, Borrowing, BookCopy " +
 	  		"WHERE Book.callNumber=Borrowing.callNumber AND Borrower.bid=Borrowing.bid " +
 	  		"AND BookCopy.callNumber=Book.callNumber And BookCopy.status='out'";
 	  ResultSet rsCheckedOut = stmt1.executeQuery(sql1);
-	  ArrayList<Book> lob = new ArrayList<Book>();
+	  ArrayList<Table> lob = new ArrayList<Table>();
 	  while(rsCheckedOut.next()) {
-			String callNo = rsCheckedOut.getString(1);
-			Book b = new Book();
-			b.setCallNumber(callNo);
-			b = b.get();
+			int borid = rsCheckedOut.getInt(1);
+			Borrowing b = new Borrowing();
+			b.setBorid(borid);
+			b = (Borrowing) b.get();
 			lob.add(b);
 	  }
 	  
@@ -435,12 +435,12 @@ public class Borrower implements Table {
 	  String sql2 = "SELECT Fine.fid FROM Borrower, Fine, Borrowing " +
 	  		"WHERE Borrower.bid=Borrowing.bid AND Borrowing.borid=Fine.borid";
 	  ResultSet rsFines = stmt2.executeQuery(sql2);
-	  ArrayList<Fine> lof = new ArrayList<Fine>();
+	  ArrayList<Table> lof = new ArrayList<Table>();
 	  while(rsFines.next()) {
 			int fid = rsFines.getInt(1);
 			Fine f = new Fine();
 			f.setFid(fid);
-			f = f.get();
+			f = (Fine) f.get();
 			lof.add(f);
 	  }
 	  
@@ -448,14 +448,21 @@ public class Borrower implements Table {
 	  String sql3 = "SELECT HoldRequest.hid FROM Borrower, HoldRequest " +
 	  		"WHERE Borrower.bid=HoldRequest.bid";
 	  ResultSet rsHolds = stmt3.executeQuery(sql3);
-	  ArrayList<HoldRequest> loh = new ArrayList<HoldRequest>();
+	  ArrayList<Table> loh = new ArrayList<Table>();
 	  while(rsHolds.next()) {
 			int hid = rsHolds.getInt(1);
 			HoldRequest h = new HoldRequest();
 			h.setHid(hid);
-			h = h.get();
+			h = (HoldRequest) h.get();
 			loh.add(h);
 	  }
+	  
+	  ArrayList<ArrayList<Table>> loT = new ArrayList<ArrayList<Table>>();
+	  loT.add(lob);
+	  loT.add(lof);
+	  loT.add(loh);
+	  
+	  return loT;
   }
   
   public void placeHoldRequest(String isbn) throws SQLException {
@@ -473,8 +480,10 @@ public class Borrower implements Table {
   
   public void payFine(Integer borid, Integer amountInCents) throws SQLException {
 	  Fine f = new Fine();
-	  f.setAmount(amountInCents);
-	  f = f.get();
+	  Borrowing bor = new Borrowing();
+	  bor.setBorid(borid);
+	  f.setBorrowing(bor);
+	  f = (Fine) f.get();
 	  if(amountInCents==f.getAmount()) {
 		  Statement stmt = con.createStatement();
 		  String sql = "DELETE FROM Fine WHERE EXISTS " +
