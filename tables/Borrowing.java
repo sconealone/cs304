@@ -68,7 +68,6 @@ public class Borrowing implements Table {
          * only for use within this object!
          * Call next() before you pass the ResultSet
          * @param rs 
-         * TODO there are several calls to get() that are stubbed out
          */
         private Borrowing(ResultSet rs) throws SQLException
         {
@@ -78,21 +77,18 @@ public class Borrowing implements Table {
               
               borr = new Borrower();
               borr.setBid(rs.getInt(fieldIndex++));
-              // TODO uncomment when Borrower::get() is implemented
-              //borr = (Borrower) borr.get();
+              borr = (Borrower) borr.get();
               
               // initializing book copy
               String callNumber = rs.getString(fieldIndex++);
               String copyNo = rs.getString(fieldIndex++);
               Book book = new Book();
               book.setCallNumber(callNumber);
-              // TODO uncomment when Book::get() is implemented
-              //book = (Book) book.get();
+              book = (Book) book.get();
               BookCopy copy = new BookCopy();
               copy.setB(book);
               copy.setCopyNo(copyNo);
-              // TODO uncomment when BookCopy::get() is implemented
-              //copy = (BookCopy) copy.get();
+              copy = (BookCopy) copy.get();
               bc = copy;
               Date sqlOutDate= rs.getDate(fieldIndex++);
               outDate = (rs.wasNull()) ?
