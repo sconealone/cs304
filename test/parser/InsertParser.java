@@ -4,11 +4,14 @@
  */
 package test.parser;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
+import test.tablesTest;
 import users.Conn;
 
 /**
@@ -19,7 +22,7 @@ import users.Conn;
 public class InsertParser {
   
   private String filename;
-  private final String DEFAULT_FILE = "insert_teset_vlues.sql";
+  private final String DEFAULT_FILE = "insert_test_values.sql";
   
   public InsertParser()
   {
@@ -61,7 +64,7 @@ public class InsertParser {
     catch (FileNotFoundException e)
     {
       System.out.println("File not found."
-              + " Using default file 'insert_teset_values.sql'");
+              + " Using default file '"+DEFAULT_FILE+"'");
       try
       {
         fr = new FileReader(DEFAULT_FILE);
@@ -80,6 +83,7 @@ public class InsertParser {
     while (fin.hasNext())
     {
       queries += fin.nextLine();
+      queries += ' ';
     }
     return queries;
   }
@@ -92,15 +96,60 @@ public class InsertParser {
     Connection c = Conn.getInstance().getConnection();
     try
     {
+      c.setAutoCommit(false);
       Statement s = c.createStatement();
-      for (int i = 0; i < queries.length; i++)
+      // length - 1 to ignore the last line, commit;
+      int n = queries.length - 1;
+      for (int i = 0; i < n; i++)
       {
-        s.execute(queries[i]);
+        try
+        {
+          System.out.println(queries[i]);
+          s.execute(queries[i]);
+        }
+        catch (SQLException e)
+        {
+          if ((e.getMessage()).contains("ORA-00001"))
+          {
+            // do nothing
+          }
+          else
+          {
+            throw new SQLException(e);
+          }
+        }
       }
+      c.setAutoCommit(true);
+      c.commit();
     }
     catch (SQLException e)
     {
+      System.out.println("Failed. Rolling back.");
+      try
+      {
+        //c.commit();
+        c.rollback();
+        c.setAutoCommit(true);
+        (new tablesTest()).setup(); // reset tables
+        System.out.println(e.getMessage());
+        e.printStackTrace();
+      }
+      catch(SQLException ex)
+      {
+        System.out.println(ex.getMessage());
+        ex.printStackTrace();
+      }
       
     }
+    
+  }
+  
+  /**
+   * Inserts the contents of the file
+   * @param args 
+   */
+  public static void main(String[] args) throws Exception{
+    (new InsertParser()).parse();
+    System.out.println("End of program");
   }
 }
