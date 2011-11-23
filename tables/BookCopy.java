@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import users.Conn;
 
@@ -18,13 +19,19 @@ import users.Conn;
 
 public class BookCopy implements Table {
 
+	private final String IN = "IN";
+	private final String OUT = "OUT";
+	private final String HOLD = "HOLD";
+	private final String OVERDUE = "OVERDUE";
+	// TODO Ensure status is only of these types. Either create custom
+	// exception, or try enum
+
+	private final int BOOK_COPY_FIELDS = 3;
+	
+	//The fields for BookCopy in the table are copyNo, callNo, status in that order.
 	private String copyNo;
-	private String status; // TODO This needs to be clarified
-        /*
-         * status can be "in", "out", "on-hold", or "overdue"
-         * see requirements
-         */
 	private Book b;
+	private String status;
 
 	private Connection c;
 
@@ -48,7 +55,7 @@ public class BookCopy implements Table {
 	 * @param b
 	 *            The Book that shares the callNo of the BookCopy object
 	 */
-	public BookCopy(String copyNo, String status, Book b) {
+	public BookCopy(String copyNo, Book b, String status) {
 		this.copyNo = copyNo;
 		this.status = status;
 		this.b = b;
@@ -57,9 +64,24 @@ public class BookCopy implements Table {
 	}
 
 	@Override
-	public String[][] display() {
-		// TODO Auto-generated method stub
-		return null;
+	public String[][] display() throws SQLException {
+		String[][] result = null;
+		Collection<Table> bct = getAll();
+		
+		if (bct.size() > 0) {
+			result = new String[bct.size()][BOOK_COPY_FIELDS];
+			int i = 0;
+			Iterator<Table> bcItr = bct.iterator();
+			while (bcItr.hasNext()) {
+				int j = 0;
+				
+				//could probably organize this better
+				result[i][j] = ((BookCopy) bcItr.next()).getCopyNo();
+				result[i][j++] = ((BookCopy) bcItr.next()).getB().getCallNumber();
+				result[i][j++] =((BookCopy) bcItr.next()).getStatus();
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -72,11 +94,11 @@ public class BookCopy implements Table {
 	public void update() throws SQLException {
 		PreparedStatement ps;
 
-		ps = c.prepareStatement("UPDATE bookCopy SET copyNo = '?', status = '?' WHERE callNo = '?'");
+		ps = c.prepareStatement("UPDATE bookCopy SET status = '?' WHERE copyNo = '?', callNo = ?");
 
+		ps.setString(1, status);
+		ps.setString(2, copyNo);
 		ps.setString(3, b.getCallNumber());
-		ps.setString(1, copyNo);
-		ps.setString(2, status);
 		int rowCount = ps.executeUpdate();
 		if (rowCount == 0) {
 			// Throw Exception
@@ -94,9 +116,10 @@ public class BookCopy implements Table {
 	public boolean delete() throws SQLException {
 		PreparedStatement ps;
 
-		ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNo = '?'");
+		ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNo = '?', copyNo = ?");
 
 		ps.setString(1, b.getCallNumber());
+		ps.setString(2, copyNo);
 
 		int rowCount = ps.executeUpdate();
 		if (rowCount == 0) {
@@ -119,11 +142,11 @@ public class BookCopy implements Table {
 	public boolean insert() throws SQLException {
 		PreparedStatement ps;
 
-		ps = c.prepareStatement("UPDATE bookCopy SET copyNo = '?', status = '?' WHERE callNo = '?'");
+		ps = c.prepareStatement("INSERT INTO HoldRequest VALUES (?,?,?)");
 
-		ps.setString(3, b.getCallNumber());
 		ps.setString(1, copyNo);
-		ps.setString(2, status);
+		ps.setString(2, b.getCallNumber());
+		ps.setString(3, status);
 
 		int rowCount = ps.executeUpdate();
 		if (rowCount == 0) {
@@ -153,9 +176,9 @@ public class BookCopy implements Table {
 
 		while (rs.next()) {
 			Book b = new Book();
-			b.setCallNumber(rs.getString(1));
+			b.setCallNumber(rs.getString(2));
 			b = (Book) b.get();
-			bc.add(new BookCopy(rs.getString(2), rs.getString(3), b));
+			bc.add(new BookCopy(rs.getString(1), b, rs.getString(3)));
 		}
 
 		return bc;
@@ -183,7 +206,7 @@ public class BookCopy implements Table {
 		rs = ps.executeQuery();
 
 		while (rs.next()) {
-			bc.add(new BookCopy(rs.getString(2), rs.getString(3), b));
+			bc.add(new BookCopy(rs.getString(1), b, rs.getString(3)));
 		}
 
 		return bc;
@@ -214,14 +237,16 @@ public class BookCopy implements Table {
 
 		while (rs.next()) {
 			BookCopy bc = new BookCopy();
-			bc.setB(b);
 			bc.setCopyNo(copyNo);
-			bc.setStatus(rs.getBoolean(3));
+			bc.setB(b);
+			bc.setStatus(rs.getString(3));
 			return bc;
 		}
 		return null;
 	}
-
+	
+	
+	//DEPENDING ON CONVENTION, THIS MIGHT BE DEFUNCT
 	/**
 	 * Returns the BookCopy object corresponding with the given Book and copyNo.
 	 * 
@@ -247,9 +272,9 @@ public class BookCopy implements Table {
 
 		while (rs.next()) {
 			BookCopy bc = new BookCopy();
-			bc.setB(b);
 			bc.setCopyNo(copyNo);
-			bc.setStatus(rs.getBoolean(3));
+			bc.setB(b);
+			bc.setStatus(rs.getString(3));
 			return bc;
 		}
 		return null;

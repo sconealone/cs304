@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Iterator;
 
 import users.Conn;
 
@@ -17,11 +19,14 @@ import users.Conn;
  * 
  */
 public class HoldRequest implements Table {
+	private final int HOLD_REQUEST_FIELDS = 4;
+	private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 
+	//The fields for HoldRequest in the table are hid, bid, callNo, issueDate, in that order.
 	private Integer hid;
-	private Calendar issueDate;
-	private Book b;
 	private Borrower borr;
+	private Book b;
+	private Calendar issueDate;
 
 	private Connection c;
 	private PreparedStatement ps;
@@ -76,11 +81,11 @@ public class HoldRequest implements Table {
 
 		if (rs.next()) {
 			this.hid = hid;
-			this.issueDate.setTime(rs.getDate(2));
-			b.setCallNumber(rs.getString(3));
 			b = (Book) b.get();
-			borr.setBid(rs.getInt(4));
+			borr.setBid(rs.getInt(2));
 			borr = (Borrower) borr.get();
+			b.setCallNumber(rs.getString(3));
+			this.issueDate.setTime(rs.getDate(4));
 		}
 
 		c = Conn.getInstance().getConnection();
@@ -108,18 +113,35 @@ public class HoldRequest implements Table {
 
 		if (rs.next()) {
 			this.hid = rs.getInt(1);
-			this.issueDate.setTime(rs.getDate(2));
 			this.b = b;
 			this.borr = borr;
+			this.issueDate.setTime(rs.getDate(4));
 		}
 
 		c = Conn.getInstance().getConnection();
 	}
 
 	@Override
-	public String[][] display() {
-		// TODO Auto-generated method stub
-		return null;
+	public String[][] display() throws SQLException {
+		String[][] result = null;
+		Collection<Table> hrt = getAll();
+		
+		if (hrt.size() > 0) {
+			result = new String[hrt.size()][HOLD_REQUEST_FIELDS];
+			int i = 0;
+			Iterator<Table> hrItr = hrt.iterator();
+			while (hrItr.hasNext()) {
+				i++;
+				int j = 0;
+				
+				//could probably organize this better
+				result[i][j] = String.valueOf((((HoldRequest) hrItr.next()).getHid()));
+				result[i][j++] = String.valueOf(((HoldRequest) hrItr.next()).getBorr().getBid());
+				result[i][j++] = ((HoldRequest) hrItr.next()).getB().getCallNumber();
+				result[i][j++] = sdf.format(((HoldRequest) hrItr.next()).getIssueDate());
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -157,7 +179,7 @@ public class HoldRequest implements Table {
 
 		int rowCount = ps.executeUpdate();
 		if (rowCount == 0) {
-			// throw exception
+			//TODO throw exception
 		}
 
 		c.commit();
@@ -176,8 +198,8 @@ public class HoldRequest implements Table {
 		ps = c.prepareStatement("INSERT INTO HoldRequest VALUES (hidCounter.nextVal,?,?,?)");
 
 		ps.setInt(1, borr.getBid());
-		ps.setString(2, issueDate.toString());
-		ps.setString(3, b.getCallNumber());
+		ps.setString(2, b.getCallNumber());
+		ps.setString(3, issueDate.toString());
 
 		int numRowsChanged = ps.executeUpdate();
 		if (numRowsChanged == 1) {
@@ -277,8 +299,8 @@ public class HoldRequest implements Table {
 			b = (Book) b.get();
 
 			hr.setHid(rs.getInt(1));
-			hr.setB(b);
 			hr.setBorr(borr);
+			hr.setB(b);
 			hr.getIssueDate().setTime(rs.getDate(4));
 			holdRequests.add(hr);
 		}
@@ -311,8 +333,8 @@ public class HoldRequest implements Table {
 			borr = (Borrower) borr.get();
 
 			hr.setHid(rs.getInt(1));
-			hr.setB(b);
 			hr.setBorr(borr);
+			hr.setB(b);
 			hr.getIssueDate().setTime(rs.getDate(4));
 			holdRequests.add(hr);
 		}
