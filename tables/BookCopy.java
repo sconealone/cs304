@@ -72,7 +72,7 @@ public class BookCopy implements Table {
 	public void update() throws SQLException {
 		PreparedStatement ps;
 
-		ps = c.prepareStatement("UPDATE bookCopy SET copyNo = '?', status = '?' WHERE callNo = '?'");
+		ps = c.prepareStatement("UPDATE bookCopy SET copyNo = ?, status = ? WHERE callNo = ?");
 
 		ps.setString(3, b.getCallNumber());
 		ps.setString(1, copyNo);
@@ -94,7 +94,7 @@ public class BookCopy implements Table {
 	public boolean delete() throws SQLException {
 		PreparedStatement ps;
 
-		ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNo = '?'");
+		ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNo = ?");
 
 		ps.setString(1, b.getCallNumber());
 
@@ -119,7 +119,7 @@ public class BookCopy implements Table {
 	public boolean insert() throws SQLException {
 		PreparedStatement ps;
 
-		ps = c.prepareStatement("UPDATE bookCopy SET copyNo = '?', status = '?' WHERE callNo = '?'");
+		ps = c.prepareStatement("UPDATE bookCopy SET copyNo = ?, status = ? WHERE callNo = ?");
 
 		ps.setString(3, b.getCallNumber());
 		ps.setString(1, copyNo);
@@ -177,7 +177,7 @@ public class BookCopy implements Table {
 		ResultSet rs;
 
 		Collection<Table> bc = new ArrayList<Table>();
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE callNo = '?'");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE callNo = ?");
 		ps.setString(1, b.getCallNumber());
 
 		rs = ps.executeQuery();
@@ -206,7 +206,7 @@ public class BookCopy implements Table {
 		PreparedStatement ps;
 		ResultSet rs;
 
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = '?', callNo = '?'");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNo = ?");
 		ps.setString(1, this.b.getCallNumber());
 		ps.setString(2, this.copyNo);
 
@@ -239,7 +239,7 @@ public class BookCopy implements Table {
 		PreparedStatement ps;
 		ResultSet rs;
 
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = '?', callNo = '?'");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNo = ?");
 		ps.setString(1, b.getCallNumber());
 		ps.setString(2, copyNo);
 
