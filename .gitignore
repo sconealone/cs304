@@ -10,7 +10,7 @@
 nbproject*
 jjcmlib*
 build*
-*.java~
+*.classpath
 
 # Compiled source #
 ###################
