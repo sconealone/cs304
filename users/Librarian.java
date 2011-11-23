@@ -186,7 +186,7 @@ public class Librarian
     for (int i = 0; i < numCopies; i++)
     {
       String copyNoAsString = "C"+copyNoAsInt;
-      BookCopy newBookCopy = new BookCopy(copyNoAsString,"in",book);
+      BookCopy newBookCopy = new BookCopy(copyNoAsString,book,"in");
       if (newBookCopy.insert())
       {
         copyNumbersGrowable.add(copyNoAsString);
