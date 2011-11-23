@@ -9,6 +9,7 @@ import java.util.Iterator;
 import tables.Book;
 import tables.BookCopy;
 import tables.Borrower;
+import tables.BorrowerType;
 import tables.Borrowing;
 import tables.Fine;
 import tables.HoldRequest;
@@ -46,7 +47,7 @@ public class Clerk {
 			Calendar expiryDate, String type) throws SQLException {
 
 		Borrower borr = new Borrower();
-		// BorrowerType btype = new BorrowerType();
+		BorrowerType btype = new BorrowerType();
 
 		borr.setAddress(address);
 		borr.setEmailAddress(emailAddress);

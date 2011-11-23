@@ -194,12 +194,39 @@ public class HoldRequest implements Table {
 	}
 
 	/**
+	 * Return all HoldRequests.
+	 * 
+	 * This returns all HoldRequest objects in the SQL database.
+	 * 
+	 * @throws SQLException 
 	 * 
 	 */
 	@Override
-	public Collection<Table> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<Table> getAll() throws SQLException {
+		Collection<Table> holdRequests = new ArrayList<Table>();
+		ps = c.prepareStatement("SELECT * FROM HoldRequest");
+
+		rs = ps.executeQuery();
+
+		while (rs.next()) {
+			HoldRequest hr = new HoldRequest();
+			Book b = new Book();
+			Borrower borr = new Borrower();
+
+			b.setCallNumber(rs.getString(3));
+			b = (Book) b.get();
+			
+			borr.setBid(rs.getInt(2));
+			borr = (Borrower) borr.get();
+
+			hr.setHid(rs.getInt(1));
+			hr.setB(b);
+			hr.setBorr(borr);
+			hr.getIssueDate().setTime(rs.getDate(4));
+			holdRequests.add(hr);
+		}
+
+		return holdRequests;
 	}
 
 	/**
@@ -209,7 +236,7 @@ public class HoldRequest implements Table {
 	 * HoldRequest object with that id field that exists in the SQL database.
 	 * This is used if either the default constructor was called and the
 	 * parameters are required, or if some of the parameters are changed and the
-	 * user wants the database object.
+	 * user wants the original database object.
 	 * 
 	 * @throws SQLException
 	 * 
