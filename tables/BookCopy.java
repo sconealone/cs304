@@ -19,7 +19,11 @@ import users.Conn;
 public class BookCopy implements Table {
 
 	private String copyNo;
-	private boolean status; // TODO This needs to be clarified
+	private String status; // TODO This needs to be clarified
+        /*
+         * status can be "in", "out", "on-hold", or "overdue"
+         * see requirements
+         */
 	private Book b;
 
 	private Connection c;
@@ -44,7 +48,7 @@ public class BookCopy implements Table {
 	 * @param b
 	 *            The Book that shares the callNo of the BookCopy object
 	 */
-	public BookCopy(String copyNo, boolean status, Book b) {
+	public BookCopy(String copyNo, String status, Book b) {
 		this.copyNo = copyNo;
 		this.status = status;
 		this.b = b;
@@ -68,11 +72,11 @@ public class BookCopy implements Table {
 	public void update() throws SQLException {
 		PreparedStatement ps;
 
-		ps = c.prepareStatement("UPDATE bookCopy SET copyNo = ?, status = ? WHERE callNo = ?");
+		ps = c.prepareStatement("UPDATE bookCopy SET copyNo = '?', status = '?' WHERE callNo = '?'");
 
 		ps.setString(3, b.getCallNumber());
 		ps.setString(1, copyNo);
-		ps.setBoolean(2, status);
+		ps.setString(2, status);
 		int rowCount = ps.executeUpdate();
 		if (rowCount == 0) {
 			// Throw Exception
@@ -90,7 +94,7 @@ public class BookCopy implements Table {
 	public boolean delete() throws SQLException {
 		PreparedStatement ps;
 
-		ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNo = ?");
+		ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNo = '?'");
 
 		ps.setString(1, b.getCallNumber());
 
@@ -115,11 +119,11 @@ public class BookCopy implements Table {
 	public boolean insert() throws SQLException {
 		PreparedStatement ps;
 
-		ps = c.prepareStatement("UPDATE bookCopy SET copyNo = ?, status = ? WHERE callNo = ?");
+		ps = c.prepareStatement("UPDATE bookCopy SET copyNo = '?', status = '?' WHERE callNo = '?'");
 
 		ps.setString(3, b.getCallNumber());
 		ps.setString(1, copyNo);
-		ps.setBoolean(2, status);
+		ps.setString(2, status);
 
 		int rowCount = ps.executeUpdate();
 		if (rowCount == 0) {
@@ -151,7 +155,7 @@ public class BookCopy implements Table {
 			Book b = new Book();
 			b.setCallNumber(rs.getString(1));
 			b = (Book) b.get();
-			bc.add(new BookCopy(rs.getString(2), rs.getBoolean(3), b));
+			bc.add(new BookCopy(rs.getString(2), rs.getString(3), b));
 		}
 
 		return bc;
@@ -173,13 +177,13 @@ public class BookCopy implements Table {
 		ResultSet rs;
 
 		Collection<Table> bc = new ArrayList<Table>();
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE callNo = ?");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE callNo = '?'");
 		ps.setString(1, b.getCallNumber());
 
 		rs = ps.executeQuery();
 
 		while (rs.next()) {
-			bc.add(new BookCopy(rs.getString(2), rs.getBoolean(3), b));
+			bc.add(new BookCopy(rs.getString(2), rs.getString(3), b));
 		}
 
 		return bc;
@@ -202,7 +206,7 @@ public class BookCopy implements Table {
 		PreparedStatement ps;
 		ResultSet rs;
 
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNo = ?");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = '?', callNo = '?'");
 		ps.setString(1, this.b.getCallNumber());
 		ps.setString(2, this.copyNo);
 
@@ -235,7 +239,7 @@ public class BookCopy implements Table {
 		PreparedStatement ps;
 		ResultSet rs;
 
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNo = ?");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = '?', callNo = '?'");
 		ps.setString(1, b.getCallNumber());
 		ps.setString(2, copyNo);
 
@@ -269,7 +273,7 @@ public class BookCopy implements Table {
 	/**
 	 * @return the status
 	 */
-	public boolean getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
@@ -277,7 +281,7 @@ public class BookCopy implements Table {
 	 * @param status
 	 *            the status to set
 	 */
-	public void setStatus(boolean status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
