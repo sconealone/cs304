@@ -216,7 +216,7 @@ public class BookCopy implements Table {
 			BookCopy bc = new BookCopy();
 			bc.setB(b);
 			bc.setCopyNo(copyNo);
-			bc.setStatus(rs.getBoolean(3));
+			bc.setStatus(rs.getString(3));
 			return bc;
 		}
 		return null;
@@ -249,7 +249,7 @@ public class BookCopy implements Table {
 			BookCopy bc = new BookCopy();
 			bc.setB(b);
 			bc.setCopyNo(copyNo);
-			bc.setStatus(rs.getBoolean(3));
+			bc.setStatus(rs.getString(3));
 			return bc;
 		}
 		return null;
