@@ -1,13 +1,15 @@
-README is back.
-It will be used to track meeting dates and work assignments.
-
-Next meeting: Monday, November 21
+Next meeting: Friday, November 25
 Work assignments:
-- Finish Table classes and implement user functionality
+- Mitch: write unit tests, update schedule, write file parser, Librarian GUI
+- Jenny: write unit tests for Borrower functionality, write List<Book>ToString[][] method, Borrower GUI
 
 ==============================================================
 
 Old work:
+
+Next meeting: Monday, November 21
+Work assignments:
+- Finish Table classes and implement user functionality
 
 Next meeting: Friday, November 18
 Discuss any problems we've been having with implementation

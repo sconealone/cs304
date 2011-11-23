@@ -268,6 +268,28 @@ public class Borrowing implements Table {
           
           return borrowings;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public Collection<Table> getOverdue() throws SQLException {
+		ArrayList<Table> borrowings = new ArrayList<Table>();
+		
+		PreparedStatement ps = con.prepareStatement("SELECT * FROM Borrowing WHERE inDate < ?");
+		ps.setDate(1, null, Calendar.getInstance());
+		
+		ResultSet rs = ps.executeQuery();
+        while (rs.next())
+        {
+          borrowings.add(new Borrowing(rs));
+
+        } // end while(rs.next())
+        rs.close();
+        
+        return borrowings;
+	}
         
 
         /**

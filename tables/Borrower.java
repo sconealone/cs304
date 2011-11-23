@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import tables.Book;
+import tables.Table;
 import users.Conn;
 
 public class Borrower implements Table {
@@ -370,7 +372,7 @@ public class Borrower implements Table {
 		this.bookTimeLimit = bookTimeLimit;
 	}
 
-	public List<Book> searchBookByTitle(String title) throws SQLException {
+	public String[][] searchBookByTitle(String title) throws SQLException {
 		Statement stmt = con.createStatement();
 		ResultSet rs = stmt
 				.executeQuery("SELECT Book.*, COUNT(status) FROM Book, BookCopy "
@@ -393,10 +395,11 @@ public class Borrower implements Table {
 			b = b.get();
 			lob.add(b);
 		}
-		return lob;
+		String[][] bookArray = listOfBooksTo2DArray(lob);
+		return bookArray;
 	}
 
-	public List<Book> searchBookByAuthor(String author) throws SQLException {
+	public String[][] searchBookByAuthor(String author) throws SQLException {
 		Statement stmt = con.createStatement();
 		String sql = "SELECT Book.* FROM Book, HasAuthor "
 				+ "WHERE Book.callNumber=HasAuthor.callNumber AND HasAuthor.name='"
@@ -410,10 +413,11 @@ public class Borrower implements Table {
 			b = b.get();
 			lob.add(b);
 		}
-		return lob;
+		String[][] bookArray = listOfBooksTo2DArray(lob);
+		return bookArray;
 	}
 
-	public List<Book> searchBookBySubject(String subject) throws SQLException {
+	public String[][] searchBookBySubject(String subject) throws SQLException {
 		Statement stmt = Conn.getInstance().getConnection().createStatement();
 		String sql = "Select Book.CallNumber FROM Book, HasSubject "
 				+ "WHERE Book.CallNumber = HasSubject.CallNumber AND HasSubject.subject = '"
@@ -427,7 +431,8 @@ public class Borrower implements Table {
 			b = b.get();
 			lob.add(b);
 		}
-		return lob;
+		String[][] bookArray = listOfBooksTo2DArray(lob);
+		return bookArray;
 	}
 
 	public ArrayList<ArrayList<Table>> checkAccount() throws SQLException {
@@ -524,7 +529,7 @@ public class Borrower implements Table {
 		}
 	}
 
-	public boolean isVald() throws SQLException {
+	public boolean isValid() throws SQLException {
 	  // if Borrower has unpaid fines
 	  Statement stmt = con.createStatement();
 	  String sql = "SELECT B.bid FROM Borrower B WHERE EXISTS " +
@@ -541,7 +546,8 @@ public class Borrower implements Table {
 	  Statement stmt2 = con.createStatement();
 	  String sql2 = "SELECT B.bid FROM Borrower B WHERE EXISTS " +
 	  		"(SELECT W.borid FROM Borrowing W, BorrowerType T " +
-	  		"WHERE B.bid=W.bid AND B.type=T.type AND DATEADD(W.outDate,T.bookTimeLimit,outDate) < Convert(datetime, Convert(int, GetDate())))";
+	  		"WHERE B.bid=W.bid AND B.type=T.type AND " +
+	  		"DATEADD(W.outDate,T.bookTimeLimit,outDate) < Convert(datetime, Convert(int, GetDate())))";
 	  ResultSet rs2 = stmt2.executeQuery(sql2);
 	  if(rs2.next()) {
 		  int id = rs2.getInt(1);
@@ -550,4 +556,56 @@ public class Borrower implements Table {
 	  }
 	  return true;
   }
+	
+	public String[][] listOfBooksTo2DArray(ArrayList<Book> lob) throws SQLException {
+
+		int copiesIn,copiesOut;
+		int numColumns = 8;
+		int numRows = lob.size() + 1;
+		String[][] twoDArray = new String[numRows][numColumns];
+		String[] columnNames = {"callNumber","isbn","title","mainAuthor","publisher","year","copiesIn","copiesOut"};
+		for(int i=0;i<numColumns;i++) {
+			twoDArray[0][i]= columnNames[i];
+		}
+
+		for(int i=1;i<numRows;i++) {
+			// populate row[i] with the (i-1)th Book from lob
+			Book b = lob.get(i-1);
+			twoDArray[i][0] = b.getCallNumber().toString();
+			twoDArray[i][1] = b.getIsbn();
+			twoDArray[i][2] = b.getTitle();
+			twoDArray[i][3] = b.getMainAuthor();
+			twoDArray[i][4] = b.getPublisher();
+			twoDArray[i][5] = b.getYear().toString();
+			
+			// Counts number of copies of specific book that are in
+			Statement stmt = con.createStatement();
+			String sql = "SELECT COUNT(COPYNO) AS copiesIn FROM BookCopy " +
+					"WHERE BookCopy.callNumber='" + b.getCallNumber() + "' AND BookCopy.status='in'";
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			if(rs.next()) {
+				copiesIn = rs.getInt(1);
+				twoDArray[i][6] = Integer.toString(copiesIn);
+			}
+			else
+				twoDArray[i][6] = Integer.toString(0);
+			
+			// Counts number of copies of specific book that are out
+			Statement stmt2 = con.createStatement();
+			String sql2 = "SELECT COUNT(COPYNO) AS totalCopies FROM Book, BookCopy " +
+					"WHERE BookCopy.callNumber='" + b.getCallNumber() + "' AND BookCopy.status<>'in'";
+			ResultSet rs2 = stmt2.executeQuery(sql2);
+			
+			if(rs2.next()) {
+				copiesOut = rs2.getInt(1);
+				twoDArray[i][7] = Integer.toString(copiesOut);
+			}
+			else
+				twoDArray[i][7] = Integer.toString(0);			
+		}
+		return twoDArray;
+	}
+
+	
 }

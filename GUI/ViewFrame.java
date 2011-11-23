@@ -30,6 +30,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import tables.Book;
+import tables.Borrower;
 /*
  * ViewFrame.java
  *
@@ -806,8 +810,41 @@ public class ViewFrame extends javax.swing.JFrame {
         doButton.setText(buttonText);
         break;
       case SEARCH:
+        try{
         String searchTextField = SearchTextField.getText();
         String searchGetSelection = (String)SearchComboBox.getSelectedItem();
+       // List<Book> lob = new ArrayList<Book>();
+        
+        
+        String[][] TwoDArrayToPrint=null;
+        Book b = new Book();
+        Borrower bor = new Borrower();
+        
+            if(searchGetSelection.equals("Subject")){
+                TwoDArrayToPrint=bor.searchBookBySubject(searchTextField);
+            }
+            if(searchGetSelection.equals("Title")){
+                TwoDArrayToPrint = bor.searchBookByTitle(searchTextField);
+            }
+            if(searchGetSelection.equals("Author")){
+                TwoDArrayToPrint = bor.searchBookByAuthor(searchTextField);
+            }
+            
+            String[] header1 = TwoDArrayToPrint[0];
+            String[][] TwoDMinusHeader = new String[TwoDArrayToPrint.length-1][TwoDArrayToPrint[0].length];
+            for(int i =0;i<TwoDArrayToPrint.length-1;i++){
+                TwoDMinusHeader[i]=TwoDArrayToPrint[i+1];
+            }
+            
+            //print 2d array
+            UneditableTableModel uTM = new UneditableTableModel(TwoDMinusHeader,header1);
+            SearchTable.setModel(uTM);
+            SearchTable.repaint();
+        }
+        catch(SQLException S){
+            S.printStackTrace();
+            
+        }
         break;
       case CHECK_ACCOUNT:
         break;
