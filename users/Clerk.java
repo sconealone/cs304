@@ -9,6 +9,7 @@ import java.util.Iterator;
 import tables.Book;
 import tables.BookCopy;
 import tables.Borrower;
+import tables.BorrowerType;
 import tables.Borrowing;
 import tables.Fine;
 import tables.HoldRequest;
@@ -46,7 +47,7 @@ public class Clerk {
 			Calendar expiryDate, String type) throws SQLException {
 
 		Borrower borr = new Borrower();
-		// BorrowerType btype = new BorrowerType();
+		BorrowerType btype = new BorrowerType();
 
 		borr.setAddress(address);
 		borr.setEmailAddress(emailAddress);
@@ -86,7 +87,8 @@ public class Clerk {
 				BookCopy bc = new BookCopy();
 				bc.setCopyNo(copyNos[i]);
 				bc = (BookCopy) bc.get();
-				if (bc.getStatus()) {
+				if (bc.getStatus() == "IN") {
+					bc.setStatus("OUT");
 					bwing.setBookCopy(bc);
 					bwing.setBorrower(borr);
 
@@ -125,7 +127,7 @@ public class Clerk {
 
 		// TODO get the correct Borrowing object
 
-		bc.setStatus(true);
+		bc.setStatus("IN");
 		if (Calendar.getInstance().compareTo(bwing.getInDate()) == 1) {
 			Fine f = new Fine();
 			// TODO Set correct fine amount
@@ -145,7 +147,7 @@ public class Clerk {
 			while (hrItr.hasNext()) {
 				hr = (HoldRequest) hrItr.next();
 				// TODO message(hr.getBorr());
-				bc.setStatus(false);
+				bc.setStatus("HOLD");
 			}
 		}
 	}
@@ -173,7 +175,7 @@ public class Clerk {
 				Borrower borr = new Borrower();
 				borr.setBid(bwing.getBorid());
 				borr = (Borrower) borr.get();
-
+				// TODO bc.setStatus("OVERDUE");
 				// TODO message(borr);
 			}
 		}
