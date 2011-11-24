@@ -2,6 +2,10 @@
 ###################
 *.txt
 
+#Eclipse Project Stuff#
+*.classpath
+*.project
+
 #NBFiles#
 ###################
 *.properties
