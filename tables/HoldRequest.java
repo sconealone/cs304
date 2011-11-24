@@ -54,7 +54,7 @@ public class HoldRequest implements Table {
 	 * @param borr
 	 *            Borrower for the HoldRequest
 	 */
-	public HoldRequest(Calendar issueDate, Book b, Borrower borr) {
+	public HoldRequest(Borrower borr, Book b, Calendar issueDate) {
 		this.issueDate = issueDate;
 		this.b = b;
 		this.borr = borr;
@@ -121,6 +121,11 @@ public class HoldRequest implements Table {
 		c = Conn.getInstance().getConnection();
 	}
 
+	/**
+	 * Returns a String representation of the table.
+	 * 
+	 * Returns a 2-D String representation of the HoldRequest table.
+	 */
 	@Override
 	public String[][] display() throws SQLException {
 		String[][] result = null;
@@ -129,11 +134,18 @@ public class HoldRequest implements Table {
 		if (hrt.size() > 0) {
 			result = new String[hrt.size()][HOLD_REQUEST_FIELDS];
 			int i = 0;
+			
+			/*
+			 * result[i][0] = "hid";
+			 * result[i][1] = "bid";
+			 * result[i][2] = "callNo";
+			 * result[i][3] = "issueDate";
+			 */
+			
 			Iterator<Table> hrItr = hrt.iterator();
 			while (hrItr.hasNext()) {
 				i++;
 				int j = 0;
-				
 				//could probably organize this better
 				result[i][j] = String.valueOf((((HoldRequest) hrItr.next()).getHid()));
 				result[i][j++] = String.valueOf(((HoldRequest) hrItr.next()).getBorr().getBid());

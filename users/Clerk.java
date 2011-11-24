@@ -139,6 +139,8 @@ public class Clerk {
 		}
 
 		HoldRequest hr = new HoldRequest();
+		HoldRequest finalhr = new HoldRequest();
+		finalhr.setIssueDate(Calendar.getInstance());
 		Book b = new Book();
 
 		Collection<Table> lhReq = hr.getAll(b);
@@ -146,9 +148,12 @@ public class Clerk {
 			Iterator<Table> hrItr = lhReq.iterator();
 			while (hrItr.hasNext()) {
 				hr = (HoldRequest) hrItr.next();
-				// TODO message(hr.getBorr());
-				bc.setStatus("HOLD");
+				// This returned BookCopy goes to the earliest HoldRequest
+				if ((hr.getIssueDate().compareTo(finalhr.getIssueDate())) == -1)
+					finalhr = hr;
 			}
+			// TODO message(hr.getBorr());
+			// TODO bc.setStatus("HOLD");
 		}
 	}
 
