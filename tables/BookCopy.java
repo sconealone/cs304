@@ -324,5 +324,32 @@ public class BookCopy implements Table {
 	public void setB(Book b) {
 		this.b = b;
 	}
+        
+        /**
+         * Gets the latest copy number for the book whose callNumber matches
+         * the one passed in. 
+         * @param callNumber the unique call number of the book whose copy we
+         * are interested in
+         * @return null if there are no copies, otherwise the most recently
+         * added call number
+         * @throws SQLException if the database cannot be reached
+         */
+        public String getLatestCopyNo()
+                throws SQLException
+        {
+          // move this block to BookCopy class and call that method
+          String latestCopyNumber;
+          String sql = "SELECT MAX(copyNo) "
+                  + "FROM BookCopy "
+                  + "WHERE callNumber = ?"
+                  + "GROUP BY callNumber";
+          Connection con = Conn.getInstance().getConnection();
+          PreparedStatement ps = con.prepareStatement(sql);
+          ps.setString(1, b.getCallNumber());
+          ResultSet rs = ps.executeQuery();
+          latestCopyNumber = (rs.next()) ? rs.getString(1) : null;
+          return latestCopyNumber;
+          // end move this block to BookCopy class and call that method
+        }
 
 }
