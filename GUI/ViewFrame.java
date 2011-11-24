@@ -83,6 +83,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        removeBookButtonGroup = new javax.swing.ButtonGroup();
         mainPanel = new javax.swing.JPanel();
         cardPanel = new javax.swing.JPanel();
         startPanel = new javax.swing.JPanel();
@@ -122,7 +123,15 @@ public class ViewFrame extends javax.swing.JFrame {
         removeBorrowerLabel = new javax.swing.JLabel();
         removeBorrowerTextField = new javax.swing.JTextField();
         removeBookPanel = new javax.swing.JPanel();
-        jLabel14 = new javax.swing.JLabel();
+        removeBookCallNumberPanel = new javax.swing.JPanel();
+        removeBookCallNumberLabel = new javax.swing.JLabel();
+        removeBookPrimaryNoTextField = new javax.swing.JTextField();
+        removeBookSecondaryNoTextField = new javax.swing.JTextField();
+        removeBookYearTextField = new javax.swing.JTextField();
+        removeBookRadioButtonPanel = new javax.swing.JPanel();
+        removeBookBookRadioButton = new javax.swing.JRadioButton();
+        removeBookWhichCopiesTextField = new javax.swing.JTextField();
+        removeBookOnlyTheseCopiesRadioButton = new javax.swing.JRadioButton();
         popularReportPanel = new javax.swing.JPanel();
         popularReportOptionsPanel = new javax.swing.JPanel();
         popularReportYearSelectLabel = new javax.swing.JLabel();
@@ -348,10 +357,57 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(removeBorrowerPanel, "Remove borrower");
 
+        removeBookPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Remove books and copies"));
         removeBookPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel14.setText("remove books and copies");
-        removeBookPanel.add(jLabel14, java.awt.BorderLayout.CENTER);
+        removeBookCallNumberPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Book"));
+        removeBookCallNumberPanel.setLayout(new java.awt.GridBagLayout());
+
+        removeBookCallNumberLabel.setText("Call number: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        removeBookCallNumberPanel.add(removeBookCallNumberLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        removeBookCallNumberPanel.add(removeBookPrimaryNoTextField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        removeBookCallNumberPanel.add(removeBookSecondaryNoTextField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        removeBookCallNumberPanel.add(removeBookYearTextField, gridBagConstraints);
+
+        removeBookPanel.add(removeBookCallNumberPanel, java.awt.BorderLayout.PAGE_START);
+
+        removeBookRadioButtonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Remove"));
+        removeBookRadioButtonPanel.setLayout(new java.awt.GridBagLayout());
+
+        removeBookButtonGroup.add(removeBookBookRadioButton);
+        removeBookBookRadioButton.setSelected(true);
+        removeBookBookRadioButton.setText("Remove book and all copies");
+        removeBookBookRadioButton.setName("all"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        removeBookRadioButtonPanel.add(removeBookBookRadioButton, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 100;
+        removeBookRadioButtonPanel.add(removeBookWhichCopiesTextField, gridBagConstraints);
+
+        removeBookButtonGroup.add(removeBookOnlyTheseCopiesRadioButton);
+        removeBookOnlyTheseCopiesRadioButton.setText("Only these copies: ");
+        removeBookOnlyTheseCopiesRadioButton.setName("select"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        removeBookRadioButtonPanel.add(removeBookOnlyTheseCopiesRadioButton, gridBagConstraints);
+
+        removeBookPanel.add(removeBookRadioButtonPanel, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(removeBookPanel, "Remove books and copies");
 
@@ -1113,7 +1169,6 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel holdRequestPanel;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
@@ -1145,8 +1200,18 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem processReturnMenuItem;
     private javax.swing.JPanel processReturnPanel;
     private javax.swing.JMenuItem quitMenuItem;
+    private javax.swing.JRadioButton removeBookBookRadioButton;
+    private javax.swing.ButtonGroup removeBookButtonGroup;
+    private javax.swing.JLabel removeBookCallNumberLabel;
+    private javax.swing.JPanel removeBookCallNumberPanel;
     private javax.swing.JMenuItem removeBookMenuItem;
+    private javax.swing.JRadioButton removeBookOnlyTheseCopiesRadioButton;
     private javax.swing.JPanel removeBookPanel;
+    private javax.swing.JTextField removeBookPrimaryNoTextField;
+    private javax.swing.JPanel removeBookRadioButtonPanel;
+    private javax.swing.JTextField removeBookSecondaryNoTextField;
+    private javax.swing.JTextField removeBookWhichCopiesTextField;
+    private javax.swing.JTextField removeBookYearTextField;
     private javax.swing.JPanel removeBorrowerInputPanel;
     private javax.swing.JLabel removeBorrowerLabel;
     private javax.swing.JMenuItem removeBorrowerMenuItem;
