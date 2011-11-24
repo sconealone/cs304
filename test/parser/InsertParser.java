@@ -45,7 +45,8 @@ public class InsertParser {
   }
   
   /**
-   * Opens a file and parses it
+   * Opens a file and parses it,
+   * then executes all sql statements
    */
   public void parse()
   {
@@ -104,7 +105,7 @@ public class InsertParser {
       {
         try
         {
-          System.out.println(queries[i]);
+          //System.out.println(queries[i]);
           s.execute(queries[i]);
         }
         catch (SQLException e)

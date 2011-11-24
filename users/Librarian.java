@@ -147,19 +147,9 @@ public class Librarian
   {
     Book book = new Book();
     book.setCallNumber(callNumber);
-    
-    // move this block to BookCopy class and call that method
-    String latestCopyNumber;
-    String sql = "SELECT MAX(copyNo) "
-            + "FROM BookCopy "
-            + "WHERE callNumber = ?"
-            + "GROUP BY callNumber";
-    Connection con = Conn.getInstance().getConnection();
-    PreparedStatement ps = con.prepareStatement(sql);
-    ps.setString(1, callNumber);
-    ResultSet rs = ps.executeQuery();
-    latestCopyNumber = (rs.next()) ? rs.getString(1) : null;
-    // end move this block to BookCopy class and call that method
+    BookCopy bc = new BookCopy();
+    bc.setB(book);
+    String latestCopyNumber = bc.getLatestCopyNo();
     
     return addNewCopiesToBookWithLatestCopyNumber(  numCopies, 
                                                     book, 

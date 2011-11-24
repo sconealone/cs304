@@ -28,10 +28,12 @@ public class BorrowingTest {
 
   @BeforeClass
   public static void setUpClass() throws Exception {
+    (new tablesTest()).setup();
   }
 
   @AfterClass
   public static void tearDownClass() throws Exception {
+    (new tablesTest()).clearDataBaseAfterTests();
   }
   
   @Before
