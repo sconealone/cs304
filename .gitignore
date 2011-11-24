@@ -7,6 +7,10 @@
 *.properties
 *.mf
 *.xml
+nbproject*
+jjcmlib*
+build*
+*.classpath
 
 # Compiled source #
 ###################

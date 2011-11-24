@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import tables.Book;
 import tables.Borrower;
+import test.parser.InsertParser;
 import users.Conn;
 
 public class tablesTest {
@@ -185,6 +186,8 @@ public class tablesTest {
 
 			Statement addView2 = c.createStatement();
 			addView2.execute(view2);
+                        
+                        (new InsertParser()).parse();
 
 		}catch (SQLException s){
 			System.out.println(s.getMessage());

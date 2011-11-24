@@ -139,7 +139,6 @@ public class Librarian
    * @return the copy numbers of the new copies added
    * @throws SQLException 
    * 
-   * TODO move the commented block to the BookCopy class when the BookCopy
    * class is stable
    */
   public String[] addNewCopies(String callNumber, int numCopies)
@@ -147,19 +146,9 @@ public class Librarian
   {
     Book book = new Book();
     book.setCallNumber(callNumber);
-    
-    // move this block to BookCopy class and call that method
-    String latestCopyNumber;
-    String sql = "SELECT MAX(copyNo) "
-            + "FROM BookCopy "
-            + "WHERE callNumber = ?"
-            + "GROUP BY callNumber";
-    Connection con = Conn.getInstance().getConnection();
-    PreparedStatement ps = con.prepareStatement(sql);
-    ps.setString(1, callNumber);
-    ResultSet rs = ps.executeQuery();
-    latestCopyNumber = (rs.next()) ? rs.getString(1) : null;
-    // end move this block to BookCopy class and call that method
+    BookCopy bc = new BookCopy();
+    bc.setB(book);
+    String latestCopyNumber = bc.getLatestCopyNo();
     
     return addNewCopiesToBookWithLatestCopyNumber(  numCopies, 
                                                     book, 
@@ -183,10 +172,12 @@ public class Librarian
             0 : Integer.parseInt(latestCopyNo.substring(1));
     copyNoAsInt++;
     ArrayList<String> copyNumbersGrowable = new ArrayList<String>();
+    Connection c = Conn.getInstance().getConnection();
+    c.setAutoCommit(false);
     for (int i = 0; i < numCopies; i++)
     {
       String copyNoAsString = "C"+copyNoAsInt;
-      BookCopy newBookCopy = new BookCopy(copyNoAsString,"in",book);
+      BookCopy newBookCopy = new BookCopy(copyNoAsString,book,"in");
       if (newBookCopy.insert())
       {
         copyNumbersGrowable.add(copyNoAsString);
@@ -198,7 +189,8 @@ public class Librarian
         throw new SQLException(msg);
       }
     }
-    
+    c.setAutoCommit(true);
+    c.commit();
     return (String[]) copyNumbersGrowable.toArray();
   }
 	
@@ -269,6 +261,7 @@ public class Librarian
     finally
     {
       con.setAutoCommit(true);
+      con.commit();
     }
   }
 
