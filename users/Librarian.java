@@ -172,6 +172,8 @@ public class Librarian
             0 : Integer.parseInt(latestCopyNo.substring(1));
     copyNoAsInt++;
     ArrayList<String> copyNumbersGrowable = new ArrayList<String>();
+    Connection c = Conn.getInstance().getConnection();
+    c.setAutoCommit(false);
     for (int i = 0; i < numCopies; i++)
     {
       String copyNoAsString = "C"+copyNoAsInt;
@@ -187,7 +189,8 @@ public class Librarian
         throw new SQLException(msg);
       }
     }
-    
+    c.setAutoCommit(true);
+    c.commit();
     return (String[]) copyNumbersGrowable.toArray();
   }
 	
@@ -258,6 +261,7 @@ public class Librarian
     finally
     {
       con.setAutoCommit(true);
+      con.commit();
     }
   }
 
