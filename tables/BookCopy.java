@@ -63,6 +63,11 @@ public class BookCopy implements Table {
 		c = Conn.getInstance().getConnection();
 	}
 
+	/**
+	 * Returns a String representation of the table.
+	 * 
+	 * Returns a 2-D String representation of the BookCopy table.
+	 */
 	@Override
 	public String[][] display() throws SQLException {
 		String[][] result = null;
@@ -71,6 +76,13 @@ public class BookCopy implements Table {
 		if (bct.size() > 0) {
 			result = new String[bct.size()][BOOK_COPY_FIELDS];
 			int i = 0;
+			
+			/*
+			 * result[i][0] = "copyNo";
+			 * result[i][2] = "callNo";
+			 * result[i][3] = "status";
+			 */
+			
 			Iterator<Table> bcItr = bct.iterator();
 			while (bcItr.hasNext()) {
 				int j = 0;
