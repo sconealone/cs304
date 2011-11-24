@@ -118,7 +118,9 @@ public class ViewFrame extends javax.swing.JFrame {
         addNewCopyPanel = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
         removeBorrowerPanel = new javax.swing.JPanel();
-        jLabel16 = new javax.swing.JLabel();
+        removeBorrowerInputPanel = new javax.swing.JPanel();
+        removeBorrowerLabel = new javax.swing.JLabel();
+        removeBorrowerTextField = new javax.swing.JTextField();
         removeBookPanel = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         popularReportPanel = new javax.swing.JPanel();
@@ -245,78 +247,6 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(tablesPanel, "View tables");
 
-        checkAccountPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel3.setText("check account");
-        checkAccountPanel.add(jLabel3, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(checkAccountPanel, "Check account");
-
-        payFinePanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel4.setText("pay fine");
-        payFinePanel.add(jLabel4, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(payFinePanel, "Pay a fine");
-
-        holdRequestPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel5.setText("hold request");
-        holdRequestPanel.add(jLabel5, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(holdRequestPanel, "Place hold request");
-
-        checkOutPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel7.setText("check out");
-        checkOutPanel.add(jLabel7, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(checkOutPanel, "Check-out books");
-
-        processReturnPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel8.setText("process returns");
-        processReturnPanel.add(jLabel8, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(processReturnPanel, "Process a return");
-
-        addBorrowerPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel9.setText("add new borrower");
-        addBorrowerPanel.add(jLabel9, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(addBorrowerPanel, "Add a new borrower");
-
-        checkOverduePanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel10.setText("check overdue items");
-        checkOverduePanel.add(jLabel10, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(checkOverduePanel, "Check overdue books");
-
-        addNewBookPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel20.setText("add new book");
-        addNewBookPanel.add(jLabel20, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(addNewBookPanel, "Add new book");
-
-        addNewCopyPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel19.setText("new copy");
-        addNewCopyPanel.add(jLabel19, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(addNewCopyPanel, "Add new book copy");
-
-        removeBorrowerPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel16.setText("remove borrower");
-        removeBorrowerPanel.add(jLabel16, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(removeBorrowerPanel, "Remove borrower");
-
-        removeBookPanel.setLayout(new java.awt.BorderLayout());
-
         searchPanel.setLayout(new java.awt.BorderLayout());
 
         SearchComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Title", "Subject", "Author"}));
@@ -328,7 +258,6 @@ public class ViewFrame extends javax.swing.JFrame {
         searchPanel.add(SearchTopPanel, java.awt.BorderLayout.PAGE_START);
 
         SearchTable.setModel(new javax.swing.table.DefaultTableModel());
-
         jScrollPane1.setViewportView(SearchTable);
 
         searchPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -398,10 +327,24 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(addNewCopyPanel, "Add new book copy");
 
+        removeBorrowerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Remove borrower"));
         removeBorrowerPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel16.setText("remove borrower");
-        removeBorrowerPanel.add(jLabel16, java.awt.BorderLayout.CENTER);
+        removeBorrowerInputPanel.setLayout(new java.awt.GridBagLayout());
+
+        removeBorrowerLabel.setText("Borrower ID:");
+        removeBorrowerLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        removeBorrowerInputPanel.add(removeBorrowerLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        removeBorrowerInputPanel.add(removeBorrowerTextField, gridBagConstraints);
+
+        removeBorrowerPanel.add(removeBorrowerInputPanel, java.awt.BorderLayout.NORTH);
 
         cardPanel.add(removeBorrowerPanel, "Remove borrower");
 
@@ -867,6 +810,41 @@ public class ViewFrame extends javax.swing.JFrame {
       case REMOVE_BOOK:
         break;
       case REMOVE_BORROWER:
+        int bid = -1;
+        
+        try
+        {
+          bid = Integer.parseInt(removeBorrowerTextField.getText());
+          Borrower removeBorrowerBorrower = new Borrower();
+          removeBorrowerBorrower.setBid(bid);
+          if (removeBorrowerBorrower.delete())
+          {
+            String msg = "Borrower with an ID of "+bid
+                    + " successfully removed from the database.";
+            JOptionPane.showMessageDialog(this, msg, "Success", JOptionPane.PLAIN_MESSAGE);
+          }
+          else
+          {
+            String msg = "Failed to remove borrower with an ID of "+bid+ ".";
+            JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+            
+          }
+        }
+        catch (NumberFormatException nfe)
+        {
+          String msg = "Borrower ID must be a whole number.";
+          JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        catch (SQLException se)
+        {
+          String msg = "Could not remove borrower with an ID of "+bid
+                  + " from the database:\n"+se.getMessage();
+          JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        finally
+        {
+          clearButtonActionPerformed(null);
+        }
         break;
       case REPORT_POPULAR:
         int reportYear = -1;
@@ -1039,6 +1017,7 @@ public class ViewFrame extends javax.swing.JFrame {
       case REMOVE_BOOK:
         break;
       case REMOVE_BORROWER:
+        removeBorrowerTextField.setText("");
         break;
       case REPORT_POPULAR:
         popularReportYearTextField.setText("");
@@ -1135,7 +1114,6 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
@@ -1169,8 +1147,11 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem quitMenuItem;
     private javax.swing.JMenuItem removeBookMenuItem;
     private javax.swing.JPanel removeBookPanel;
+    private javax.swing.JPanel removeBorrowerInputPanel;
+    private javax.swing.JLabel removeBorrowerLabel;
     private javax.swing.JMenuItem removeBorrowerMenuItem;
     private javax.swing.JPanel removeBorrowerPanel;
+    private javax.swing.JTextField removeBorrowerTextField;
     private javax.swing.JMenu removeMenu;
     private javax.swing.JMenu reportMenu;
     private javax.swing.JMenuItem searchMenuItem;
