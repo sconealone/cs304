@@ -205,7 +205,7 @@ public class Librarian
   public boolean removeBook(String callNumber) throws SQLException
   {
     Book book = new Book();
-    book.setCallNumber(callNumber);
+    book.setCallNumber(callNumber.toUpperCase());
     return book.delete();
   }
 

@@ -29,11 +29,11 @@ public class InsertFileGenerator {
       int numBorrower, numBook, numBorrowing, numFine, numHoldRequest;
       if (args.length != 5)
       {
-        numBorrower = 25;
-        numBook = 25;
-        numBorrowing = 15;
-        numFine = 5;
-        numHoldRequest = 5;
+        numBorrower = 3;
+        numBook = 3;
+        numBorrowing = 2;
+        numFine = 1;
+        numHoldRequest = 1;
         System.out.println("Default number of tables to generate used.");
       }
       else
@@ -48,7 +48,7 @@ public class InsertFileGenerator {
     FileWriter fout;
     InsertGenerator ig = new InsertGenerator();
       fout = new FileWriter(filename);
-      fout.write(ig.generate(25,25,15,5,5));
+      fout.write(ig.generate(numBorrower,numBook,numBorrowing,numFine,numHoldRequest));
       fout.close();
       
       System.out.println("File generated as insert_test_values.sql");

@@ -16,23 +16,11 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import users.Controller;
 import javax.swing.JSplitPane;
-import javax.swing.JButton;
-import java.awt.BorderLayout;
-import javax.swing.BoxLayout;
-import java.awt.Component;
-import javax.swing.Box;
-import java.awt.GridLayout;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import tables.Book;
+import tables.BookCopy;
 import tables.Borrower;
 /*
  * ViewFrame.java
@@ -864,6 +852,99 @@ public class ViewFrame extends javax.swing.JFrame {
       case ADD_COPY:
         break;
       case REMOVE_BOOK:
+        String removeBookCallNumber = 
+                removeBookPrimaryNoTextField.getText().trim() + ' '
+                + removeBookSecondaryNoTextField.getText().trim() + ' '
+                + removeBookYearTextField.getText().trim();
+        
+        try
+        {
+        
+          if (removeBookBookRadioButton.isSelected())
+          {
+
+            // confirm
+            String removeBookConfirmMessage = 
+                    "Are you sure you want to remove book " + removeBookCallNumber
+                    + "?\nAll information such as copies, requests, and borrowings"
+                    + " will also be deleted.";
+            int removeBookConfirm = JOptionPane.showConfirmDialog(this, 
+                    removeBookConfirmMessage, 
+                    "Please confirm",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (removeBookConfirm != JOptionPane.YES_OPTION)
+            {
+              return;
+            }
+
+            if (controller.getSystemLibrarian().removeBook(removeBookCallNumber))
+            {
+              String msg = "Book "+removeBookCallNumber+" successfully removed.";
+              JOptionPane.showMessageDialog(this, msg, "Success", JOptionPane.PLAIN_MESSAGE);
+            }
+            else
+            {
+              String msg = "Failed to remove book "+removeBookCallNumber+".";
+              JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+              return;
+            }
+          }
+
+          else // if remove copies radio button is selected
+          {
+            int[] copyNumbersToRemove = 
+                    parseBookCopyCopyNumbers(removeBookWhichCopiesTextField.getText());
+            String removeBookCopiesConfirmMessage = 
+                    "Are you sure you want to remove the copies of book " 
+                    + removeBookCallNumber
+                    + " with copy numbers:";
+            int length = copyNumbersToRemove.length;
+            for (int i = 0; i < length; i++)
+            {
+              removeBookCopiesConfirmMessage += "C" + copyNumbersToRemove[i];
+              if (i != length - 1)
+              {
+                removeBookCopiesConfirmMessage += ", ";
+              }
+            }
+            removeBookCopiesConfirmMessage +=
+                    "?\nAll information such as hold requests and borrowings"
+                    + " for these copies"
+                    + " will also be deleted.";
+            int removeBookConfirm = JOptionPane.showConfirmDialog(this, 
+                    removeBookCopiesConfirmMessage, 
+                    "Please confirm",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (removeBookConfirm != JOptionPane.YES_OPTION)
+            {
+              return;
+            }
+
+            if (controller.getSystemLibrarian().removeBook(removeBookCallNumber))
+            {
+              String msg = "Copies successfully removed.";
+              JOptionPane.showMessageDialog(this, msg, "Success", JOptionPane.PLAIN_MESSAGE);
+            }
+            else
+            {
+              String msg = "Failed to remove copies.  None were removed.";
+              JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+              return;
+            }
+          }
+        } // end try
+        catch (SQLException e)
+        {
+          // handle
+          
+          String msg = "Deletion failed.\n";
+          msg += e.getMessage();
+          JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+
         break;
       case REMOVE_BORROWER:
         int bid = -1;
@@ -871,8 +952,27 @@ public class ViewFrame extends javax.swing.JFrame {
         try
         {
           bid = Integer.parseInt(removeBorrowerTextField.getText());
+          
+          // confirm
+          String confirmRemoveBorrowerMessage =
+                 "Are you sure you want to remove borrower "+bid+"?";
+          
+          int confirmRemoveBorrowerResult = JOptionPane.showConfirmDialog(this, 
+                  confirmRemoveBorrowerMessage, 
+                  "Please confirm",
+                  JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+          if (confirmRemoveBorrowerResult != JOptionPane.YES_OPTION)
+          {
+            return;
+          }
+          
           Borrower removeBorrowerBorrower = new Borrower();
           removeBorrowerBorrower.setBid(bid);
+          
+          // TODO delete does not return false if the Borrower is not deleted.
+          // Coordinate with the author of Borrower and get this fixed.
+          
+          
           if (removeBorrowerBorrower.delete())
           {
             String msg = "Borrower with an ID of "+bid
@@ -1096,7 +1196,73 @@ public class ViewFrame extends javax.swing.JFrame {
     System.exit(0);
   }//GEN-LAST:event_quitMenuItemActionPerformed
 
-  
+  /**
+   * Parses a string of copy numbers, delimited by the comma, ','.
+   * You can specify a range using '-'
+   * It changes it to an int.
+   * @param copyNumbers
+   * @return 
+   */
+  private int[] parseBookCopyCopyNumbers(String copyNumbers) 
+  {
+    // filter out C
+    String copyNumbersFilteredForC = "";
+    int length;
+    length = copyNumbers.length();
+    for (int i = 0; i < length; i++)
+    {
+      char charAt = copyNumbers.charAt(i);
+      if (charAt != 'c' && charAt != 'C')
+      {
+        copyNumbersFilteredForC += charAt; 
+      }
+      // else leave it out
+    }
+    
+    // tokenize by ','
+    String[] copyNumbersSplitOnComma =
+            copyNumbersFilteredForC.split(",");
+    HashSet<Integer> copyNumbersSet = new HashSet();
+    length = copyNumbersSplitOnComma.length;
+    for (int i = 0; i < length; i++)
+    {
+      String trimmedCopyNumber = copyNumbersSplitOnComma[i].trim();
+      try
+      {
+        if (trimmedCopyNumber.contains("-"))
+        {
+          String[] splitRange = trimmedCopyNumber.split("-");
+          int start = Integer.parseInt(splitRange[0].trim());
+          int end = Integer.parseInt(splitRange[1].trim());
+          for (int j = start; j <= end; j++)
+          {
+            copyNumbersSet.add(j);
+          }
+        }
+        else
+        {
+          copyNumbersSet.add(Integer.parseInt(trimmedCopyNumber));
+        }
+      }
+      catch (NumberFormatException e)
+      {
+        // it's not a copy number - ignore it
+      }
+    } // end for
+    
+    length = copyNumbersSet.size();
+    int[] copyNumbersArray = new int[length];
+    Iterator<Integer> setIterator = copyNumbersSet.iterator();
+    int copyNumbersIndex = 0;
+    while (setIterator.hasNext())
+    {
+      copyNumbersArray[copyNumbersIndex] = setIterator.next();
+      copyNumbersIndex++;
+    }
+    Arrays.sort(copyNumbersArray);
+    return copyNumbersArray;
+    
+  }
   /**
    * @param args the command line arguments
    */
@@ -1234,6 +1400,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private Controller controller;
     private State state;
     private HashMap<String,State> statemap;
+
     
     /**
      * The possible states that the GUI can be in.  One state for every panel/
