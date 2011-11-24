@@ -139,7 +139,6 @@ public class Librarian
    * @return the copy numbers of the new copies added
    * @throws SQLException 
    * 
-   * TODO move the commented block to the BookCopy class when the BookCopy
    * class is stable
    */
   public String[] addNewCopies(String callNumber, int numCopies)
