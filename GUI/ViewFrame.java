@@ -204,7 +204,8 @@ public class ViewFrame extends javax.swing.JFrame {
         popularReportTable = new javax.swing.JTable();
         checkedOutReportPanel = new javax.swing.JPanel();
         checkedOutReportFilterPanel = new javax.swing.JPanel();
-        checkedOutReportSubjectComboBox = new javax.swing.JComboBox();
+        checkedOutReportFilterCheckBox = new javax.swing.JCheckBox();
+        checkedOutReportTextField = new javax.swing.JTextField();
         checkedOutReportTablePanel = new javax.swing.JPanel();
         checkedOutReportTablePane = new javax.swing.JScrollPane();
         checkedOutReportTable = new javax.swing.JTable();
@@ -592,11 +593,6 @@ public class ViewFrame extends javax.swing.JFrame {
         jPanel5.add(jLabel14);
 
         jTextField10.setText("Waiting for Input...");
-        jTextField10.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField10ActionPerformed(evt);
-            }
-        });
         jPanel5.add(jTextField10);
 
         addNewBookPanel.add(jPanel5, java.awt.BorderLayout.CENTER);
@@ -739,9 +735,16 @@ public class ViewFrame extends javax.swing.JFrame {
         checkedOutReportPanel.setLayout(new java.awt.BorderLayout());
 
         checkedOutReportFilterPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter by subject"));
+        checkedOutReportFilterPanel.setLayout(new java.awt.GridBagLayout());
 
-        checkedOutReportSubjectComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        checkedOutReportFilterPanel.add(checkedOutReportSubjectComboBox);
+        checkedOutReportFilterCheckBox.setText("Filter by subject: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        checkedOutReportFilterPanel.add(checkedOutReportFilterCheckBox, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        checkedOutReportFilterPanel.add(checkedOutReportTextField, gridBagConstraints);
 
         checkedOutReportPanel.add(checkedOutReportFilterPanel, java.awt.BorderLayout.PAGE_START);
 
@@ -1364,8 +1367,46 @@ public class ViewFrame extends javax.swing.JFrame {
         }
         popularReportTable.setModel(new DefaultTableModel(tableWithoutHeader,header));
         popularReportTable.repaint();
-        break;
+        break; // END CASE POPULAR REPORT
+        
       case REPORT_CHECKED_OUT:
+        String[][] checkedOutReportWithHeader = null;
+        try
+        {
+          if (checkedOutReportFilterCheckBox.isSelected())
+          {
+            String subjectToFilterBy = checkedOutReportTextField.getText().trim();
+            checkedOutReportWithHeader = 
+                    controller.getSystemLibrarian().getCheckedOutBooksReport(subjectToFilterBy);
+          }
+          else
+          {
+            checkedOutReportWithHeader = 
+                    controller.getSystemLibrarian().getCheckedOutBooksReport();
+          }
+        }
+        catch (SQLException e)
+        {
+          String msg = "Could not retrieve data\n"
+                  + e.getMessage();
+          JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+        String[] checkedOutReportHeader = checkedOutReportWithHeader[0];
+        numRows = checkedOutReportWithHeader.length;
+        numRows--;
+        numCols = checkedOutReportWithHeader[0].length;
+        tableWithoutHeader = new String[numRows][];
+        for (int i = 0; i < numRows; i++)
+        {
+          tableWithoutHeader[i] = new String[numCols];
+        }
+        for (int i = 0; i < numRows; i++)
+        {
+          System.arraycopy(checkedOutReportWithHeader[i+1], 0, tableWithoutHeader[i], 0, numCols);
+        }
+        checkedOutReportTable.setModel(new DefaultTableModel(tableWithoutHeader, checkedOutReportHeader));
+        checkedOutReportTable.repaint();
         break;
       default:
     }
@@ -1475,6 +1516,10 @@ public class ViewFrame extends javax.swing.JFrame {
         popularReportTable.repaint();
         break;
       case REPORT_CHECKED_OUT:
+        checkedOutReportFilterCheckBox.setSelected(false);
+        checkedOutReportTextField.setText("");
+        checkedOutReportTable.setModel(new DefaultTableModel());
+        checkedOutReportTable.repaint();
         break;
       default:
     }
@@ -1492,10 +1537,6 @@ public class ViewFrame extends javax.swing.JFrame {
   private void reconnectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reconnectMenuItemActionPerformed
     controller.reconnect();
   }//GEN-LAST:event_reconnectMenuItemActionPerformed
-
-    private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField10ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField10ActionPerformed
 
     private void abCNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abCNActionPerformed
         // TODO add your handling code here:
@@ -1674,13 +1715,14 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel checkOverduePanel;
     private javax.swing.JScrollPane checkOverdueTextAreaBookCopyInfo;
     private javax.swing.JScrollPane checkOverdueTextAreaBorrInfo;
+    private javax.swing.JCheckBox checkedOutReportFilterCheckBox;
     private javax.swing.JPanel checkedOutReportFilterPanel;
     private javax.swing.JMenuItem checkedOutReportMenuItem;
     private javax.swing.JPanel checkedOutReportPanel;
-    private javax.swing.JComboBox checkedOutReportSubjectComboBox;
     private javax.swing.JTable checkedOutReportTable;
     private javax.swing.JScrollPane checkedOutReportTablePane;
     private javax.swing.JPanel checkedOutReportTablePanel;
+    private javax.swing.JTextField checkedOutReportTextField;
     private javax.swing.JButton clearButton;
     private javax.swing.JMenu clerkMenu;
     private javax.swing.JButton doButton;
