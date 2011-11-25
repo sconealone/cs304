@@ -3,11 +3,13 @@ package test;
 import static org.junit.Assert.*;
 
 import java.sql.Date;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +32,7 @@ public class HoldRequestTest {
 	private Calendar cal1 = Calendar.getInstance();
 	private Calendar cal2 = Calendar.getInstance();
 	private Calendar cal3 = Calendar.getInstance();
-	
+
 	private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 
 	@Before
@@ -38,45 +40,45 @@ public class HoldRequestTest {
 		populateDB();
 	}
 
-	private void populateDB() {	
+	private void populateDB() {
 		b1.setCallNumber("CallNo1");
 		b2.setCallNumber("CallNo2");
 
 		borr1.setBid(1);
 		borr2.setBid(2);
 		borr3.setBid(3);
-	
+
 		cal1.set(Calendar.YEAR, 2011);
 		cal1.set(Calendar.MONTH, 2);
 		cal1.set(Calendar.DATE, 10);
-		
+
 		cal2.set(Calendar.YEAR, 2011);
 		cal2.set(Calendar.MONTH, 2);
 		cal2.set(Calendar.DATE, 20);
-		
+
 		cal3.set(Calendar.YEAR, 2011);
 		cal3.set(Calendar.MONTH, 4);
 		cal3.set(Calendar.DATE, 20);
-		
+
 		testhr1.setBorr(borr1);
 		testhr1.setB(b1);
 		testhr1.setIssueDate(cal1);
-		
+
 		testhr2.setBorr(borr2);
 		testhr2.setB(b1);
 		testhr2.setIssueDate(cal2);
-		
+
 		testhr3.setBorr(borr1);
 		testhr3.setB(b2);
 		testhr3.setIssueDate(cal3);
-		
+
 		try {
 			b1.insert();
 			b2.insert();
 			borr1.insert();
 			borr2.insert();
 			borr3.insert();
-			
+
 			testhr1.insert();
 			testhr2.insert();
 			testhr3.insert();
@@ -84,7 +86,7 @@ public class HoldRequestTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	@After
@@ -108,14 +110,15 @@ public class HoldRequestTest {
 	@Test
 	public final void testHoldRequest() {
 		testhr = new HoldRequest();
-		
+
 		assertNotNull((Object) testhr);
 	}
 
 	@Test
 	public final void testHoldRequestCalendarBookBorrower() {
-		testhr = new HoldRequest(new Borrower(), new Book(), Calendar.getInstance());
-		
+		testhr = new HoldRequest(new Borrower(), new Book(),
+				Calendar.getInstance());
+
 		assertNotNull((Object) testhr);
 		assertTrue(testhr.getB() instanceof Book);
 		assertTrue(testhr.getBorr() instanceof Borrower);
@@ -124,14 +127,14 @@ public class HoldRequestTest {
 	@Test
 	public final void testDisplay() throws SQLException {
 		String[][] result = testhr.display();
-		
+
 		assertEquals(result[1][0], borr1.getBid());
 		assertEquals(result[1][1], b1.getCallNumber());
 		assertEquals(result[1][2], sdf.format(cal1.getTime()));
-		
+
 		assertEquals(result[2][0], borr2.getBid());
 		assertEquals(result[2][1], b1.getCallNumber());
-		assertEquals(result[2][2], sdf.format(cal2.getTime()));	
+		assertEquals(result[2][2], sdf.format(cal2.getTime()));
 	}
 
 	@Test
@@ -147,7 +150,7 @@ public class HoldRequestTest {
 		testhr.setHid(testhr2.getHid());
 		testhr.get();
 		testhr.delete();
-		//testhr2 should not exist
+		// testhr2 should not exist
 		fail("Not yet implemented"); // TODO
 	}
 
@@ -156,10 +159,10 @@ public class HoldRequestTest {
 		testhr2.setBorr(borr2);
 		testhr2.setB(b1);
 		testhr2.setIssueDate(cal2);
-		
+
 		testhr2.insert();
 		testhr.setHid(testhr2.getHid());
-		
+
 		assertEquals(testhr, testhr2);
 	}
 
@@ -171,12 +174,22 @@ public class HoldRequestTest {
 	}
 
 	@Test
-	public final void testGet() {
-		fail("Not yet implemented"); // TODO
+	public final void testGetMeta() throws SQLException {
+		ResultSetMetaData md = testhr.getMeta();
+		String[] result = new String[md.getColumnCount()];
+
+		for (int j = 0; j < result[j].length(); j++) {
+			result[j] = md.getColumnName(j + 1);
+		}
+
+		assertEquals(result[0], "hid");
+		assertEquals(result[1], "bid");
+		assertEquals(result[2], "callNo");
+		assertEquals(result[3], "issueDate");
 	}
 
 	@Test
-	public final void testGetAllBorrower() throws SQLException {	
+	public final void testGetAllBorrower() throws SQLException {
 		Collection<Table> hr = testhr1.getAll(borr1);
 		assertTrue(hr.contains(testhr1));
 		assertFalse(hr.contains(testhr2));
@@ -185,7 +198,7 @@ public class HoldRequestTest {
 
 	@Test
 	public final void testGetAllBook() throws SQLException {
-		Collection<Table> hr = testhr1.getAll(borr1);
+		Collection<Table> hr = testhr1.getAll(b1);
 		assertTrue(hr.contains(testhr1));
 		assertTrue(hr.contains(testhr2));
 		assertFalse(hr.contains(testhr3));

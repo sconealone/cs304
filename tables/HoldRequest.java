@@ -142,7 +142,7 @@ public class HoldRequest implements Table {
 			while (hrItr.hasNext()) {
 				for (int j = 0; j < result[i].length; j++) {
 					if (i == 0)
-						result[i][j] = md.getColumnName(i + 1);
+						result[i][j] = md.getColumnName(j + 1);
 					else {
 						switch (j) {
 						case 0: // hid
