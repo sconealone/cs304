@@ -4,6 +4,8 @@
  */
 package test;
 
+import java.util.GregorianCalendar;
+import tables.Book;
 import java.util.Calendar;
 import java.util.Collection;
 import org.junit.After;
@@ -28,12 +30,10 @@ public class BorrowingTest {
 
   @BeforeClass
   public static void setUpClass() throws Exception {
-    (new tablesTest()).setup();
   }
 
   @AfterClass
   public static void tearDownClass() throws Exception {
-    (new tablesTest()).clearDataBaseAfterTests();
   }
   
   @Before
@@ -46,21 +46,36 @@ public class BorrowingTest {
     (new tablesTest()).clearDataBaseAfterTests();
   }
 
+  
 
   /**
-   * Test of display method, of class Borrowing.
+   * Test of get method, of class Borrowing.
    */
   @Test
-  public void testDisplay() throws Exception {
-    System.out.println("display");
+  public void testGet() throws Exception {
+    System.out.println("get");
     Borrowing instance = new Borrowing();
-    String[][] expResult = null;
-    String[][] result = instance.display();
-    assertArrayEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
+    instance.setBorid(1);
+    BookCopy bc = new BookCopy();
+    bc.setCopyNo("C1");
+    Book b = new Book();
+    b.setCallNumber("HI108 P73 1998");
+    bc.setB(b);
+    Borrower bor = new Borrower();
+    bor.setBid(2);
+    Borrowing result = (Borrowing) instance.get();
+    assertEquals((int)result.getBorrower().getBid(),2);
+    assertEquals((int)result.getBorid(),1);
+    assertEquals(result.getBookCopy().getB().getCallNumber(), "HI108 P73 1998");
+    assertEquals(result.getBookCopy().getCopyNo(), "C1");
+    assertEquals(result.getOutDate(), new GregorianCalendar(1990,6,8));
+    assertEquals(result.getInDate(), new GregorianCalendar(2003,3,24));
+    
+    Borrowing nonsenseBorid = new Borrowing();
+    nonsenseBorid.setBorid(1000000);
+    assertEquals(nonsenseBorid.get(),null);
   }
-
+  
   /**
    * Test of update method, of class Borrowing.
    */
@@ -68,9 +83,19 @@ public class BorrowingTest {
   public void testUpdate() throws Exception {
     System.out.println("update");
     Borrowing instance = new Borrowing();
+    instance.setBookCopy(new BookCopy("C1",new Book("HI108 P73 1998",null,null,null,null,0,null,null), null));
+    Borrower borrower = new Borrower();
+    borrower.setBid(1);
+    instance.setBorid(1);
     instance.update();
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
+    Borrowing gotBorrowing = (Borrowing) instance.get();
+    assertEquals((int) gotBorrowing.getBorid(), 1);
+    assertEquals(gotBorrowing.getBookCopy().getCopyNo(), "C1");
+    assertEquals(gotBorrowing.getBookCopy().getB().getCallNumber(), "HI108 P73 1998");
+    assertEquals((int) gotBorrowing.getBorrower().getBid(), 1);
+    assertEquals(gotBorrowing.getOutDate(), null);
+    assertEquals(gotBorrowing.getInDate(), null);
+    
   }
 
   /**
@@ -102,20 +127,6 @@ public class BorrowingTest {
   }
 
   /**
-   * Test of get method, of class Borrowing.
-   */
-  @Test
-  public void testGet() throws Exception {
-    System.out.println("get");
-    Borrowing instance = new Borrowing();
-    Table expResult = null;
-    Table result = instance.get();
-    assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
    * Test of insert method, of class Borrowing.
    */
   @Test
@@ -130,163 +141,23 @@ public class BorrowingTest {
   }
 
   /**
-   * Test of getBorid method, of class Borrowing.
+   * Test of display method, of class Borrowing.
    */
   @Test
-  public void testGetBorid() {
-    System.out.println("getBorid");
+  public void testDisplay() throws Exception {
+    System.out.println("display");
     Borrowing instance = new Borrowing();
-    Integer expResult = null;
-    Integer result = instance.getBorid();
-    assertEquals(expResult, result);
+    String[][] expResult = null;
+    String[][] result = instance.display();
+    assertArrayEquals(expResult, result);
     // TODO review the generated test code and remove the default call to fail.
     fail("The test case is a prototype.");
+  
   }
-
-  /**
-   * Test of setBorid method, of class Borrowing.
-   */
+  
   @Test
-  public void testSetBorid() {
-    System.out.println("setBorid");
-    Integer borid = null;
-    Borrowing instance = new Borrowing();
-    instance.setBorid(borid);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
-   * Test of getOutDate method, of class Borrowing.
-   */
-  @Test
-  public void testGetOutDate() {
-    System.out.println("getOutDate");
-    Borrowing instance = new Borrowing();
-    Calendar expResult = null;
-    Calendar result = instance.getOutDate();
-    assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
-   * Test of setOutDate method, of class Borrowing.
-   */
-  @Test
-  public void testSetOutDate() {
-    System.out.println("setOutDate");
-    Calendar outDate = null;
-    Borrowing instance = new Borrowing();
-    instance.setOutDate(outDate);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
-   * Test of getInDate method, of class Borrowing.
-   */
-  @Test
-  public void testGetInDate() {
-    System.out.println("getInDate");
-    Borrowing instance = new Borrowing();
-    Calendar expResult = null;
-    Calendar result = instance.getInDate();
-    assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
-   * Test of setInDate method, of class Borrowing.
-   */
-  @Test
-  public void testSetInDate() {
-    System.out.println("setInDate");
-    Calendar inDate = null;
-    Borrowing instance = new Borrowing();
-    instance.setInDate(inDate);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
-   * Test of getBookCopy method, of class Borrowing.
-   */
-  @Test
-  public void testGetBookCopy() {
-    System.out.println("getBookCopy");
-    Borrowing instance = new Borrowing();
-    BookCopy expResult = null;
-    BookCopy result = instance.getBookCopy();
-    assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
-   * Test of setBookCopy method, of class Borrowing.
-   */
-  @Test
-  public void testSetBookCopy() {
-    System.out.println("setBookCopy");
-    BookCopy bc = null;
-    Borrowing instance = new Borrowing();
-    instance.setBookCopy(bc);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
-   * Test of getBorrower method, of class Borrowing.
-   */
-  @Test
-  public void testGetBorrower() {
-    System.out.println("getBorrower");
-    Borrowing instance = new Borrowing();
-    Borrower expResult = null;
-    Borrower result = instance.getBorrower();
-    assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
-   * Test of setBorrower method, of class Borrowing.
-   */
-  @Test
-  public void testSetBorrower() {
-    System.out.println("setBorrower");
-    Borrower borr = null;
-    Borrowing instance = new Borrowing();
-    instance.setBorrower(borr);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
-   * Test of toString method, of class Borrowing.
-   */
-  @Test
-  public void testToString() {
-    System.out.println("toString");
-    Borrowing instance = new Borrowing();
-    String expResult = "";
-    String result = instance.toString();
-    assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
-  }
-
-  /**
-   * Test of main method, of class Borrowing.
-   */
-  @Test
-  public void testMain() throws Exception {
-    System.out.println("main");
-    String[] args = null;
-    Borrowing.main(args);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
+  public void testGetDueDate() throws Exception
+  {
+    fail("Not implemented yet");
   }
 }

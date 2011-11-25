@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  * Singleton connection
@@ -34,6 +35,9 @@ import java.sql.SQLException;
 public class Conn {
   private static Conn instance;
   private Connection conn;
+  private final String USERNAME = "ora_c7e8";
+  private final String PASSWORD = "a84148014";
+  private final String CONNECTURL = "jdbc:oracle:thin:@localhost:1521:ug";
   
   /**
    * Accessor for the Conn
@@ -72,28 +76,53 @@ public class Conn {
        catch (SQLException e)
       {
         // handle couldn't find driver
-        System.out.println("Couldn't load the driver: " + e.getMessage());
+        JOptionPane.showMessageDialog(null, "Can't find driver.\nInstall the driver.", "Error", JOptionPane.ERROR_MESSAGE);
       }
       // somehow get the username and password
       // get rid of the hard code
-      String username = "ora_c7e8";
-      String password = "a84148014";
-      connect(username, password);
+      connect(USERNAME, PASSWORD);
   }
   
   private void connect(String username, String password)
   {
-      String connectURL = "jdbc:oracle:thin:@localhost:1521:ug";
-      try 
+      int attemptCount = 0;
+      while (attemptCount < 3)
       {
-        conn = DriverManager.getConnection(connectURL, username, password);
-      } 
-      catch (SQLException ex) 
-      {
-        // handle couldn't connect
-        // temporary handler
-        System.out.println("could not connect: " + ex.getMessage());
+        try 
+        {
+          if (attemptCount > 0)
+          {
+            JOptionPane.showMessageDialog(null, "Set up SSH tunnel and click OK when ready", "", JOptionPane.INFORMATION_MESSAGE);
+          }
+          attemptCount++;
+          conn = DriverManager.getConnection(CONNECTURL, username, password);
+          return;
+        } 
+        catch (SQLException ex) 
+        {
+          // handle couldn't connect
+          JOptionPane.showMessageDialog(null, "Can't connect to Oracle.\nSet SSH tunnel.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
       }
+      if (attemptCount >= 3)
+      {
+        JOptionPane.showMessageDialog(null, "Too many failed attempts.\nExiting.", "Error", JOptionPane.ERROR_MESSAGE);
+        System.exit(-1);
+      }
+  }
+  
+  public void reconnect()
+  {
+    try 
+    {
+      conn = DriverManager.getConnection(CONNECTURL, USERNAME, PASSWORD);
+      JOptionPane.showMessageDialog(null, "Successfully reconnected!\nEnjoy.", "Success", JOptionPane.INFORMATION_MESSAGE);
+    } 
+    catch (SQLException ex) 
+    {
+      // handle couldn't connect
+      JOptionPane.showMessageDialog(null, "Could not connect to database.\nPlease try again later.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
   }
   
   

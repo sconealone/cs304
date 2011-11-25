@@ -16,28 +16,17 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import users.Controller;
 import javax.swing.JSplitPane;
-import javax.swing.JButton;
-import java.awt.BorderLayout;
-import javax.swing.BoxLayout;
-import java.awt.Component;
-import javax.swing.Box;
-import java.awt.GridLayout;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import tables.Book;
 import tables.Borrower;
 /*
  * ViewFrame.java
  *
  * Created on 16-Nov-2011, 4:09:38 PM
+ * 
+ * TODO maybe changed UneditableTableModel to DefaultTableModel
  */
 
 /**
@@ -83,6 +72,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        removeBookButtonGroup = new javax.swing.ButtonGroup();
         mainPanel = new javax.swing.JPanel();
         cardPanel = new javax.swing.JPanel();
         startPanel = new javax.swing.JPanel();
@@ -118,9 +108,19 @@ public class ViewFrame extends javax.swing.JFrame {
         addNewCopyPanel = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
         removeBorrowerPanel = new javax.swing.JPanel();
-        jLabel16 = new javax.swing.JLabel();
+        removeBorrowerInputPanel = new javax.swing.JPanel();
+        removeBorrowerLabel = new javax.swing.JLabel();
+        removeBorrowerTextField = new javax.swing.JTextField();
         removeBookPanel = new javax.swing.JPanel();
-        jLabel14 = new javax.swing.JLabel();
+        removeBookCallNumberPanel = new javax.swing.JPanel();
+        removeBookCallNumberLabel = new javax.swing.JLabel();
+        removeBookPrimaryNoTextField = new javax.swing.JTextField();
+        removeBookSecondaryNoTextField = new javax.swing.JTextField();
+        removeBookYearTextField = new javax.swing.JTextField();
+        removeBookRadioButtonPanel = new javax.swing.JPanel();
+        removeBookBookRadioButton = new javax.swing.JRadioButton();
+        removeBookWhichCopiesTextField = new javax.swing.JTextField();
+        removeBookOnlyTheseCopiesRadioButton = new javax.swing.JRadioButton();
         popularReportPanel = new javax.swing.JPanel();
         popularReportOptionsPanel = new javax.swing.JPanel();
         popularReportYearSelectLabel = new javax.swing.JLabel();
@@ -137,6 +137,7 @@ public class ViewFrame extends javax.swing.JFrame {
         clearButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
+        reconnectMenuItem = new javax.swing.JMenuItem();
         quitMenuItem = new javax.swing.JMenuItem();
         navigationMenu = new javax.swing.JMenu();
         borrowerMenu = new javax.swing.JMenu();
@@ -245,78 +246,6 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(tablesPanel, "View tables");
 
-        checkAccountPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel3.setText("check account");
-        checkAccountPanel.add(jLabel3, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(checkAccountPanel, "Check account");
-
-        payFinePanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel4.setText("pay fine");
-        payFinePanel.add(jLabel4, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(payFinePanel, "Pay a fine");
-
-        holdRequestPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel5.setText("hold request");
-        holdRequestPanel.add(jLabel5, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(holdRequestPanel, "Place hold request");
-
-        checkOutPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel7.setText("check out");
-        checkOutPanel.add(jLabel7, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(checkOutPanel, "Check-out books");
-
-        processReturnPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel8.setText("process returns");
-        processReturnPanel.add(jLabel8, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(processReturnPanel, "Process a return");
-
-        addBorrowerPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel9.setText("add new borrower");
-        addBorrowerPanel.add(jLabel9, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(addBorrowerPanel, "Add a new borrower");
-
-        checkOverduePanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel10.setText("check overdue items");
-        checkOverduePanel.add(jLabel10, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(checkOverduePanel, "Check overdue books");
-
-        addNewBookPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel20.setText("add new book");
-        addNewBookPanel.add(jLabel20, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(addNewBookPanel, "Add new book");
-
-        addNewCopyPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel19.setText("new copy");
-        addNewCopyPanel.add(jLabel19, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(addNewCopyPanel, "Add new book copy");
-
-        removeBorrowerPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel16.setText("remove borrower");
-        removeBorrowerPanel.add(jLabel16, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(removeBorrowerPanel, "Remove borrower");
-
-        removeBookPanel.setLayout(new java.awt.BorderLayout());
-
         searchPanel.setLayout(new java.awt.BorderLayout());
 
         SearchComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Title", "Subject", "Author"}));
@@ -328,7 +257,6 @@ public class ViewFrame extends javax.swing.JFrame {
         searchPanel.add(SearchTopPanel, java.awt.BorderLayout.PAGE_START);
 
         SearchTable.setModel(new javax.swing.table.DefaultTableModel());
-
         jScrollPane1.setViewportView(SearchTable);
 
         searchPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -398,17 +326,78 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(addNewCopyPanel, "Add new book copy");
 
+        removeBorrowerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Remove borrower"));
         removeBorrowerPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel16.setText("remove borrower");
-        removeBorrowerPanel.add(jLabel16, java.awt.BorderLayout.CENTER);
+        removeBorrowerInputPanel.setLayout(new java.awt.GridBagLayout());
+
+        removeBorrowerLabel.setText("Borrower ID:");
+        removeBorrowerLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        removeBorrowerInputPanel.add(removeBorrowerLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        removeBorrowerInputPanel.add(removeBorrowerTextField, gridBagConstraints);
+
+        removeBorrowerPanel.add(removeBorrowerInputPanel, java.awt.BorderLayout.NORTH);
 
         cardPanel.add(removeBorrowerPanel, "Remove borrower");
 
+        removeBookPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Remove books and copies"));
         removeBookPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel14.setText("remove books and copies");
-        removeBookPanel.add(jLabel14, java.awt.BorderLayout.CENTER);
+        removeBookCallNumberPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Book"));
+        removeBookCallNumberPanel.setLayout(new java.awt.GridBagLayout());
+
+        removeBookCallNumberLabel.setText("Call number: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        removeBookCallNumberPanel.add(removeBookCallNumberLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        removeBookCallNumberPanel.add(removeBookPrimaryNoTextField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        removeBookCallNumberPanel.add(removeBookSecondaryNoTextField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        removeBookCallNumberPanel.add(removeBookYearTextField, gridBagConstraints);
+
+        removeBookPanel.add(removeBookCallNumberPanel, java.awt.BorderLayout.PAGE_START);
+
+        removeBookRadioButtonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Remove"));
+        removeBookRadioButtonPanel.setLayout(new java.awt.GridBagLayout());
+
+        removeBookButtonGroup.add(removeBookBookRadioButton);
+        removeBookBookRadioButton.setSelected(true);
+        removeBookBookRadioButton.setText("Remove book and all copies");
+        removeBookBookRadioButton.setName("all"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        removeBookRadioButtonPanel.add(removeBookBookRadioButton, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 100;
+        removeBookRadioButtonPanel.add(removeBookWhichCopiesTextField, gridBagConstraints);
+
+        removeBookButtonGroup.add(removeBookOnlyTheseCopiesRadioButton);
+        removeBookOnlyTheseCopiesRadioButton.setText("Only these copies: ");
+        removeBookOnlyTheseCopiesRadioButton.setName("select"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        removeBookRadioButtonPanel.add(removeBookOnlyTheseCopiesRadioButton, gridBagConstraints);
+
+        removeBookPanel.add(removeBookRadioButtonPanel, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(removeBookPanel, "Remove books and copies");
 
@@ -496,6 +485,14 @@ public class ViewFrame extends javax.swing.JFrame {
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         fileMenu.setText("File");
+
+        reconnectMenuItem.setText("Reconnect");
+        reconnectMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reconnectMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(reconnectMenuItem);
 
         quitMenuItem.setText("Quit");
         quitMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -865,8 +862,155 @@ public class ViewFrame extends javax.swing.JFrame {
       case ADD_COPY:
         break;
       case REMOVE_BOOK:
+        String removeBookCallNumber = 
+                removeBookPrimaryNoTextField.getText().trim() + ' '
+                + removeBookSecondaryNoTextField.getText().trim() + ' '
+                + removeBookYearTextField.getText().trim();
+        
+        try
+        {
+        
+          if (removeBookBookRadioButton.isSelected())
+          {
+
+            // confirm
+            String removeBookConfirmMessage = 
+                    "Are you sure you want to remove book " + removeBookCallNumber
+                    + "?\nAll information such as copies, requests, and borrowings"
+                    + " will also be deleted.";
+            int removeBookConfirm = JOptionPane.showConfirmDialog(this, 
+                    removeBookConfirmMessage, 
+                    "Please confirm",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (removeBookConfirm != JOptionPane.YES_OPTION)
+            {
+              return;
+            }
+
+            if (controller.getSystemLibrarian().removeBook(removeBookCallNumber))
+            {
+              String msg = "Book "+removeBookCallNumber+" successfully removed.";
+              JOptionPane.showMessageDialog(this, msg, "Success", JOptionPane.PLAIN_MESSAGE);
+            }
+            else
+            {
+              String msg = "Failed to remove book "+removeBookCallNumber+".";
+              JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+              return;
+            }
+          }
+
+          else // if remove copies radio button is selected
+          {
+            int[] copyNumbersToRemove = 
+                    parseBookCopyCopyNumbers(removeBookWhichCopiesTextField.getText());
+            String removeBookCopiesConfirmMessage = 
+                    "Are you sure you want to remove the copies of book " 
+                    + removeBookCallNumber
+                    + " with copy numbers:";
+            int length = copyNumbersToRemove.length;
+            for (int i = 0; i < length; i++)
+            {
+              removeBookCopiesConfirmMessage += "C" + copyNumbersToRemove[i];
+              if (i != length - 1)
+              {
+                removeBookCopiesConfirmMessage += ", ";
+              }
+            }
+            removeBookCopiesConfirmMessage +=
+                    "?\nAll information such as hold requests and borrowings"
+                    + " for these copies"
+                    + " will also be deleted.";
+            int removeBookConfirm = JOptionPane.showConfirmDialog(this, 
+                    removeBookCopiesConfirmMessage, 
+                    "Please confirm",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (removeBookConfirm != JOptionPane.YES_OPTION)
+            {
+              return;
+            }
+
+            if (controller.getSystemLibrarian().removeBook(removeBookCallNumber))
+            {
+              String msg = "Copies successfully removed.";
+              JOptionPane.showMessageDialog(this, msg, "Success", JOptionPane.PLAIN_MESSAGE);
+            }
+            else
+            {
+              String msg = "Failed to remove copies.  None were removed.";
+              JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+              return;
+            }
+          }
+        } // end try
+        catch (SQLException e)
+        {
+          // handle
+          
+          String msg = "Deletion failed.\n";
+          msg += e.getMessage();
+          JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+
         break;
       case REMOVE_BORROWER:
+        int bid = -1;
+        
+        try
+        {
+          bid = Integer.parseInt(removeBorrowerTextField.getText());
+          
+          // confirm
+          String confirmRemoveBorrowerMessage =
+                 "Are you sure you want to remove borrower "+bid+"?";
+          
+          int confirmRemoveBorrowerResult = JOptionPane.showConfirmDialog(this, 
+                  confirmRemoveBorrowerMessage, 
+                  "Please confirm",
+                  JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+          if (confirmRemoveBorrowerResult != JOptionPane.YES_OPTION)
+          {
+            return;
+          }
+          
+          Borrower removeBorrowerBorrower = new Borrower();
+          removeBorrowerBorrower.setBid(bid);
+          
+          // TODO delete does not return false if the Borrower is not deleted.
+          // Coordinate with the author of Borrower and get this fixed.
+          
+          
+          if (removeBorrowerBorrower.delete())
+          {
+            String msg = "Borrower with an ID of "+bid
+                    + " successfully removed from the database.";
+            JOptionPane.showMessageDialog(this, msg, "Success", JOptionPane.PLAIN_MESSAGE);
+          }
+          else
+          {
+            String msg = "Failed to remove borrower with an ID of "+bid+ ".";
+            JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+            
+          }
+        }
+        catch (NumberFormatException nfe)
+        {
+          String msg = "Borrower ID must be a whole number.";
+          JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        catch (SQLException se)
+        {
+          String msg = "Could not remove borrower with an ID of "+bid
+                  + " from the database:\n"+se.getMessage();
+          JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        finally
+        {
+          clearButtonActionPerformed(null);
+        }
         break;
       case REPORT_POPULAR:
         int reportYear = -1;
@@ -1039,6 +1183,7 @@ public class ViewFrame extends javax.swing.JFrame {
       case REMOVE_BOOK:
         break;
       case REMOVE_BORROWER:
+        removeBorrowerTextField.setText("");
         break;
       case REPORT_POPULAR:
         popularReportYearTextField.setText("");
@@ -1061,7 +1206,77 @@ public class ViewFrame extends javax.swing.JFrame {
     System.exit(0);
   }//GEN-LAST:event_quitMenuItemActionPerformed
 
-  
+  private void reconnectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reconnectMenuItemActionPerformed
+    controller.reconnect();
+  }//GEN-LAST:event_reconnectMenuItemActionPerformed
+
+  /**
+   * Parses a string of copy numbers, delimited by the comma, ','.
+   * You can specify a range using '-'
+   * It changes it to an int.
+   * @param copyNumbers
+   * @return 
+   */
+  private int[] parseBookCopyCopyNumbers(String copyNumbers) 
+  {
+    // filter out C
+    String copyNumbersFilteredForC = "";
+    int length;
+    length = copyNumbers.length();
+    for (int i = 0; i < length; i++)
+    {
+      char charAt = copyNumbers.charAt(i);
+      if (charAt != 'c' && charAt != 'C')
+      {
+        copyNumbersFilteredForC += charAt; 
+      }
+      // else leave it out
+    }
+    
+    // tokenize by ','
+    String[] copyNumbersSplitOnComma =
+            copyNumbersFilteredForC.split(",");
+    HashSet<Integer> copyNumbersSet = new HashSet();
+    length = copyNumbersSplitOnComma.length;
+    for (int i = 0; i < length; i++)
+    {
+      String trimmedCopyNumber = copyNumbersSplitOnComma[i].trim();
+      try
+      {
+        if (trimmedCopyNumber.contains("-"))
+        {
+          String[] splitRange = trimmedCopyNumber.split("-");
+          int start = Integer.parseInt(splitRange[0].trim());
+          int end = Integer.parseInt(splitRange[1].trim());
+          for (int j = start; j <= end; j++)
+          {
+            copyNumbersSet.add(j);
+          }
+        }
+        else
+        {
+          copyNumbersSet.add(Integer.parseInt(trimmedCopyNumber));
+        }
+      }
+      catch (NumberFormatException e)
+      {
+        // it's not a copy number - ignore it
+      }
+    } // end for
+    
+    length = copyNumbersSet.size();
+    int[] copyNumbersArray = new int[length];
+    Iterator<Integer> setIterator = copyNumbersSet.iterator();
+    int copyNumbersIndex = 0;
+    while (setIterator.hasNext())
+    {
+      copyNumbersArray[copyNumbersIndex] = setIterator.next();
+      copyNumbersIndex++;
+    }
+    Arrays.sort(copyNumbersArray);
+    return copyNumbersArray;
+    
+  }
   /**
    * @param args the command line arguments
    */
@@ -1134,8 +1349,6 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel holdRequestPanel;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
@@ -1167,10 +1380,24 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem processReturnMenuItem;
     private javax.swing.JPanel processReturnPanel;
     private javax.swing.JMenuItem quitMenuItem;
+    private javax.swing.JMenuItem reconnectMenuItem;
+    private javax.swing.JRadioButton removeBookBookRadioButton;
+    private javax.swing.ButtonGroup removeBookButtonGroup;
+    private javax.swing.JLabel removeBookCallNumberLabel;
+    private javax.swing.JPanel removeBookCallNumberPanel;
     private javax.swing.JMenuItem removeBookMenuItem;
+    private javax.swing.JRadioButton removeBookOnlyTheseCopiesRadioButton;
     private javax.swing.JPanel removeBookPanel;
+    private javax.swing.JTextField removeBookPrimaryNoTextField;
+    private javax.swing.JPanel removeBookRadioButtonPanel;
+    private javax.swing.JTextField removeBookSecondaryNoTextField;
+    private javax.swing.JTextField removeBookWhichCopiesTextField;
+    private javax.swing.JTextField removeBookYearTextField;
+    private javax.swing.JPanel removeBorrowerInputPanel;
+    private javax.swing.JLabel removeBorrowerLabel;
     private javax.swing.JMenuItem removeBorrowerMenuItem;
     private javax.swing.JPanel removeBorrowerPanel;
+    private javax.swing.JTextField removeBorrowerTextField;
     private javax.swing.JMenu removeMenu;
     private javax.swing.JMenu reportMenu;
     private javax.swing.JMenuItem searchMenuItem;
@@ -1188,6 +1415,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private Controller controller;
     private State state;
     private HashMap<String,State> statemap;
+
     
     /**
      * The possible states that the GUI can be in.  One state for every panel/
