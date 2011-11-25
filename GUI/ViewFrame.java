@@ -141,7 +141,19 @@ public class ViewFrame extends javax.swing.JFrame {
         addBorrowerJListBorrToAdd = new javax.swing.JList();
         addBorrowersButtonAddAll = new javax.swing.JButton();
         checkOverduePanel = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        checkOverdueLabelBorrInfo = new javax.swing.JLabel();
+        checkOverdueTextAreaBorrInfo = new javax.swing.JScrollPane();
+        jTextArea3 = new javax.swing.JTextArea();
+        checkOverdueLabelBookCopyInfo = new javax.swing.JLabel();
+        checkOverdueTextAreaBookCopyInfo = new javax.swing.JScrollPane();
+        jTextArea4 = new javax.swing.JTextArea();
+        jPanel4 = new javax.swing.JPanel();
+        checkOverdueButtonBlock = new javax.swing.JButton();
+        checkOverdueButtonMessage = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        checkOverdueListOverdueInfo = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
         addNewBookPanel = new javax.swing.JPanel();
         jLabel20 = new javax.swing.JLabel();
         addNewCopyPanel = new javax.swing.JPanel();
@@ -447,10 +459,50 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(addBorrowerPanel, "Add a new borrower");
 
-        checkOverduePanel.setLayout(new java.awt.BorderLayout());
+        checkOverduePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel10.setText("check overdue items");
-        checkOverduePanel.add(jLabel10, java.awt.BorderLayout.CENTER);
+        jPanel2.setLayout(new java.awt.GridLayout(5, 1));
+
+        checkOverdueLabelBorrInfo.setText("Borrower Info");
+        jPanel2.add(checkOverdueLabelBorrInfo);
+
+        jTextArea3.setColumns(20);
+        jTextArea3.setRows(5);
+        checkOverdueTextAreaBorrInfo.setViewportView(jTextArea3);
+
+        jPanel2.add(checkOverdueTextAreaBorrInfo);
+
+        checkOverdueLabelBookCopyInfo.setText("jLabel2");
+        jPanel2.add(checkOverdueLabelBookCopyInfo);
+
+        jTextArea4.setColumns(20);
+        jTextArea4.setRows(5);
+        checkOverdueTextAreaBookCopyInfo.setViewportView(jTextArea4);
+
+        jPanel2.add(checkOverdueTextAreaBookCopyInfo);
+
+        checkOverdueButtonBlock.setText("Block Borrower");
+        jPanel4.add(checkOverdueButtonBlock);
+
+        checkOverdueButtonMessage.setText("Message Borrower");
+        jPanel4.add(checkOverdueButtonMessage);
+
+        jPanel2.add(jPanel4);
+
+        checkOverduePanel.add(jPanel2);
+
+        jPanel3.setLayout(new java.awt.BorderLayout());
+
+        jList1.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        checkOverdueListOverdueInfo.setViewportView(jList1);
+
+        jPanel3.add(checkOverdueListOverdueInfo, java.awt.BorderLayout.CENTER);
+
+        checkOverduePanel.add(jPanel3);
 
         cardPanel.add(checkOverduePanel, "Check overdue books");
 
@@ -1503,8 +1555,15 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JTextField checkOutTextBorid;
     private javax.swing.JTextField checkOutTextCallNo;
     private javax.swing.JTextField checkOutTextCopyNo;
+    private javax.swing.JButton checkOverdueButtonBlock;
+    private javax.swing.JButton checkOverdueButtonMessage;
+    private javax.swing.JLabel checkOverdueLabelBookCopyInfo;
+    private javax.swing.JLabel checkOverdueLabelBorrInfo;
+    private javax.swing.JScrollPane checkOverdueListOverdueInfo;
     private javax.swing.JMenuItem checkOverdueMenuItem;
     private javax.swing.JPanel checkOverduePanel;
+    private javax.swing.JScrollPane checkOverdueTextAreaBookCopyInfo;
+    private javax.swing.JScrollPane checkOverdueTextAreaBorrInfo;
     private javax.swing.JMenuItem checkedOutReportMenuItem;
     private javax.swing.JPanel checkedOutReportPanel;
     private javax.swing.JButton clearButton;
@@ -1515,18 +1574,23 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private javax.swing.JPanel holdRequestPanel;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextArea jTextArea3;
+    private javax.swing.JTextArea jTextArea4;
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
