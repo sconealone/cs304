@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import tables.Book;
-import tables.BookCopy;
 import tables.Borrower;
 /*
  * ViewFrame.java
@@ -136,6 +135,7 @@ public class ViewFrame extends javax.swing.JFrame {
         clearButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
+        reconnectMenuItem = new javax.swing.JMenuItem();
         quitMenuItem = new javax.swing.JMenuItem();
         navigationMenu = new javax.swing.JMenu();
         borrowerMenu = new javax.swing.JMenu();
@@ -483,6 +483,14 @@ public class ViewFrame extends javax.swing.JFrame {
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         fileMenu.setText("File");
+
+        reconnectMenuItem.setText("Reconnect");
+        reconnectMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reconnectMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(reconnectMenuItem);
 
         quitMenuItem.setText("Quit");
         quitMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1196,6 +1204,10 @@ public class ViewFrame extends javax.swing.JFrame {
     System.exit(0);
   }//GEN-LAST:event_quitMenuItemActionPerformed
 
+  private void reconnectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reconnectMenuItemActionPerformed
+    controller.reconnect();
+  }//GEN-LAST:event_reconnectMenuItemActionPerformed
+
   /**
    * Parses a string of copy numbers, delimited by the comma, ','.
    * You can specify a range using '-'
@@ -1366,6 +1378,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem processReturnMenuItem;
     private javax.swing.JPanel processReturnPanel;
     private javax.swing.JMenuItem quitMenuItem;
+    private javax.swing.JMenuItem reconnectMenuItem;
     private javax.swing.JRadioButton removeBookBookRadioButton;
     private javax.swing.ButtonGroup removeBookButtonGroup;
     private javax.swing.JLabel removeBookCallNumberLabel;

@@ -92,10 +92,11 @@ public class Conn {
         {
           if (attemptCount > 0)
           {
-            JOptionPane.showConfirmDialog(null, "Set up SSH tunnel and click OK when ready", "", JOptionPane.OK_OPTION);
+            JOptionPane.showMessageDialog(null, "Set up SSH tunnel and click OK when ready", "", JOptionPane.INFORMATION_MESSAGE);
           }
           attemptCount++;
           conn = DriverManager.getConnection(CONNECTURL, username, password);
+          return;
         } 
         catch (SQLException ex) 
         {
@@ -115,6 +116,7 @@ public class Conn {
     try 
     {
       conn = DriverManager.getConnection(CONNECTURL, USERNAME, PASSWORD);
+      JOptionPane.showMessageDialog(null, "Successfully reconnected!\nEnjoy.", "Success", JOptionPane.INFORMATION_MESSAGE);
     } 
     catch (SQLException ex) 
     {
