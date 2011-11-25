@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import tables.Book;
@@ -30,24 +33,11 @@ public class tablesTest {
 
 
 	//Also, the clearDataBaseAfterTests() method clears the database of any changes, but leaves the structure
-
-
-
-
 	Book b;
-	Connection c = Conn.getInstance().getConnection();
+	static Connection c = Conn.getInstance().getConnection();
 
-	
-	@Test
-	public void testSearchBySubject() throws SQLException{
-		testBookInsert();
-		Borrower bor = new Borrower();
-		List<Book> lob = bor.searchBookBySubject("astrobiology");
-		assertEquals(lob.get(0).getCallNumber(), "123456789");
-	}
-	@Test
-	public void testBookInsert() throws SQLException {
 
+	public void createBookObject() throws SQLException {
 		//create a book object
 		String cN = "123456789";
 		String isBun = "123412341234A";
@@ -66,49 +56,71 @@ public class tablesTest {
 		b= new Book(cN,isBun,titleArg,mainAuthorArg,pub,yr,authrs,subjectsArg);
 		//String sql1 = "INSERT INTO Book VALUES('1234','123','teilte','mainsss','pubb',1929)";
 		//{"1234", "123          ","teilte","mainsss","pubb","1929"},
+	}
 
-
-		//add rest of tables to database
-
+	@Test public void testBookInsert() throws SQLException{
+		createBookObject();
 		assertTrue(b.insert());
+	}
+	/**
+	 * Pre: runs after testBookInsert()
+	 * @throws SQLException
+	 */
+	@Test
+	public void testSearchBySubject() throws SQLException{
+		Borrower bor = new Borrower();
+		String[][] lob = bor.searchBookBySubject("astrobiology");
+		assertEquals(lob[1][0], "123456789");
+	}
+	
+
+	/**
+	 * Pre: runs after testBookInsert();
+	 * @throws SQLException
+	 */
+	@Test
+	public void testBookDisplayandGet() throws SQLException {
+		createBookObject();
 		String test[][] = {
 				{"CALLNUMBER", "ISBN", "TITLE", "MAINAUTHOR", "PUBLISHER","YEAR"},
 				{"123456789", "123412341234A","The Most Amazing Book","The Most Amazing Author","the most super publisher","2012"}};
-		
+
 		String test1[][] = b.display();
 		assertArrayEquals(test1,test);
-		
+
 		//try changing a field in b
 		b.setMainAuthor("fake author");
 		//assert that calling get updates b with the appropriate fields
 		b = b.get();
 
 		assertEquals(b.getMainAuthor(),"The Most Amazing Author");
-		
-		
-
 	}
-
+	/**
+	 * pre: createBookObject() has been called, and it's book tuple exists as an instance and in the database;
+	 * @throws SQLException 
+	 */
+	
 	@Test
-	public void stub() throws SQLException{
-		assertEquals(1,1);
-		assertTrue(true);
-
-		String test[][] = {
-				{"test", "test2"},
-				{"af23", "3sf"},
-				{"fa2", "gg2"}};
-
-		String test1[][] = {
-				{"test", "test2"},
-				{"af23", "3sf"},
-				{"fa2", "gg2"}};
-		assertArrayEquals(test,test1);
+	public void testBookDeleteValid() throws SQLException{
+		createBookObject();
+		try {
+			assertTrue(b.delete());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testBookDeleteInvalid() throws SQLException{
+		createBookObject();
+		assertFalse(b.delete());
 	}
 
 
-	@Before
-	public void setup(){
+
+	@BeforeClass
+	public static void setup(){
 
 		try{
 			//clear database
@@ -118,7 +130,12 @@ public class tablesTest {
 			for(int i =0; i<=3; i++){
 				Statement dropSeq = c.createStatement();
 				String sql = "DROP SEQUENCE " + seqName[i];
+				try{
 				dropSeq.executeUpdate(sql);
+				}
+				catch(SQLException e){
+					System.out.println("the sequence could not be dropped: " + e.getMessage());
+				}
 			}
 
 			//create sequences
@@ -132,16 +149,25 @@ public class tablesTest {
 			//drop views
 			for(int i =0; i<=1; i++){
 				Statement dropViews = c.createStatement();
-				dropViews.executeUpdate("DROP VIEW " + viewNames[i]);
+				try{
+					dropViews.executeUpdate("DROP VIEW " + viewNames[i]);
+				}catch(SQLException s){
+					System.out.println("the view could not be dropped: " + s.getMessage());
+				}
 			}
 
+
+			//drop tables
 			String[] tableNames = {"HoldRequest","HasSubject","HasAuthor","Fine","Borrowing","BookCopy",
 					"Book","Borrower","BorrowerType"};
 
-			//drop tables
 			for(int i =0; i<=8; i++){
 				Statement dropTables = c.createStatement();
-				dropTables.executeUpdate("DROP TABLE " + tableNames[i]);
+				try{
+					dropTables.executeUpdate("DROP TABLE " + tableNames[i]);
+				}catch(SQLException e){
+					System.out.println("the table could not be dropped: " + e.getMessage());
+				}
 			}
 
 
@@ -186,22 +212,26 @@ public class tablesTest {
 
 			Statement addView2 = c.createStatement();
 			addView2.execute(view2);
-                        
-                        (new InsertParser()).parse();
+
 
 		}catch (SQLException s){
-			System.out.println(s.getMessage());
+			System.out.println("a non dropping exception: " + s.getMessage());
 			s.printStackTrace();
 		}
 
 
 	}
 
+	public void insertSQLTuples() {
+		(new InsertParser()).parse();
+	}
 
 
-	@After
-	public void clearDataBaseAfterTests(){
+
+	@AfterClass
+	public static void clearDataBaseAfterTests(){
 		try{
+			System.out.println("inside the clean up method");
 			//clear database
 			//drop sequences
 			String[] seqName = {"bidCounter","hidCounter","boridCounter","fidCounter"};
@@ -277,10 +307,12 @@ public class tablesTest {
 
 			Statement addView2 = c.createStatement();
 			addView2.execute(view2);
+			System.out.println("at the end of the clean up method");
+
 
 		}catch (SQLException s){
-			System.out.println(s.getMessage());
-			s.printStackTrace();
+			System.out.println("a tear down exception: " +s.getMessage());
+			//s.printStackTrace();
 		}
 	}
 }

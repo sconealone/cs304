@@ -78,6 +78,9 @@ public class Conn {
       // get rid of the hard code
       String username = "ora_c7e8";
       String password = "a84148014";
+      
+      //String username = "ora_v2v7";
+      //String password = "a36988103";
       connect(username, password);
   }
   
