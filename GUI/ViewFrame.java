@@ -100,7 +100,26 @@ public class ViewFrame extends javax.swing.JFrame {
         processReturnPanel = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         addBorrowerPanel = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
+        addBorrowerFieldsPanel = new javax.swing.JPanel();
+        addBorrowerLabelName = new javax.swing.JLabel();
+        addBorrowerTextName = new javax.swing.JTextField();
+        addBorrowerLabelAddress = new javax.swing.JLabel();
+        addBorrowerTextAddress = new javax.swing.JTextField();
+        addBorrowerLabelPhoneNo = new javax.swing.JLabel();
+        addBorrowerTextPhoneNo = new javax.swing.JTextField();
+        addBorrowerLabelEmail = new javax.swing.JLabel();
+        addBorrowerTextEmail = new javax.swing.JTextField();
+        addBorrowerLabelPassword = new javax.swing.JLabel();
+        addBorrowerTextPassword = new javax.swing.JTextField();
+        addBorrowerLabelSinOrStNo = new javax.swing.JLabel();
+        addBorrowerTextSinOrStNo = new javax.swing.JTextField();
+        addBorrowerLabelType = new javax.swing.JLabel();
+        addBorrowerComboBoxType = new javax.swing.JComboBox();
+        addBorrowerButtonAdd = new javax.swing.JButton();
+        addBorrowerAddsPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        addBorrowerJListBorrToAdd = new javax.swing.JList();
+        addBorrowersButtonAddAll = new javax.swing.JButton();
         checkOverduePanel = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         addNewBookPanel = new javax.swing.JPanel();
@@ -298,10 +317,67 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(processReturnPanel, "Process a return");
 
-        addBorrowerPanel.setLayout(new java.awt.BorderLayout());
+        addBorrowerPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel9.setText("add new borrower");
-        addBorrowerPanel.add(jLabel9, java.awt.BorderLayout.CENTER);
+        addBorrowerFieldsPanel.setAutoscrolls(true);
+        addBorrowerFieldsPanel.setPreferredSize(new java.awt.Dimension(250, 180));
+        addBorrowerFieldsPanel.setRequestFocusEnabled(false);
+        addBorrowerFieldsPanel.setLayout(new java.awt.GridLayout(8, 2));
+
+        addBorrowerLabelName.setText("Name");
+        addBorrowerFieldsPanel.add(addBorrowerLabelName);
+
+        addBorrowerTextName.setName(""); // NOI18N
+        addBorrowerFieldsPanel.add(addBorrowerTextName);
+
+        addBorrowerLabelAddress.setText("Address");
+        addBorrowerFieldsPanel.add(addBorrowerLabelAddress);
+        addBorrowerFieldsPanel.add(addBorrowerTextAddress);
+
+        addBorrowerLabelPhoneNo.setText("Phone No");
+        addBorrowerFieldsPanel.add(addBorrowerLabelPhoneNo);
+        addBorrowerFieldsPanel.add(addBorrowerTextPhoneNo);
+
+        addBorrowerLabelEmail.setText("Email");
+        addBorrowerFieldsPanel.add(addBorrowerLabelEmail);
+        addBorrowerFieldsPanel.add(addBorrowerTextEmail);
+
+        addBorrowerLabelPassword.setText("Password");
+        addBorrowerFieldsPanel.add(addBorrowerLabelPassword);
+        addBorrowerFieldsPanel.add(addBorrowerTextPassword);
+
+        addBorrowerLabelSinOrStNo.setText("SIN No");
+        addBorrowerFieldsPanel.add(addBorrowerLabelSinOrStNo);
+        addBorrowerFieldsPanel.add(addBorrowerTextSinOrStNo);
+
+        addBorrowerLabelType.setText("BorrowerType");
+        addBorrowerFieldsPanel.add(addBorrowerLabelType);
+
+        addBorrowerComboBoxType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        addBorrowerFieldsPanel.add(addBorrowerComboBoxType);
+
+        addBorrowerButtonAdd.setText("Add To List");
+        addBorrowerFieldsPanel.add(addBorrowerButtonAdd);
+
+        addBorrowerPanel.add(addBorrowerFieldsPanel);
+
+        addBorrowerAddsPanel.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(130, 180));
+
+        addBorrowerJListBorrToAdd.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(addBorrowerJListBorrToAdd);
+
+        addBorrowerAddsPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        addBorrowersButtonAddAll.setText("Add Borrowers to DB");
+        addBorrowerAddsPanel.add(addBorrowersButtonAddAll, java.awt.BorderLayout.PAGE_END);
+
+        addBorrowerPanel.add(addBorrowerAddsPanel);
 
         cardPanel.add(addBorrowerPanel, "Add a new borrower");
 
@@ -1323,8 +1399,27 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel SearchTopPanel;
     private javax.swing.JMenuItem addBookCopyMenuItem;
     private javax.swing.JMenuItem addBookMenuItem;
+    private javax.swing.JPanel addBorrowerAddsPanel;
+    private javax.swing.JButton addBorrowerButtonAdd;
+    private javax.swing.JComboBox addBorrowerComboBoxType;
+    private javax.swing.JPanel addBorrowerFieldsPanel;
+    private javax.swing.JList addBorrowerJListBorrToAdd;
+    private javax.swing.JLabel addBorrowerLabelAddress;
+    private javax.swing.JLabel addBorrowerLabelEmail;
+    private javax.swing.JLabel addBorrowerLabelName;
+    private javax.swing.JLabel addBorrowerLabelPassword;
+    private javax.swing.JLabel addBorrowerLabelPhoneNo;
+    private javax.swing.JLabel addBorrowerLabelSinOrStNo;
+    private javax.swing.JLabel addBorrowerLabelType;
     private javax.swing.JMenuItem addBorrowerMenuItem;
     private javax.swing.JPanel addBorrowerPanel;
+    private javax.swing.JTextField addBorrowerTextAddress;
+    private javax.swing.JTextField addBorrowerTextEmail;
+    private javax.swing.JTextField addBorrowerTextName;
+    private javax.swing.JTextField addBorrowerTextPassword;
+    private javax.swing.JTextField addBorrowerTextPhoneNo;
+    private javax.swing.JTextField addBorrowerTextSinOrStNo;
+    private javax.swing.JButton addBorrowersButtonAddAll;
     private javax.swing.JMenu addMenu;
     private javax.swing.JPanel addNewBookPanel;
     private javax.swing.JPanel addNewCopyPanel;
@@ -1356,8 +1451,8 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
