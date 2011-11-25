@@ -136,5 +136,9 @@ public class Controller {
   public Borrower getSystemBorrower() {
     return systemBorrower;
   }
+
+  public void reconnect() {
+    Conn.getInstance().reconnect();
+  }
 }
 

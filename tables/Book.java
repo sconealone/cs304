@@ -33,8 +33,8 @@ public class Book implements Table {
 	//refer to the same object right?
 	//why 2dArray of strings?
 	public Book(){
-
-	};
+          c = Conn.getInstance().getConnection();
+	}
 
 	/**
 	 * Construct a Book object given all it's fields. 
