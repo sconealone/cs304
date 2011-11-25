@@ -3,6 +3,7 @@ package tables;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,10 +20,10 @@ import users.Conn;
  * 
  */
 public class HoldRequest implements Table {
-	private final int HOLD_REQUEST_FIELDS = 4;
 	private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 
-	//The fields for HoldRequest in the table are hid, bid, callNo, issueDate, in that order.
+	// The fields for HoldRequest in the table are hid, bid, callNo, issueDate,
+	// in that order.
 	private Integer hid;
 	private Borrower borr;
 	private Book b;
@@ -130,27 +131,40 @@ public class HoldRequest implements Table {
 	public String[][] display() throws SQLException {
 		String[][] result = null;
 		Collection<Table> hrt = getAll();
-		
+
+		ResultSetMetaData md = getMeta();
+
 		if (hrt.size() > 0) {
-			result = new String[hrt.size()][HOLD_REQUEST_FIELDS];
+			result = new String[hrt.size() + 1][md.getColumnCount()];
 			int i = 0;
-			
-			/*
-			 * result[i][0] = "hid";
-			 * result[i][1] = "bid";
-			 * result[i][2] = "callNo";
-			 * result[i][3] = "issueDate";
-			 */
-			
+
 			Iterator<Table> hrItr = hrt.iterator();
 			while (hrItr.hasNext()) {
+				for (int j = 0; j < result[i].length; j++) {
+					if (i == 0)
+						result[i][j] = md.getColumnName(i + 1);
+					else {
+						switch (j) {
+						case 0: // hid
+							result[i][j] = String.valueOf((((HoldRequest) hrItr
+									.next()).getHid()));
+							break;
+						case 1: // bid
+							result[i][j] = String.valueOf(((HoldRequest) hrItr
+									.next()).getBorr().getBid());
+							break;
+						case 2: // callNo
+							result[i][j] = ((HoldRequest) hrItr.next()).getB()
+									.getCallNumber();
+							break;
+						case 3: // issueDate
+							result[i][j] = sdf.format(((HoldRequest) hrItr
+									.next()).getIssueDate());
+							break;
+						}
+					}
+				}
 				i++;
-				int j = 0;
-				//could probably organize this better
-				result[i][j] = String.valueOf((((HoldRequest) hrItr.next()).getHid()));
-				result[i][j++] = String.valueOf(((HoldRequest) hrItr.next()).getBorr().getBid());
-				result[i][j++] = ((HoldRequest) hrItr.next()).getB().getCallNumber();
-				result[i][j++] = sdf.format(((HoldRequest) hrItr.next()).getIssueDate());
 			}
 		}
 		return result;
@@ -191,7 +205,7 @@ public class HoldRequest implements Table {
 
 		int rowCount = ps.executeUpdate();
 		if (rowCount == 0) {
-			//TODO throw exception
+			// TODO throw exception
 		}
 
 		c.commit();
@@ -232,7 +246,7 @@ public class HoldRequest implements Table {
 	 * 
 	 * This returns all HoldRequest objects in the SQL database.
 	 * 
-	 * @throws SQLException 
+	 * @throws SQLException
 	 * 
 	 */
 	@Override
@@ -249,7 +263,7 @@ public class HoldRequest implements Table {
 
 			b.setCallNumber(rs.getString(3));
 			b = (Book) b.get();
-			
+
 			borr.setBid(rs.getInt(2));
 			borr = (Borrower) borr.get();
 
@@ -261,6 +275,22 @@ public class HoldRequest implements Table {
 		}
 
 		return holdRequests;
+	}
+
+	/**
+	 * Returns the ResultSetMetaData object for the HoldRequest table.
+	 * 
+	 * Returns an object that contains the meta data for the HoldRequest table.
+	 * This is an internal helper method to be used by the display method.
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public ResultSetMetaData getMeta() throws SQLException {
+		ps = c.prepareStatement("SELECT * FROM HoldRequest");
+
+		rs = ps.executeQuery();
+		return rs.getMetaData();
 	}
 
 	/**
