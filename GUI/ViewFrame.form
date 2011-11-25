@@ -548,18 +548,38 @@
                 </Constraint>
               </Constraints>
 
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="jLabel7">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="check out"/>
-                  </Properties>
-                  <Constraints>
-                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-                      <BorderConstraints direction="Center"/>
-                    </Constraint>
-                  </Constraints>
-                </Component>
+                <Container class="javax.swing.JPanel" name="checkOutFieldsPanel">
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+                    <Property name="columns" type="int" value="3"/>
+                    <Property name="rows" type="int" value="3"/>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="checkOutLabelBorid">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Borrower&apos;s Card Number"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="checkOutTextBorid">
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="checkOutLabelCallNo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Call Number"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="checkOutTextCallNo">
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="checkOutLabelCopyNo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Copy Number"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="checkOutTextCopyNo">
+                    </Component>
+                  </SubComponents>
+                </Container>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="processReturnPanel">
@@ -569,18 +589,93 @@
                 </Constraint>
               </Constraints>
 
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+                <Property name="columns" type="int" value="1"/>
+                <Property name="rows" type="int" value="3"/>
+              </Layout>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="jLabel8">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="process returns"/>
-                  </Properties>
-                  <Constraints>
-                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-                      <BorderConstraints direction="Center"/>
-                    </Constraint>
-                  </Constraints>
-                </Component>
+                <Container class="javax.swing.JPanel" name="processReturnFieldsPanel">
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+                    <Property name="columns" type="int" value="2"/>
+                    <Property name="rows" type="int" value="3"/>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="processReturnLabelCallNo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Call Number"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="processReturnTextCallNo">
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="processReturnLabelCopyNo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Copy Number"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="processReturnTextCopyNo">
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="processReturnLabelPlaceHolder">
+                    </Component>
+                    <Component class="javax.swing.JButton" name="processReturnButtonGetInfo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Get Info"/>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="processReturnsInfoPanel">
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+                  <SubComponents>
+                    <Container class="javax.swing.JScrollPane" name="processReturnTextAreaBookCopyInfo">
+                      <AuxValues>
+                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                      </AuxValues>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <SubComponents>
+                        <Component class="javax.swing.JTextArea" name="jTextArea2">
+                          <Properties>
+                            <Property name="columns" type="int" value="20"/>
+                            <Property name="rows" type="int" value="5"/>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                    <Container class="javax.swing.JScrollPane" name="processReturnTextAreaHoldRequestInfo">
+                      <AuxValues>
+                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                      </AuxValues>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <SubComponents>
+                        <Component class="javax.swing.JTextArea" name="jTextArea1">
+                          <Properties>
+                            <Property name="columns" type="int" value="20"/>
+                            <Property name="rows" type="int" value="5"/>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="jPanel1">
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+                    <Property name="columns" type="int" value="0"/>
+                    <Property name="rows" type="int" value="1"/>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="processReturnLabelPlaceHolder2">
+                    </Component>
+                    <Component class="javax.swing.JButton" name="processReturnButtonMsgHoldRequest">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Send Message"/>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
+                </Container>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="addBorrowerPanel">

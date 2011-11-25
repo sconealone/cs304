@@ -96,9 +96,29 @@ public class ViewFrame extends javax.swing.JFrame {
         holdRequestPanel = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         checkOutPanel = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
+        checkOutFieldsPanel = new javax.swing.JPanel();
+        checkOutLabelBorid = new javax.swing.JLabel();
+        checkOutTextBorid = new javax.swing.JTextField();
+        checkOutLabelCallNo = new javax.swing.JLabel();
+        checkOutTextCallNo = new javax.swing.JTextField();
+        checkOutLabelCopyNo = new javax.swing.JLabel();
+        checkOutTextCopyNo = new javax.swing.JTextField();
         processReturnPanel = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
+        processReturnFieldsPanel = new javax.swing.JPanel();
+        processReturnLabelCallNo = new javax.swing.JLabel();
+        processReturnTextCallNo = new javax.swing.JTextField();
+        processReturnLabelCopyNo = new javax.swing.JLabel();
+        processReturnTextCopyNo = new javax.swing.JTextField();
+        processReturnLabelPlaceHolder = new javax.swing.JLabel();
+        processReturnButtonGetInfo = new javax.swing.JButton();
+        processReturnsInfoPanel = new javax.swing.JPanel();
+        processReturnTextAreaBookCopyInfo = new javax.swing.JScrollPane();
+        jTextArea2 = new javax.swing.JTextArea();
+        processReturnTextAreaHoldRequestInfo = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jPanel1 = new javax.swing.JPanel();
+        processReturnLabelPlaceHolder2 = new javax.swing.JLabel();
+        processReturnButtonMsgHoldRequest = new javax.swing.JButton();
         addBorrowerPanel = new javax.swing.JPanel();
         addBorrowerFieldsPanel = new javax.swing.JPanel();
         addBorrowerLabelName = new javax.swing.JLabel();
@@ -303,17 +323,63 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(holdRequestPanel, "Place hold request");
 
-        checkOutPanel.setLayout(new java.awt.BorderLayout());
+        checkOutFieldsPanel.setLayout(new java.awt.GridLayout(3, 3));
 
-        jLabel7.setText("check out");
-        checkOutPanel.add(jLabel7, java.awt.BorderLayout.CENTER);
+        checkOutLabelBorid.setText("Borrower's Card Number");
+        checkOutFieldsPanel.add(checkOutLabelBorid);
+        checkOutFieldsPanel.add(checkOutTextBorid);
+
+        checkOutLabelCallNo.setText("Call Number");
+        checkOutFieldsPanel.add(checkOutLabelCallNo);
+        checkOutFieldsPanel.add(checkOutTextCallNo);
+
+        checkOutLabelCopyNo.setText("Copy Number");
+        checkOutFieldsPanel.add(checkOutLabelCopyNo);
+        checkOutFieldsPanel.add(checkOutTextCopyNo);
+
+        checkOutPanel.add(checkOutFieldsPanel);
 
         cardPanel.add(checkOutPanel, "Check-out books");
 
-        processReturnPanel.setLayout(new java.awt.BorderLayout());
+        processReturnPanel.setLayout(new java.awt.GridLayout(3, 1));
 
-        jLabel8.setText("process returns");
-        processReturnPanel.add(jLabel8, java.awt.BorderLayout.CENTER);
+        processReturnFieldsPanel.setLayout(new java.awt.GridLayout(3, 2));
+
+        processReturnLabelCallNo.setText("Call Number");
+        processReturnFieldsPanel.add(processReturnLabelCallNo);
+        processReturnFieldsPanel.add(processReturnTextCallNo);
+
+        processReturnLabelCopyNo.setText("Copy Number");
+        processReturnFieldsPanel.add(processReturnLabelCopyNo);
+        processReturnFieldsPanel.add(processReturnTextCopyNo);
+        processReturnFieldsPanel.add(processReturnLabelPlaceHolder);
+
+        processReturnButtonGetInfo.setText("Get Info");
+        processReturnFieldsPanel.add(processReturnButtonGetInfo);
+
+        processReturnPanel.add(processReturnFieldsPanel);
+
+        jTextArea2.setColumns(20);
+        jTextArea2.setRows(5);
+        processReturnTextAreaBookCopyInfo.setViewportView(jTextArea2);
+
+        processReturnsInfoPanel.add(processReturnTextAreaBookCopyInfo);
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        processReturnTextAreaHoldRequestInfo.setViewportView(jTextArea1);
+
+        processReturnsInfoPanel.add(processReturnTextAreaHoldRequestInfo);
+
+        processReturnPanel.add(processReturnsInfoPanel);
+
+        jPanel1.setLayout(new java.awt.GridLayout());
+        jPanel1.add(processReturnLabelPlaceHolder2);
+
+        processReturnButtonMsgHoldRequest.setText("Send Message");
+        jPanel1.add(processReturnButtonMsgHoldRequest);
+
+        processReturnPanel.add(jPanel1);
 
         cardPanel.add(processReturnPanel, "Process a return");
 
@@ -1428,8 +1494,15 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel cardPanel;
     private javax.swing.JMenuItem checkAccountMenuItem;
     private javax.swing.JPanel checkAccountPanel;
+    private javax.swing.JPanel checkOutFieldsPanel;
+    private javax.swing.JLabel checkOutLabelBorid;
+    private javax.swing.JLabel checkOutLabelCallNo;
+    private javax.swing.JLabel checkOutLabelCopyNo;
     private javax.swing.JMenuItem checkOutMenuItem;
     private javax.swing.JPanel checkOutPanel;
+    private javax.swing.JTextField checkOutTextBorid;
+    private javax.swing.JTextField checkOutTextCallNo;
+    private javax.swing.JTextField checkOutTextCopyNo;
     private javax.swing.JMenuItem checkOverdueMenuItem;
     private javax.swing.JPanel checkOverduePanel;
     private javax.swing.JMenuItem checkedOutReportMenuItem;
@@ -1449,10 +1522,11 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextArea2;
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
@@ -1472,8 +1546,20 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel popularReportTablePanel;
     private javax.swing.JLabel popularReportYearSelectLabel;
     private javax.swing.JTextField popularReportYearTextField;
+    private javax.swing.JButton processReturnButtonGetInfo;
+    private javax.swing.JButton processReturnButtonMsgHoldRequest;
+    private javax.swing.JPanel processReturnFieldsPanel;
+    private javax.swing.JLabel processReturnLabelCallNo;
+    private javax.swing.JLabel processReturnLabelCopyNo;
+    private javax.swing.JLabel processReturnLabelPlaceHolder;
+    private javax.swing.JLabel processReturnLabelPlaceHolder2;
     private javax.swing.JMenuItem processReturnMenuItem;
     private javax.swing.JPanel processReturnPanel;
+    private javax.swing.JScrollPane processReturnTextAreaBookCopyInfo;
+    private javax.swing.JScrollPane processReturnTextAreaHoldRequestInfo;
+    private javax.swing.JTextField processReturnTextCallNo;
+    private javax.swing.JTextField processReturnTextCopyNo;
+    private javax.swing.JPanel processReturnsInfoPanel;
     private javax.swing.JMenuItem quitMenuItem;
     private javax.swing.JMenuItem reconnectMenuItem;
     private javax.swing.JRadioButton removeBookBookRadioButton;
