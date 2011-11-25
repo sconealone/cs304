@@ -155,7 +155,28 @@ public class ViewFrame extends javax.swing.JFrame {
         checkOverdueListOverdueInfo = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
         addNewBookPanel = new javax.swing.JPanel();
-        jLabel20 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        abCN = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        abISBN = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        abTitle = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        abMA = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        abPub = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        abYear = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        abAA = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        abSubs = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        abSpinner = new javax.swing.JSpinner();
+        jLabel14 = new javax.swing.JLabel();
+        jTextField10 = new javax.swing.JTextField();
         addNewCopyPanel = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
         removeBorrowerPanel = new javax.swing.JPanel();
@@ -512,8 +533,73 @@ public class ViewFrame extends javax.swing.JFrame {
 
         addNewBookPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel20.setText("add new book");
-        addNewBookPanel.add(jLabel20, java.awt.BorderLayout.CENTER);
+        jLabel1.setText("Add New Book:  * = required, & = deliniate with commas");
+        addNewBookPanel.add(jLabel1, java.awt.BorderLayout.PAGE_START);
+
+        jPanel5.setLayout(new java.awt.GridLayout(10, 3, 5, 0));
+
+        jLabel2.setText("CallNumber  (*)");
+        jPanel5.add(jLabel2);
+
+        abCN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abCNActionPerformed(evt);
+            }
+        });
+        jPanel5.add(abCN);
+
+        jLabel8.setText("ISBN (*)");
+        jPanel5.add(jLabel8);
+
+        abISBN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abISBNActionPerformed(evt);
+            }
+        });
+        jPanel5.add(abISBN);
+
+        jLabel10.setText("Title");
+        jPanel5.add(jLabel10);
+        jPanel5.add(abTitle);
+
+        jLabel9.setText("Main Author");
+        jPanel5.add(jLabel9);
+        jPanel5.add(abMA);
+
+        jLabel6.setText("Publisher");
+        jPanel5.add(jLabel6);
+        jPanel5.add(abPub);
+
+        jLabel12.setText("Year");
+        jPanel5.add(jLabel12);
+        jPanel5.add(abYear);
+
+        jLabel11.setText("Additional Authors (&)");
+        jPanel5.add(jLabel11);
+        jPanel5.add(abAA);
+
+        jLabel13.setText("Subjects (*) (&)");
+        jPanel5.add(jLabel13);
+        jPanel5.add(abSubs);
+
+        jLabel7.setText("Create Copies");
+        jPanel5.add(jLabel7);
+
+        abSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 200, 1));
+        jPanel5.add(abSpinner);
+
+        jLabel14.setText("Operation Status");
+        jPanel5.add(jLabel14);
+
+        jTextField10.setText("Waiting for Input...");
+        jTextField10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField10ActionPerformed(evt);
+            }
+        });
+        jPanel5.add(jTextField10);
+
+        addNewBookPanel.add(jPanel5, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(addNewBookPanel, "Add new book");
 
@@ -1407,6 +1493,18 @@ public class ViewFrame extends javax.swing.JFrame {
     controller.reconnect();
   }//GEN-LAST:event_reconnectMenuItemActionPerformed
 
+    private void jTextField10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField10ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField10ActionPerformed
+
+    private void abCNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abCNActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_abCNActionPerformed
+
+    private void abISBNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abISBNActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_abISBNActionPerformed
+
   /**
    * Parses a string of copy numbers, delimited by the comma, ','.
    * You can specify a range using '-'
@@ -1518,6 +1616,15 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JTable SearchTable;
     private javax.swing.JTextField SearchTextField;
     private javax.swing.JPanel SearchTopPanel;
+    private javax.swing.JTextField abAA;
+    private javax.swing.JTextField abCN;
+    private javax.swing.JTextField abISBN;
+    private javax.swing.JTextField abMA;
+    private javax.swing.JTextField abPub;
+    private javax.swing.JSpinner abSpinner;
+    private javax.swing.JTextField abSubs;
+    private javax.swing.JTextField abTitle;
+    private javax.swing.JTextField abYear;
     private javax.swing.JMenuItem addBookCopyMenuItem;
     private javax.swing.JMenuItem addBookMenuItem;
     private javax.swing.JPanel addBorrowerAddsPanel;
@@ -1582,22 +1689,34 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private javax.swing.JPanel holdRequestPanel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
+    private javax.swing.JTextField jTextField10;
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;

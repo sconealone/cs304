@@ -20,7 +20,7 @@ import tables.Borrower;
 import test.parser.InsertParser;
 import users.Conn;
 
-public class tablesTest {
+public class tablesTest{
 
 	//setup essentially calls create_tables.sql as of Sunday November 20th 
 	//changes in create_tables.sql should also be added here. Or maybe just here.
