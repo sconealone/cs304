@@ -25,6 +25,8 @@ import tables.Borrower;
  * ViewFrame.java
  *
  * Created on 16-Nov-2011, 4:09:38 PM
+ * 
+ * TODO maybe changed UneditableTableModel to DefaultTableModel
  */
 
 /**

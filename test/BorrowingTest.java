@@ -4,6 +4,7 @@
  */
 package test;
 
+import java.util.GregorianCalendar;
 import tables.Book;
 import java.util.Calendar;
 import java.util.Collection;
@@ -54,11 +55,25 @@ public class BorrowingTest {
   public void testGet() throws Exception {
     System.out.println("get");
     Borrowing instance = new Borrowing();
-    Table expResult = null;
-    Table result = instance.get();
-    assertEquals(expResult, result);
-    // TODO review the generated test code and remove the default call to fail.
-    fail("The test case is a prototype.");
+    instance.setBorid(1);
+    BookCopy bc = new BookCopy();
+    bc.setCopyNo("C1");
+    Book b = new Book();
+    b.setCallNumber("HI108 P73 1998");
+    bc.setB(b);
+    Borrower bor = new Borrower();
+    bor.setBid(2);
+    Borrowing result = (Borrowing) instance.get();
+    assertEquals((int)result.getBorrower().getBid(),2);
+    assertEquals((int)result.getBorid(),1);
+    assertEquals(result.getBookCopy().getB().getCallNumber(), "HI108 P73 1998");
+    assertEquals(result.getBookCopy().getCopyNo(), "C1");
+    assertEquals(result.getOutDate(), new GregorianCalendar(1990,6,8));
+    assertEquals(result.getInDate(), new GregorianCalendar(2003,3,24));
+    
+    Borrowing nonsenseBorid = new Borrowing();
+    nonsenseBorid.setBorid(1000000);
+    assertEquals(nonsenseBorid.get(),null);
   }
   
   /**
@@ -68,7 +83,7 @@ public class BorrowingTest {
   public void testUpdate() throws Exception {
     System.out.println("update");
     Borrowing instance = new Borrowing();
-    instance.setBookCopy(new BookCopy("C1",new Book("UL355 D360 1997",null,null,null,null,0,null,null), null));
+    instance.setBookCopy(new BookCopy("C1",new Book("HI108 P73 1998",null,null,null,null,0,null,null), null));
     Borrower borrower = new Borrower();
     borrower.setBid(1);
     instance.setBorid(1);
@@ -76,7 +91,7 @@ public class BorrowingTest {
     Borrowing gotBorrowing = (Borrowing) instance.get();
     assertEquals((int) gotBorrowing.getBorid(), 1);
     assertEquals(gotBorrowing.getBookCopy().getCopyNo(), "C1");
-    assertEquals(gotBorrowing.getBookCopy().getB().getCallNumber(), "UL355 D360 1997");
+    assertEquals(gotBorrowing.getBookCopy().getB().getCallNumber(), "HI108 P73 1998");
     assertEquals((int) gotBorrowing.getBorrower().getBid(), 1);
     assertEquals(gotBorrowing.getOutDate(), null);
     assertEquals(gotBorrowing.getInDate(), null);
@@ -138,5 +153,11 @@ public class BorrowingTest {
     // TODO review the generated test code and remove the default call to fail.
     fail("The test case is a prototype.");
   
+  }
+  
+  @Test
+  public void testGetDueDate() throws Exception
+  {
+    fail("Not implemented yet");
   }
 }

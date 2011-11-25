@@ -297,7 +297,8 @@ public class Borrowing implements Table {
          * Borrowings's borid and returns it.  No attributes in the Borrowing
          * object that calls this method are modified.
          * @return a new Borrowing object whose attributes are set based on
-         * the tuple in the database that shares the calling object's borid
+         * the tuple in the database that shares the calling object's borid.
+         * Returns null if the Borrowing does not exist.
          */
 	@Override
 	public Table get() throws SQLException
@@ -307,7 +308,11 @@ public class Borrowing implements Table {
           ResultSet rs = ps.executeQuery();
           if (rs.next())
           {
-            return new Borrowing(rs);
+            Borrowing borrowing = new Borrowing(rs);
+            if (borrowing.getBorid() > 0)
+            {
+              return borrowing;
+            }
           }
           
           return null;
