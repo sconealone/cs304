@@ -26,7 +26,7 @@ import tables.Borrower;
  *
  * Created on 16-Nov-2011, 4:09:38 PM
  * 
- * TODO maybe changed UneditableTableModel to DefaultTableModel
+ * TODO maybe changed DefaultTableModel to DefaultTableModel
  */
 
 /**
@@ -182,7 +182,11 @@ public class ViewFrame extends javax.swing.JFrame {
         popularReportTablePane = new javax.swing.JScrollPane();
         popularReportTable = new javax.swing.JTable();
         checkedOutReportPanel = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
+        checkedOutReportFilterPanel = new javax.swing.JPanel();
+        checkedOutReportSubjectComboBox = new javax.swing.JComboBox();
+        checkedOutReportTablePanel = new javax.swing.JPanel();
+        checkedOutReportTablePane = new javax.swing.JScrollPane();
+        checkedOutReportTable = new javax.swing.JTable();
         buttonPanel = new javax.swing.JPanel();
         doButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
@@ -385,7 +389,7 @@ public class ViewFrame extends javax.swing.JFrame {
 
         processReturnPanel.add(processReturnsInfoPanel);
 
-        jPanel1.setLayout(new java.awt.GridLayout());
+        jPanel1.setLayout(new java.awt.GridLayout(1, 0));
         jPanel1.add(processReturnLabelPlaceHolder2);
 
         processReturnButtonMsgHoldRequest.setText("Send Message");
@@ -648,8 +652,22 @@ public class ViewFrame extends javax.swing.JFrame {
 
         checkedOutReportPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel13.setText("checked out");
-        checkedOutReportPanel.add(jLabel13, java.awt.BorderLayout.CENTER);
+        checkedOutReportFilterPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter by subject"));
+
+        checkedOutReportSubjectComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        checkedOutReportFilterPanel.add(checkedOutReportSubjectComboBox);
+
+        checkedOutReportPanel.add(checkedOutReportFilterPanel, java.awt.BorderLayout.PAGE_START);
+
+        checkedOutReportTablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Report"));
+        checkedOutReportTablePanel.setLayout(new java.awt.BorderLayout());
+
+        checkedOutReportTable.setModel(new javax.swing.table.DefaultTableModel());
+        checkedOutReportTablePane.setViewportView(checkedOutReportTable);
+
+        checkedOutReportTablePanel.add(checkedOutReportTablePane, java.awt.BorderLayout.CENTER);
+
+        checkedOutReportPanel.add(checkedOutReportTablePanel, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(checkedOutReportPanel, "Checked-out report");
 
@@ -940,21 +958,6 @@ public class ViewFrame extends javax.swing.JFrame {
    * @param evt 
    */
   private void doButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doButtonActionPerformed
-    /**
-     * A TableModel where you cant edit the cells
-     */
-    class UneditableTableModel extends DefaultTableModel
-    {
-      public UneditableTableModel (String[][] table, String[] header)
-      {
-        super(table,header);
-      }
-      @Override
-      public boolean isCellEditable(int rowIndex ,int colIndex)
-      {
-        return false;
-      }
-    }
     String[][] tableWithHeader = null;
     String[][] tableWithoutHeader = null;
     String[] header = null;
@@ -988,7 +991,7 @@ public class ViewFrame extends javax.swing.JFrame {
           System.arraycopy(tableWithHeader[i+1], 0, tableWithoutHeader[i], 0, numCols);
         }
         entitiesTable.setModel(
-                new UneditableTableModel(tableWithoutHeader, header));
+                new DefaultTableModel(tableWithoutHeader, header));
         entitiesTable.repaint();
         break;
       case START:
@@ -1028,7 +1031,7 @@ public class ViewFrame extends javax.swing.JFrame {
             }
             
             //print 2d array
-            UneditableTableModel uTM = new UneditableTableModel(TwoDMinusHeader,header1);
+            DefaultTableModel uTM = new DefaultTableModel(TwoDMinusHeader,header1);
             SearchTable.setModel(uTM);
             SearchTable.repaint();
         }
@@ -1273,7 +1276,7 @@ public class ViewFrame extends javax.swing.JFrame {
         {
           System.arraycopy(tableWithHeader[i+1], 0, tableWithoutHeader[i], 0, numCols);
         }
-        popularReportTable.setModel(new UneditableTableModel(tableWithoutHeader,header));
+        popularReportTable.setModel(new DefaultTableModel(tableWithoutHeader,header));
         popularReportTable.repaint();
         break;
       case REPORT_CHECKED_OUT:
@@ -1564,8 +1567,13 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel checkOverduePanel;
     private javax.swing.JScrollPane checkOverdueTextAreaBookCopyInfo;
     private javax.swing.JScrollPane checkOverdueTextAreaBorrInfo;
+    private javax.swing.JPanel checkedOutReportFilterPanel;
     private javax.swing.JMenuItem checkedOutReportMenuItem;
     private javax.swing.JPanel checkedOutReportPanel;
+    private javax.swing.JComboBox checkedOutReportSubjectComboBox;
+    private javax.swing.JTable checkedOutReportTable;
+    private javax.swing.JScrollPane checkedOutReportTablePane;
+    private javax.swing.JPanel checkedOutReportTablePanel;
     private javax.swing.JButton clearButton;
     private javax.swing.JMenu clerkMenu;
     private javax.swing.JButton doButton;
@@ -1574,7 +1582,6 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private javax.swing.JPanel holdRequestPanel;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
