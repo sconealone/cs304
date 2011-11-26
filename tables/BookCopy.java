@@ -26,10 +26,14 @@ import users.Conn;
 
 public class BookCopy implements Table {
 
+	/*
 	private final String IN = "in";
 	private final String OUT = "out";
 	private final String HOLD = "on-hold";
 	private final String OVERDUE = "overdue";
+	*/
+	
+	// These are never used.
 	// TODO Ensure status is only of these types. Either create custom
 	// exception, or try enum
 

@@ -210,7 +210,7 @@ public class Borrower implements Table {
      * @throws SQLException 
      */
     @Override
-    public Table get() throws SQLException {
+    public Borrower get() throws SQLException {
         String sql = "SELECT * FROM Borrower WHERE bid = " + bid;
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
@@ -390,6 +390,14 @@ public class Borrower implements Table {
     public void setBookTimeLimit(Integer bookTimeLimit) {
         this.bookTimeLimit = bookTimeLimit;
     }
+    
+    public String getType() {
+    	return type;
+    }
+    
+    public void setType(String type) {
+    	this.type = type;
+    }
 
     /**
      * Search for books by given title, returns  a list of books that match 
@@ -401,8 +409,8 @@ public class Borrower implements Table {
      */
     public String[][] searchBookByTitle(String title) throws SQLException {
         Statement stmt = Conn.getInstance().getConnection().createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT Book.CallNumber FROM Book, BookCopy "
-                + "WHERE Book.title=" + title + " AND Book.CallNumber=BookCopy.CallNumber");
+        ResultSet rs = stmt.executeQuery("SELECT Book.callNumber FROM Book "
+                + "WHERE Book.title='" + title + "'");
         ArrayList<Book> lob = new ArrayList<Book>();
 
         while (rs.next()) {
@@ -490,32 +498,34 @@ public class Borrower implements Table {
         ArrayList<Fine> lof = new ArrayList<Fine>();
         while (rsFines.next()) {
             int fid = rsFines.getInt(1);
+            Integer intObj;
+            intObj = new Integer(fid);
             Fine f = new Fine();
-            f.setFid(fid);
+            f.setFid(intObj);
             f = (Fine) f.get();
             lof.add(f);
         }
 
-        Statement stmt3 = con.createStatement();
-        String sql3 = "SELECT HoldRequest.hid FROM Borrower, HoldRequest "
-                + "WHERE Borrower.bid=HoldRequest.bid";
-        ResultSet rsHolds = stmt3.executeQuery(sql3);
-        ArrayList<HoldRequest> loh = new ArrayList<HoldRequest>();
-        while (rsHolds.next()) {
-            int hid = rsHolds.getInt(1);
-            HoldRequest h = new HoldRequest();
-            h.setHid(hid);
-            h = (HoldRequest) h.get();
-            loh.add(h);
-        }
+//        Statement stmt3 = con.createStatement();
+//        String sql3 = "SELECT HoldRequest.hid FROM Borrower, HoldRequest "
+//                + "WHERE Borrower.bid=HoldRequest.bid";
+//        ResultSet rsHolds = stmt3.executeQuery(sql3);
+//        ArrayList<HoldRequest> loh = new ArrayList<HoldRequest>();
+//        while (rsHolds.next()) {
+//            int hid = rsHolds.getInt(1);
+//            HoldRequest h = new HoldRequest();
+//            h.setHid(hid);
+//            h = (HoldRequest) h.get();
+//            loh.add(h);
+//        }
 
         ArrayList<String[][]> loT = new ArrayList<String[][]>();
         String[][] borrowingArray = listOfBorrowingsTo2DArray(lob);
         String[][] fineArray = listOfFinesTo2DArray(lof);
-        String[][] holdArray = listOfHoldsTo2DArray(loh);
+//        String[][] holdArray = listOfHoldsTo2DArray(loh);
         loT.add(borrowingArray);
         loT.add(fineArray);
-        loT.add(holdArray);
+//        loT.add(holdArray);
 
         return loT;
     }
@@ -688,7 +698,10 @@ public class Borrower implements Table {
             twoDArray[i][0] = f.getFid().toString();
             twoDArray[i][1] = f.getAmount().toString();
             twoDArray[i][2] = df.format(f.getIssuedDate().getTime());
-            twoDArray[i][3] = df.format(f.getPaidDate().getTime());
+            if(f.getPaidDate() == null)
+                twoDArray[i][3] = "";
+            else
+                twoDArray[i][3] = df.format(f.getPaidDate().getTime());
             twoDArray[i][4] = f.getBorrowing().getBorid().toString();
         }
         return twoDArray;

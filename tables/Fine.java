@@ -131,7 +131,7 @@ public class Fine implements Table {
           int borid = rs.getInt(colIndex++);
           borrowing = new Borrowing();
           borrowing.setBorid(borid);
-          borrowing = (Borrowing) borrowing.get();          
+//          borrowing = (Borrowing) borrowing.get();          
           
         }
         
@@ -351,6 +351,13 @@ public class Fine implements Table {
    * @param fid the fid to set
    */
   public void setFid(Integer fid) {
+    this.fid = fid;
+  }
+  
+  /**
+   * @param fid the fid to set
+   */
+  public void setFid(int fid) {
     this.fid = fid;
   }
 
