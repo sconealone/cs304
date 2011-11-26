@@ -390,6 +390,14 @@ public class Borrower implements Table {
     public void setBookTimeLimit(Integer bookTimeLimit) {
         this.bookTimeLimit = bookTimeLimit;
     }
+    
+    public String getType() {
+    	return type;
+    }
+    
+    public void setType(String type) {
+    	this.type = type;
+    }
 
     /**
      * Search for books by given title, returns  a list of books that match 

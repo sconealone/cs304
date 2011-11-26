@@ -47,16 +47,14 @@ public class Clerk {
 			Calendar expiryDate, String type) throws SQLException {
 
 		Borrower borr = new Borrower();
-		BorrowerType btype = new BorrowerType();
-
 		borr.setAddress(address);
 		borr.setEmailAddress(emailAddress);
-		// TODO borr.setBookTimeLimit();
 		borr.setExpiryDate(expiryDate);
 		borr.setName(name);
 		borr.setPassword(password);
 		borr.setPhone(phone);
 		borr.setSinOrStNum(sinOrStNum);
+		borr.setType(type);
 		borr.insert();
 	}
 
@@ -100,8 +98,6 @@ public class Clerk {
 				}
 			}
 		}
-
-		// TODO print stuff
 	}
 
 	/**
@@ -120,18 +116,19 @@ public class Clerk {
 	 * @param copyNo
 	 * @throws SQLException
 	 */
-	public void processReturn(int callNo, int copyNo) throws SQLException {
-		BookCopy bc = new BookCopy();
+	public void processReturn(String callNo, String copyNo) throws SQLException {
+		Book b = new Book();
+		b.setCallNumber(callNo);
+		b = b.get();
+		BookCopy bc = new BookCopy(copyNo, b, "in");
+		bc.update();
 		Borrowing bwing = new Borrowing();
-		// Borrower borr = new Borrower();
+		Borrower borr = new Borrower();
 
-		// TODO get the correct Borrowing object
-
-		bc.setStatus("IN");
+		bwing = (Borrowing) bwing.getOverdue(bc);
 		if (Calendar.getInstance().compareTo(bwing.getInDate()) == 1) {
 			Fine f = new Fine();
-			// TODO Set correct fine amount
-			f.setAmount(0);
+			f.setAmount(100);
 			f.setBorrowing(bwing);
 			f.setIssuedDate(Calendar.getInstance());
 			f.setPaidDate(null);
@@ -141,7 +138,6 @@ public class Clerk {
 		HoldRequest hr = new HoldRequest();
 		HoldRequest finalhr = new HoldRequest();
 		finalhr.setIssueDate(Calendar.getInstance());
-		Book b = new Book();
 
 		Collection<Table> lhReq = hr.getAll(b);
 		if (lhReq.size() > 0) {
@@ -152,8 +148,8 @@ public class Clerk {
 				if ((hr.getIssueDate().compareTo(finalhr.getIssueDate())) == -1)
 					finalhr = hr;
 			}
-			// TODO message(hr.getBorr());
-			// TODO bc.setStatus("HOLD");
+			bc.setStatus("hold");
+			bc.update();
 		}
 	}
 
@@ -170,6 +166,7 @@ public class Clerk {
 	 */
 	public void checkOverdue() throws SQLException {
 		Borrowing bwing = new Borrowing();
+		BookCopy bc = bwing.getBookCopy();
 		Collection<Table> lbw = bwing.getOverdue();
 
 		if (lbw.size() > 0) {
@@ -180,8 +177,8 @@ public class Clerk {
 				Borrower borr = new Borrower();
 				borr.setBid(bwing.getBorid());
 				borr = (Borrower) borr.get();
-				// TODO bc.setStatus("OVERDUE");
-				// TODO message(borr);
+				bc.setStatus("overdue");
+				bc.update();
 			}
 		}
 	}

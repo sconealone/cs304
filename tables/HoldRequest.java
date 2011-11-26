@@ -22,7 +22,7 @@ import users.Conn;
 public class HoldRequest implements Table {
 	private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 
-	// The fields for HoldRequest in the table are hid, bid, callNo, issueDate,
+	// The fields for HoldRequest in the table are hid, bid, callNumber, issueDate,
 	// in that order.
 	private Integer hid;
 	private Borrower borr;
@@ -102,11 +102,11 @@ public class HoldRequest implements Table {
 	 * @param borr
 	 *            Borrower whose bid is shared with the HoldRequest
 	 * @param b
-	 *            Book whose callNo is shared with the HoldRequest
+	 *            Book whose callNumber is shared with the HoldRequest
 	 * @throws SQLException
 	 */
 	public HoldRequest(Borrower borr, Book b) throws SQLException {
-		ps = c.prepareStatement("SELECT * FROM HoldRequest WHERE bid = ?, callNo = ?");
+		ps = c.prepareStatement("SELECT * FROM HoldRequest WHERE bid = ?, callNumber = ?");
 		ps.setInt(1, borr.getBid());
 		ps.setString(2, b.getCallNumber());
 
@@ -153,7 +153,7 @@ public class HoldRequest implements Table {
 							result[i][j] = String.valueOf(((HoldRequest) hrItr
 									.next()).getBorr().getBid());
 							break;
-						case 2: // callNo
+						case 2: // callNumber
 							result[i][j] = ((HoldRequest) hrItr.next()).getB()
 									.getCallNumber();
 							break;
@@ -178,7 +178,7 @@ public class HoldRequest implements Table {
 	 */
 	@Override
 	public void update() throws SQLException {
-		ps = c.prepareStatement("UPDATE holdRequest SET bid = ?, issueDate = ?, callNo = ? WHERE hid = ?");
+		ps = c.prepareStatement("UPDATE holdRequest SET bid = ?, issueDate = ?, callNumber = ? WHERE hid = ?");
 
 		ps.setInt(4, hid);
 		ps.setInt(1, borr.getBid());
@@ -356,13 +356,13 @@ public class HoldRequest implements Table {
 	 * Given a book, this returns all the HoldRequests for a particular book.
 	 * 
 	 * @param b
-	 *            Book whose callNo is shared with the HoldRequest
+	 *            Book whose callNumber is shared with the HoldRequest
 	 * @return ArrayList of HoldRequests
 	 * @throws SQLException
 	 */
 	public Collection<Table> getAll(Book b) throws SQLException {
 		Collection<Table> holdRequests = new ArrayList<Table>();
-		ps = c.prepareStatement("SELECT * FROM HoldRequest WHERE callNo = ?");
+		ps = c.prepareStatement("SELECT * FROM HoldRequest WHERE callNumber = ?");
 		ps.setString(1, b.getCallNumber());
 
 		rs = ps.executeQuery();
@@ -394,7 +394,7 @@ public class HoldRequest implements Table {
 	 * @param borr
 	 *            Borrower whose bid is shared with the HoldRequest
 	 * @param b
-	 *            Book whose callNo is shared with the HoldRequest
+	 *            Book whose callNumber is shared with the HoldRequest
 	 * @return ArrayList of HoldRequests
 	 * @throws SQLException
 	 */

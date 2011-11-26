@@ -63,6 +63,14 @@ public class ViewFrame extends javax.swing.JFrame {
     doButton.setText("Go");
   }
 
+    private String[][] get2DArrayMinusHeader(String[][] TwoDArrayToPrint) {
+        String[][] TwoDMinusHeader = new String[TwoDArrayToPrint.length-1][TwoDArrayToPrint[0].length];
+        for(int i =0;i<TwoDArrayToPrint.length-1;i++){
+            TwoDMinusHeader[i]=TwoDArrayToPrint[i+1];
+        }
+        return TwoDMinusHeader;
+    }
+
   /** This method is called from within the constructor to
    * initialize the form.
    * WARNING: Do NOT modify this code. The content of this method is
@@ -164,30 +172,35 @@ public class ViewFrame extends javax.swing.JFrame {
         checkOverdueListOverdueInfo = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
         addNewBookPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel5 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        abMainLabel = new javax.swing.JLabel();
+        abMainPanel = new javax.swing.JPanel();
+        abCNLabel = new javax.swing.JLabel();
         abCN = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
+        abISBNLabel = new javax.swing.JLabel();
         abISBN = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
+        abTitleLabel = new javax.swing.JLabel();
         abTitle = new javax.swing.JTextField();
-        jLabel9 = new javax.swing.JLabel();
+        abMainAuthorLabel = new javax.swing.JLabel();
         abMA = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
+        abPubLabel = new javax.swing.JLabel();
         abPub = new javax.swing.JTextField();
-        jLabel12 = new javax.swing.JLabel();
+        abYearLabel = new javax.swing.JLabel();
         abYear = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
+        abAALabel = new javax.swing.JLabel();
         abAA = new javax.swing.JTextField();
-        jLabel13 = new javax.swing.JLabel();
+        abSubsLabel = new javax.swing.JLabel();
         abSubs = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
+        abSpinnerLabel = new javax.swing.JLabel();
         abSpinner = new javax.swing.JSpinner();
-        jLabel14 = new javax.swing.JLabel();
-        jTextField10 = new javax.swing.JTextField();
+        abOpStatusLabel = new javax.swing.JLabel();
+        abOpStatus = new javax.swing.JTextField();
         addNewCopyPanel = new javax.swing.JPanel();
-        jLabel19 = new javax.swing.JLabel();
+        abcMainPanel = new javax.swing.JPanel();
+        abcCNLabel = new javax.swing.JLabel();
+        abcSpinnerLabel = new javax.swing.JLabel();
+        abcCN = new javax.swing.JTextField();
+        abcSpinner = new javax.swing.JSpinner();
+        abcMainPanelLabel = new javax.swing.JLabel();
         removeBorrowerPanel = new javax.swing.JPanel();
         removeBorrowerInputPanel = new javax.swing.JPanel();
         removeBorrowerLabel = new javax.swing.JLabel();
@@ -563,75 +576,172 @@ public class ViewFrame extends javax.swing.JFrame {
 
         addNewBookPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setText("Add New Book:  * = required, & = deliniate with commas");
-        addNewBookPanel.add(jLabel1, java.awt.BorderLayout.PAGE_START);
+        abMainLabel.setText("Add New Book:  * = required, & = deliniate with commas");
+        addNewBookPanel.add(abMainLabel, java.awt.BorderLayout.PAGE_START);
 
-        jPanel5.setLayout(new java.awt.GridLayout(10, 3, 5, 0));
+        abMainPanel.setLayout(new java.awt.GridBagLayout());
 
-        jLabel2.setText("CallNumber  (*)");
-        jPanel5.add(jLabel2);
+        abCNLabel.setText("CallNumber  (*)");
+        abMainPanel.add(abCNLabel, new java.awt.GridBagConstraints());
 
         abCN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 abCNActionPerformed(evt);
             }
         });
-        jPanel5.add(abCN);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 50;
+        abMainPanel.add(abCN, gridBagConstraints);
 
-        jLabel8.setText("ISBN (*)");
-        jPanel5.add(jLabel8);
+        abISBNLabel.setText("ISBN (*)");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        abMainPanel.add(abISBNLabel, gridBagConstraints);
 
         abISBN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 abISBNActionPerformed(evt);
             }
         });
-        jPanel5.add(abISBN);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        abMainPanel.add(abISBN, gridBagConstraints);
 
-        jLabel10.setText("Title");
-        jPanel5.add(jLabel10);
-        jPanel5.add(abTitle);
+        abTitleLabel.setText("Title");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        abMainPanel.add(abTitleLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        abMainPanel.add(abTitle, gridBagConstraints);
 
-        jLabel9.setText("Main Author");
-        jPanel5.add(jLabel9);
-        jPanel5.add(abMA);
+        abMainAuthorLabel.setText("Main Author");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        abMainPanel.add(abMainAuthorLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        abMainPanel.add(abMA, gridBagConstraints);
 
-        jLabel6.setText("Publisher");
-        jPanel5.add(jLabel6);
-        jPanel5.add(abPub);
+        abPubLabel.setText("Publisher");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        abMainPanel.add(abPubLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        abMainPanel.add(abPub, gridBagConstraints);
 
-        jLabel12.setText("Year");
-        jPanel5.add(jLabel12);
-        jPanel5.add(abYear);
+        abYearLabel.setText("Year");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        abMainPanel.add(abYearLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        abMainPanel.add(abYear, gridBagConstraints);
 
-        jLabel11.setText("Additional Authors (&)");
-        jPanel5.add(jLabel11);
-        jPanel5.add(abAA);
+        abAALabel.setText("Additional Authors (&)");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        abMainPanel.add(abAALabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        abMainPanel.add(abAA, gridBagConstraints);
 
-        jLabel13.setText("Subjects (*) (&)");
-        jPanel5.add(jLabel13);
-        jPanel5.add(abSubs);
+        abSubsLabel.setText("Subjects (*) (&)");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        abMainPanel.add(abSubsLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        abMainPanel.add(abSubs, gridBagConstraints);
 
-        jLabel7.setText("Create Copies");
-        jPanel5.add(jLabel7);
+        abSpinnerLabel.setText("Create Copies");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        abMainPanel.add(abSpinnerLabel, gridBagConstraints);
 
-        abSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 200, 1));
-        jPanel5.add(abSpinner);
+        abSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 1000, 1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
+        abMainPanel.add(abSpinner, gridBagConstraints);
 
-        jLabel14.setText("Operation Status");
-        jPanel5.add(jLabel14);
+        abOpStatusLabel.setText("Operation Status");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        abMainPanel.add(abOpStatusLabel, gridBagConstraints);
 
-        jTextField10.setText("Waiting for Input...");
-        jPanel5.add(jTextField10);
 
-        addNewBookPanel.add(jPanel5, java.awt.BorderLayout.CENTER);
+        abOpStatus.setText("Waiting for Input...");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
+        abMainPanel.add(abOpStatus, gridBagConstraints);
+
+
+
+
+
+        addNewBookPanel.add(abMainPanel, java.awt.BorderLayout.WEST);
 
         cardPanel.add(addNewBookPanel, "Add new book");
 
         addNewCopyPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel19.setText("new copy");
-        addNewCopyPanel.add(jLabel19, java.awt.BorderLayout.CENTER);
+        abcMainPanel.setLayout(new java.awt.GridBagLayout());
+
+        abcCNLabel.setText("Call Number");
+        abcMainPanel.add(abcCNLabel, new java.awt.GridBagConstraints());
+
+        abcSpinnerLabel.setText("Number of Copies");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        abcMainPanel.add(abcSpinnerLabel, gridBagConstraints);
+
+        abcCN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abcCNActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        abcMainPanel.add(abcCN, gridBagConstraints);
+
+        abcSpinner.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), null, Integer.valueOf(1000), Integer.valueOf(1)));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        abcMainPanel.add(abcSpinner, gridBagConstraints);
+
+        addNewCopyPanel.add(abcMainPanel, java.awt.BorderLayout.CENTER);
+
+        abcMainPanelLabel.setText("Add New Book Copy");
+        addNewCopyPanel.add(abcMainPanelLabel, java.awt.BorderLayout.PAGE_START);
 
         cardPanel.add(addNewCopyPanel, "Add new book copy");
 
@@ -1143,10 +1253,7 @@ public class ViewFrame extends javax.swing.JFrame {
             }
             
             String[] header1 = TwoDArrayToPrint[0];
-            String[][] TwoDMinusHeader = new String[TwoDArrayToPrint.length-1][TwoDArrayToPrint[0].length];
-            for(int i =0;i<TwoDArrayToPrint.length-1;i++){
-                TwoDMinusHeader[i]=TwoDArrayToPrint[i+1];
-            }
+            String[][] TwoDMinusHeader = get2DArrayMinusHeader(TwoDArrayToPrint);
             
             //print 2d array
             DefaultTableModel uTM = new DefaultTableModel(TwoDMinusHeader,header1);
@@ -1213,6 +1320,13 @@ public class ViewFrame extends javax.swing.JFrame {
       case PAY_FINE:
         break;
       case ADD_BORROWER:
+    	  Borrower borr = new Borrower();
+    	  
+    	  borr.setName(addBorrowerTextName.getText());
+    	  borr.setAddress(addBorrowerTextAddress.getText());
+    	  borr.setPhone(addBorrowerTextPhoneNo.getText());
+    	  borr.setEmailAddress(addBorrowerTextEmail.getText());
+    	  borr.setSinOrStNum(Integer.parseInt(addBorrowerTextSinOrStNo.getText()));
         break;
       case CHECK_OUT:
         break;
@@ -1615,6 +1729,13 @@ public class ViewFrame extends javax.swing.JFrame {
     controller.reconnect();
   }//GEN-LAST:event_reconnectMenuItemActionPerformed
 
+
+
+
+
+
+
+
     private void abCNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abCNActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_abCNActionPerformed
@@ -1622,6 +1743,10 @@ public class ViewFrame extends javax.swing.JFrame {
     private void abISBNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abISBNActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_abISBNActionPerformed
+
+    private void abcCNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abcCNActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_abcCNActionPerformed
 
   /**
    * Parses a string of copy numbers, delimited by the comma, ','.
@@ -1737,14 +1862,40 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel SearchTopPanel;
     private javax.swing.JTabbedPane TabbedPane;
     private javax.swing.JTextField abAA;
+    private javax.swing.JLabel abAALabel;
     private javax.swing.JTextField abCN;
+    private javax.swing.JLabel abCNLabel;
     private javax.swing.JTextField abISBN;
+    private javax.swing.JLabel abISBNLabel;
     private javax.swing.JTextField abMA;
+    private javax.swing.JLabel abMainAuthorLabel;
+    private javax.swing.JLabel abMainLabel;
+    private javax.swing.JPanel abMainPanel;
+    private javax.swing.JTextField abOpStatus;
+    private javax.swing.JLabel abOpStatusLabel;
     private javax.swing.JTextField abPub;
+    private javax.swing.JLabel abPubLabel;
     private javax.swing.JSpinner abSpinner;
+    private javax.swing.JLabel abSpinnerLabel;
     private javax.swing.JTextField abSubs;
+    private javax.swing.JLabel abSubsLabel;
     private javax.swing.JTextField abTitle;
+    private javax.swing.JLabel abTitleLabel;
     private javax.swing.JTextField abYear;
+
+
+
+    private javax.swing.JLabel abYearLabel;
+    private javax.swing.JTextField abcCN;
+    private javax.swing.JLabel abcCNLabel;
+    private javax.swing.JPanel abcMainPanel;
+    private javax.swing.JLabel abcMainPanelLabel;
+    private javax.swing.JSpinner abcSpinner;
+    private javax.swing.JLabel abcSpinnerLabel;
+
+
+
+
     private javax.swing.JMenuItem addBookCopyMenuItem;
     private javax.swing.JMenuItem addBookMenuItem;
     private javax.swing.JPanel addBorrowerAddsPanel;
@@ -1816,6 +1967,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private javax.swing.JPanel holdRequestPanel;
+
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1824,25 +1976,31 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+
+
+
+
+    private javax.swing.JLabel jLabel3;
+
+
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
+
     private javax.swing.JTextField jTextField10;
+
+
+
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
