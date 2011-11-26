@@ -1282,6 +1282,13 @@ public class ViewFrame extends javax.swing.JFrame {
       case PAY_FINE:
         break;
       case ADD_BORROWER:
+    	  Borrower borr = new Borrower();
+    	  
+    	  borr.setName(addBorrowerTextName.getText());
+    	  borr.setAddress(addBorrowerTextAddress.getText());
+    	  borr.setPhone(addBorrowerTextPhoneNo.getText());
+    	  borr.setEmailAddress(addBorrowerTextEmail.getText());
+    	  borr.setSinOrStNum(Integer.parseInt(addBorrowerTextSinOrStNo.getText()));
         break;
       case CHECK_OUT:
         break;
