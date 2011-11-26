@@ -381,7 +381,8 @@ public class InsertGenerator {
     String paidDateStr = f.format(paidDate.getTime());
     
     // sometimes randomly make the indate null
-    if ((1 + (int)(Math.random()*10)) < 3)
+    // 25 Nov: No fines will have a paiddate
+    if ((1 + (int)(Math.random()*10)) < 30)
     {
       paidDateStr = "NULL";
     }

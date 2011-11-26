@@ -36,7 +36,7 @@ public class tablesTest{
 	Book b;
 	static Connection c = Conn.getInstance().getConnection();
 
-
+	@Test
 	public void createBookObject() throws SQLException {
 		//create a book object
 		String cN = "123456789";

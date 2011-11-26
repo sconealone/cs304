@@ -357,9 +357,12 @@ public class Librarian
     String[][] displayTable;
     displayTable = l.getCheckedOutBooksReport();
     display(displayTable);
+    /*
     displayTable = l.getCheckedOutBooksReport("Science");
     display(displayTable);
     display(l.getPopularBooks(2005, 5));
+     * 
+     */
     /*
      * won't work until people finish implementing delete
      
@@ -380,9 +383,9 @@ public class Librarian
   
   private static void display(String[][] displayTable)
   {
-    for (String[] a : displayTable)
+    for (String[] a : displayTable) 
     {
-      for (String b: a)
+      for (String b : a) 
       {
         System.out.print(b + '\t');
       }

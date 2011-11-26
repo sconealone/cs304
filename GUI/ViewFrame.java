@@ -62,6 +62,14 @@ public class ViewFrame extends javax.swing.JFrame {
     doButton.setText("Go");
   }
 
+    private String[][] get2DArrayMinusHeader(String[][] TwoDArrayToPrint) {
+        String[][] TwoDMinusHeader = new String[TwoDArrayToPrint.length-1][TwoDArrayToPrint[0].length];
+        for(int i =0;i<TwoDArrayToPrint.length-1;i++){
+            TwoDMinusHeader[i]=TwoDArrayToPrint[i+1];
+        }
+        return TwoDMinusHeader;
+    }
+
   /** This method is called from within the constructor to
    * initialize the form.
    * WARNING: Do NOT modify this code. The content of this method is
@@ -90,7 +98,15 @@ public class ViewFrame extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         SearchTable = new javax.swing.JTable();
         checkAccountPanel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        searchAccountPanel = new javax.swing.JPanel();
+        SearchIdField = new javax.swing.JTextField();
+        TabbedPane = new javax.swing.JTabbedPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        checkedOutBooksTable = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        finesTable = new javax.swing.JTable();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        currentHoldsTable = new javax.swing.JTable();
         payFinePanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         holdRequestPanel = new javax.swing.JPanel();
@@ -209,7 +225,8 @@ public class ViewFrame extends javax.swing.JFrame {
         popularReportTable = new javax.swing.JTable();
         checkedOutReportPanel = new javax.swing.JPanel();
         checkedOutReportFilterPanel = new javax.swing.JPanel();
-        checkedOutReportSubjectComboBox = new javax.swing.JComboBox();
+        checkedOutReportFilterCheckBox = new javax.swing.JCheckBox();
+        checkedOutReportTextField = new javax.swing.JTextField();
         checkedOutReportTablePanel = new javax.swing.JPanel();
         checkedOutReportTablePane = new javax.swing.JScrollPane();
         checkedOutReportTable = new javax.swing.JTable();
@@ -346,8 +363,27 @@ public class ViewFrame extends javax.swing.JFrame {
 
         checkAccountPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel3.setText("check account");
-        checkAccountPanel.add(jLabel3, java.awt.BorderLayout.CENTER);
+        SearchIdField.setText("");
+        searchAccountPanel.add(SearchIdField);
+
+        checkAccountPanel.add(searchAccountPanel, java.awt.BorderLayout.PAGE_START);
+
+        checkedOutBooksTable.setModel(new javax.swing.table.DefaultTableModel());
+        jScrollPane2.setViewportView(checkedOutBooksTable);
+
+        TabbedPane.addTab("tab1", jScrollPane2);
+
+        finesTable.setModel(new javax.swing.table.DefaultTableModel());
+        jScrollPane3.setViewportView(finesTable);
+
+        TabbedPane.addTab("tab2", jScrollPane3);
+
+        currentHoldsTable.setModel(new javax.swing.table.DefaultTableModel());
+        jScrollPane4.setViewportView(currentHoldsTable);
+
+        TabbedPane.addTab("tab3", jScrollPane4);
+
+        checkAccountPanel.add(TabbedPane, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(checkAccountPanel, "Check account");
 
@@ -657,16 +693,16 @@ public class ViewFrame extends javax.swing.JFrame {
         gridBagConstraints.gridy = 9;
         abMainPanel.add(abOpStatusLabel, gridBagConstraints);
 
+
         abOpStatus.setText("Waiting for Input...");
-        abOpStatus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                abOpStatusActionPerformed(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 9;
         abMainPanel.add(abOpStatus, gridBagConstraints);
+
+
+
+
 
         addNewBookPanel.add(abMainPanel, java.awt.BorderLayout.WEST);
 
@@ -836,9 +872,16 @@ public class ViewFrame extends javax.swing.JFrame {
         checkedOutReportPanel.setLayout(new java.awt.BorderLayout());
 
         checkedOutReportFilterPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter by subject"));
+        checkedOutReportFilterPanel.setLayout(new java.awt.GridBagLayout());
 
-        checkedOutReportSubjectComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        checkedOutReportFilterPanel.add(checkedOutReportSubjectComboBox);
+        checkedOutReportFilterCheckBox.setText("Filter by subject: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        checkedOutReportFilterPanel.add(checkedOutReportFilterCheckBox, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        checkedOutReportFilterPanel.add(checkedOutReportTextField, gridBagConstraints);
 
         checkedOutReportPanel.add(checkedOutReportFilterPanel, java.awt.BorderLayout.PAGE_START);
 
@@ -1208,10 +1251,7 @@ public class ViewFrame extends javax.swing.JFrame {
             }
             
             String[] header1 = TwoDArrayToPrint[0];
-            String[][] TwoDMinusHeader = new String[TwoDArrayToPrint.length-1][TwoDArrayToPrint[0].length];
-            for(int i =0;i<TwoDArrayToPrint.length-1;i++){
-                TwoDMinusHeader[i]=TwoDArrayToPrint[i+1];
-            }
+            String[][] TwoDMinusHeader = get2DArrayMinusHeader(TwoDArrayToPrint);
             
             //print 2d array
             DefaultTableModel uTM = new DefaultTableModel(TwoDMinusHeader,header1);
@@ -1224,6 +1264,18 @@ public class ViewFrame extends javax.swing.JFrame {
         }
         break;
       case CHECK_ACCOUNT:
+//          try {
+//              String searchIdField = SearchIdField.getText();
+//              String[][] BookTwoDArrayToPrint = null;
+//              Book b = new Book();
+//              Borrower bor = new Borrower();
+//              
+//              
+//        
+//          }
+//          catch (SQLException S){
+//              S.printStackTrace();
+//          }
         break;
       case HOLD_REQUEST:
         break;
@@ -1461,8 +1513,46 @@ public class ViewFrame extends javax.swing.JFrame {
         }
         popularReportTable.setModel(new DefaultTableModel(tableWithoutHeader,header));
         popularReportTable.repaint();
-        break;
+        break; // END CASE POPULAR REPORT
+        
       case REPORT_CHECKED_OUT:
+        String[][] checkedOutReportWithHeader = null;
+        try
+        {
+          if (checkedOutReportFilterCheckBox.isSelected())
+          {
+            String subjectToFilterBy = checkedOutReportTextField.getText().trim();
+            checkedOutReportWithHeader = 
+                    controller.getSystemLibrarian().getCheckedOutBooksReport(subjectToFilterBy);
+          }
+          else
+          {
+            checkedOutReportWithHeader = 
+                    controller.getSystemLibrarian().getCheckedOutBooksReport();
+          }
+        }
+        catch (SQLException e)
+        {
+          String msg = "Could not retrieve data\n"
+                  + e.getMessage();
+          JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+        String[] checkedOutReportHeader = checkedOutReportWithHeader[0];
+        numRows = checkedOutReportWithHeader.length;
+        numRows--;
+        numCols = checkedOutReportWithHeader[0].length;
+        tableWithoutHeader = new String[numRows][];
+        for (int i = 0; i < numRows; i++)
+        {
+          tableWithoutHeader[i] = new String[numCols];
+        }
+        for (int i = 0; i < numRows; i++)
+        {
+          System.arraycopy(checkedOutReportWithHeader[i+1], 0, tableWithoutHeader[i], 0, numCols);
+        }
+        checkedOutReportTable.setModel(new DefaultTableModel(tableWithoutHeader, checkedOutReportHeader));
+        checkedOutReportTable.repaint();
         break;
       default:
     }
@@ -1564,7 +1654,7 @@ public class ViewFrame extends javax.swing.JFrame {
         break;
       case REMOVE_BORROWER:
         removeBorrowerTextField.setText("");
-        break;
+        break;  
       case REPORT_POPULAR:
         popularReportYearTextField.setText("");
         popularReportNTextField.setText("");
@@ -1572,6 +1662,10 @@ public class ViewFrame extends javax.swing.JFrame {
         popularReportTable.repaint();
         break;
       case REPORT_CHECKED_OUT:
+        checkedOutReportFilterCheckBox.setSelected(false);
+        checkedOutReportTextField.setText("");
+        checkedOutReportTable.setModel(new DefaultTableModel());
+        checkedOutReportTable.repaint();
         break;
       default:
     }
@@ -1590,9 +1684,12 @@ public class ViewFrame extends javax.swing.JFrame {
     controller.reconnect();
   }//GEN-LAST:event_reconnectMenuItemActionPerformed
 
-    private void abOpStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abOpStatusActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_abOpStatusActionPerformed
+
+
+
+
+
+
 
     private void abCNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abCNActionPerformed
         // TODO add your handling code here:
@@ -1714,9 +1811,13 @@ public class ViewFrame extends javax.swing.JFrame {
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox SearchComboBox;
+    private javax.swing.JTextField SearchIdField;
     private javax.swing.JTable SearchTable;
     private javax.swing.JTextField SearchTextField;
     private javax.swing.JPanel SearchTopPanel;
+
+    private javax.swing.JTabbedPane TabbedPane;
+
     private javax.swing.JTextField abAA;
     private javax.swing.JLabel abAALabel;
     private javax.swing.JTextField abCN;
@@ -1738,6 +1839,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JTextField abTitle;
     private javax.swing.JLabel abTitleLabel;
     private javax.swing.JTextField abYear;
+
     private javax.swing.JLabel abYearLabel;
     private javax.swing.JTextField abcCN;
     private javax.swing.JLabel abcCNLabel;
@@ -1745,6 +1847,9 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JLabel abcMainPanelLabel;
     private javax.swing.JSpinner abcSpinner;
     private javax.swing.JLabel abcSpinnerLabel;
+
+
+
     private javax.swing.JMenuItem addBookCopyMenuItem;
     private javax.swing.JMenuItem addBookMenuItem;
     private javax.swing.JPanel addBorrowerAddsPanel;
@@ -1792,24 +1897,35 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane checkOverdueListOverdueInfo;
     private javax.swing.JMenuItem checkOverdueMenuItem;
     private javax.swing.JPanel checkOverduePanel;
+
+    private javax.swing.JTable checkedOutBooksTable;
+
     private javax.swing.JScrollPane checkOverdueTextAreaBookCopyInfo;
     private javax.swing.JScrollPane checkOverdueTextAreaBorrInfo;
+    private javax.swing.JCheckBox checkedOutReportFilterCheckBox;
     private javax.swing.JPanel checkedOutReportFilterPanel;
+
     private javax.swing.JMenuItem checkedOutReportMenuItem;
     private javax.swing.JPanel checkedOutReportPanel;
-    private javax.swing.JComboBox checkedOutReportSubjectComboBox;
     private javax.swing.JTable checkedOutReportTable;
     private javax.swing.JScrollPane checkedOutReportTablePane;
     private javax.swing.JPanel checkedOutReportTablePanel;
+    private javax.swing.JTextField checkedOutReportTextField;
     private javax.swing.JButton clearButton;
     private javax.swing.JMenu clerkMenu;
+    private javax.swing.JTable currentHoldsTable;
     private javax.swing.JButton doButton;
     private javax.swing.JTable entitiesTable;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JTable finesTable;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private javax.swing.JPanel holdRequestPanel;
+
+
+
     private javax.swing.JLabel jLabel3;
+
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JList jList1;
@@ -1819,10 +1935,15 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
+
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
@@ -1877,6 +1998,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JTextField removeBorrowerTextField;
     private javax.swing.JMenu removeMenu;
     private javax.swing.JMenu reportMenu;
+    private javax.swing.JPanel searchAccountPanel;
     private javax.swing.JMenuItem searchMenuItem;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JPanel startComboBoxPanel;

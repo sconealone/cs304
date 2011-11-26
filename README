@@ -1,13 +1,22 @@
+Next meeting
+
+Work assignments:
+- Mitch:
+  unit tests for HoldRequest
+  unit tests for BookCopy
+  HoldRequest GUI + functionality
+  RemoveBookCopy GUI functionality
+
+==============================================================
+
+Old work:
+
 Next meeting: Friday, November 25
 Work assignments:
 - Mitch: write unit tests, update schedule, write file parser, Librarian GUI
 - Jenny: write unit tests for Borrower functionality, write List<Book>ToString[][] method, Borrower GUI
 - Jesse: Add book, borrower and book copy functionality.  
 - Christiaan: complete clerk functionality, finish BookCopyTest, create ProcessFine GUI, fix all GUI's bordering issues
-
-==============================================================
-
-Old work:
 
 Next meeting: Monday, November 21
 Work assignments:

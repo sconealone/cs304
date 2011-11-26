@@ -29,11 +29,11 @@ public class InsertFileGenerator {
       int numBorrower, numBook, numBorrowing, numFine, numHoldRequest;
       if (args.length != 5)
       {
-        numBorrower = 3;
-        numBook = 3;
-        numBorrowing = 2;
-        numFine = 1;
-        numHoldRequest = 1;
+        numBorrower = 300;
+        numBook = 300;
+        numBorrowing = 200;
+        numFine = 100;
+        numHoldRequest = 100;
         System.out.println("Default number of tables to generate used.");
       }
       else

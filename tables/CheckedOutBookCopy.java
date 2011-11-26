@@ -94,7 +94,7 @@ public class CheckedOutBookCopy //extends BookCopy
     sql += "\nFROM CheckedOutBookCopy";
     if (shouldTheResultBeFiltered)
     {
-      sql += "\nWHERE subject = ?";
+      sql += "\nWHERE UPPER(subject) = UPPER(?)";
     }
     Connection con = Conn.getInstance().getConnection();
     PreparedStatement ps = con.prepareStatement(sql);
@@ -194,7 +194,7 @@ public class CheckedOutBookCopy //extends BookCopy
       System.out.println();
     }
     System.out.println();
-    bc.flagOverdue();
+    System.out.println(bc.flagOverdue());
     
     table = bc.display();
     for (int i = 0; i < table.length; i++)
@@ -206,7 +206,7 @@ public class CheckedOutBookCopy //extends BookCopy
       System.out.println();
     }
     System.out.println();
-    bc.setSubjectToFilterBy("Science");
+    bc.setSubjectToFilterBy("eDuCaTiON");
     table = bc.display();
     for (int i = 0; i < table.length; i++)
     {
