@@ -9,7 +9,6 @@ import java.util.Iterator;
 import tables.Book;
 import tables.BookCopy;
 import tables.Borrower;
-import tables.BorrowerType;
 import tables.Borrowing;
 import tables.Fine;
 import tables.HoldRequest;
@@ -123,7 +122,6 @@ public class Clerk {
 		BookCopy bc = new BookCopy(copyNo, b, "in");
 		bc.update();
 		Borrowing bwing = new Borrowing();
-		Borrower borr = new Borrower();
 
 		bwing = (Borrowing) bwing.getOverdue(bc);
 		if (Calendar.getInstance().compareTo(bwing.getInDate()) == 1) {
