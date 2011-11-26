@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 import users.Conn;
@@ -16,13 +17,44 @@ import users.Conn;
 /**
  * This class represents the HoldRequest table in the database.
  * 
+ * Changes: 25 Nov
+ * - fixed HoldRequest(hid:int) constructor
+ *    Moved the initialization of the Connection to before SQL calls are attempted
+ *    It was trying to set its attributes without initializing them first.
+ *    The column indexes were incorrect.
+ * 
+ * - fixed HoldRequest(:Borrower,:Book) constructor, but marked is deprecated.
+ *   There could be several HoldRequests that match the bid and call number,
+ *   but only the first such one will be returned. 
+ * 
+ * - changed get()
+ *   hid will never be null since it's a primitive.  Changed this to 0.
+ * 
+ * - fixed getAll()
+ *   Didn't want to go through all that code, so I just put the code from
+ *   HoldRequest(hid:int) into a loop and added them to an array list.
+ * 
+ * - fixed display()
+ *   DateFormat was trying to format a Calendar object.  Added a call to getTime().
+ *   case switches didn't make any sense and were producing nulls.  Replaced them.
+ * 
+ * - fixed update()
+ *   changed attribute to callNumber from callNo, which doesn't exist.
+ *   changed attribute to issuedDate from issueDate, which doesn't exist.
+ *   got rid of the line where you try to set the date to Calendar::toString().
+ *   It doesn't work like that.
+ * 
+ * - fixed delete()
+ *   changed the table to delete from to HoldRequest instead of BookCopy
+ * 
+ * 
  * @author Christiaan Fernando
  * 
  */
 public class HoldRequest implements Table {
 	private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 
-	// The fields for HoldRequest in the table are hid, bid, callNumber, issueDate,
+	// The fields for HoldRequest in the table are hid, bid, callNo, issueDate,
 	// in that order.
 	private Integer hid;
 	private Borrower borr;
@@ -68,33 +100,61 @@ public class HoldRequest implements Table {
 	 * 
 	 * This constructor takes in an Integer and find the HoldRequest entry in
 	 * the SQL table with this hid. This assumes that the entry already exists.
-	 * If it does not, this will call the default constructor.
+	 * If it does not, this will return an error value of -1 as the hid.
 	 * 
 	 * @param hid
 	 *            HoldRequest id in the SQL table.
 	 * @throws SQLException
 	 */
 	public HoldRequest(Integer hid) throws SQLException {
+		c = Conn.getInstance().getConnection();
 		ps = c.prepareStatement("SELECT * FROM HoldRequest WHERE hid = ?");
 		ps.setInt(1, hid);
 
 		rs = ps.executeQuery();
 
 		if (rs.next()) {
-			this.hid = hid;
-			b = (Book) b.get();
-			borr.setBid(rs.getInt(2));
-			borr = (Borrower) borr.get();
-			b.setCallNumber(rs.getString(3));
-			this.issueDate.setTime(rs.getDate(4));
+                  this.hid = hid;
+                  b = new Book();
+                  borr = new Borrower();
+                  borr.setBid(rs.getInt(2));
+                  borr = (Borrower) borr.get();
+                  b.setCallNumber(rs.getString(4));
+                  b = (Book) b.get();
+                  issueDate = new GregorianCalendar();
+                  this.issueDate.setTime(rs.getDate(3));
 		}
-
-		c = Conn.getInstance().getConnection();
+                else
+                {
+                  this.hid = -1;
+                }
 	}
+        
+        /**
+         * Creates a new HoldRequest object based on a result set.
+         * Call next() on result set before passing in.
+         * @param rs
+         * @throws SQLException 
+         */
+        private HoldRequest(ResultSet rs) throws SQLException
+        {
+          hid = rs.getInt(1);
+          b = new Book();
+          borr = new Borrower();
+          borr.setBid(rs.getInt(2));
+          borr = (Borrower) borr.get();
+          b.setCallNumber(rs.getString(4));
+          b = (Book) b.get();
+          issueDate = new GregorianCalendar();
+          this.issueDate.setTime(rs.getDate(3));
+        }
 
 	/**
 	 * HoldRequest Constructor.
 	 * 
+         * This constructor will only get the first such hold request when there
+         * could be several.  Do not use it.
+         * 
 	 * This constructor takes in a Borrower and a Book and finds the HoldRequest
 	 * entry in the SQL table that has these two values. This assumes the entry
 	 * already exists. If it does not, this will call the default constructor.
@@ -102,11 +162,13 @@ public class HoldRequest implements Table {
 	 * @param borr
 	 *            Borrower whose bid is shared with the HoldRequest
 	 * @param b
-	 *            Book whose callNumber is shared with the HoldRequest
+	 *            Book whose callNo is shared with the HoldRequest
 	 * @throws SQLException
 	 */
+        @Deprecated
 	public HoldRequest(Borrower borr, Book b) throws SQLException {
-		ps = c.prepareStatement("SELECT * FROM HoldRequest WHERE bid = ?, callNumber = ?");
+		c = Conn.getInstance().getConnection();
+		ps = c.prepareStatement("SELECT * FROM HoldRequest WHERE bid = ?, callNo = ?");
 		ps.setInt(1, borr.getBid());
 		ps.setString(2, b.getCallNumber());
 
@@ -119,7 +181,6 @@ public class HoldRequest implements Table {
 			this.issueDate.setTime(rs.getDate(4));
 		}
 
-		c = Conn.getInstance().getConnection();
 	}
 
 	/**
@@ -134,39 +195,36 @@ public class HoldRequest implements Table {
 
 		ResultSetMetaData md = getMeta();
 
-		if (hrt.size() > 0) {
-			result = new String[hrt.size() + 1][md.getColumnCount()];
-			int i = 0;
+                result = new String[hrt.size() + 1][md.getColumnCount()];
+                int i = 0;
+                int numCols = md.getColumnCount();
 
-			Iterator<Table> hrItr = hrt.iterator();
-			while (hrItr.hasNext()) {
-				for (int j = 0; j < result[i].length; j++) {
-					if (i == 0)
-						result[i][j] = md.getColumnName(j + 1);
-					else {
-						switch (j) {
-						case 0: // hid
-							result[i][j] = String.valueOf((((HoldRequest) hrItr
-									.next()).getHid()));
-							break;
-						case 1: // bid
-							result[i][j] = String.valueOf(((HoldRequest) hrItr
-									.next()).getBorr().getBid());
-							break;
-						case 2: // callNumber
-							result[i][j] = ((HoldRequest) hrItr.next()).getB()
-									.getCallNumber();
-							break;
-						case 3: // issueDate
-							result[i][j] = sdf.format(((HoldRequest) hrItr
-									.next()).getIssueDate());
-							break;
-						}
-					}
-				}
-				i++;
-			}
-		}
+                for (int colIndex = 1; colIndex <= numCols; colIndex++)
+                {
+                  result[i][colIndex-1] = md.getColumnName(colIndex);
+                }
+                i++;
+
+                Iterator<Table> hrItr = hrt.iterator();
+                while (hrItr.hasNext()) {
+
+                  HoldRequest hr = (HoldRequest) hrItr.next();
+                  int colIndex = 0;
+
+                  // hid
+                  result[i][colIndex++] = ""+hr.getHid();
+
+                  // bid
+                  result[i][colIndex++] = ""+hr.getBorr().getBid();
+
+                  // issuedDate
+                  result[i][colIndex++] = sdf.format(hr.getIssueDate().getTime());
+
+                  // callNo
+                  result[i][colIndex++] = ""+hr.getB().getCallNumber();
+
+                  i++;
+                } // end while
 		return result;
 	}
 
@@ -178,18 +236,19 @@ public class HoldRequest implements Table {
 	 */
 	@Override
 	public void update() throws SQLException {
-		ps = c.prepareStatement("UPDATE holdRequest SET bid = ?, issueDate = ?, callNumber = ? WHERE hid = ?");
+		ps = c.prepareStatement("UPDATE holdRequest SET bid = ?, issuedDate = ?, callNumber = ? WHERE hid = ?");
 
 		ps.setInt(4, hid);
 		ps.setInt(1, borr.getBid());
-		ps.setString(2, issueDate.toString());
+		ps.setDate(2, new java.sql.Date(issueDate.getTime().getTime()));
 		ps.setString(3, b.getCallNumber());
 
 		int rowCount = ps.executeUpdate();
 		if (rowCount == 0)
+                {
 			// Throw Exception
-
-			c.commit();
+                }
+			//c.commit();
 		ps.close();
 	}
 
@@ -200,17 +259,11 @@ public class HoldRequest implements Table {
 	 */
 	@Override
 	public boolean delete() throws SQLException {
-		ps = c.prepareStatement("DELETE FROM bookCopy WHERE hid = ?");
+		ps = c.prepareStatement("DELETE FROM HoldRequest WHERE hid = ?");
 		ps.setInt(1, hid);
 
 		int rowCount = ps.executeUpdate();
-		if (rowCount == 0) {
-			// TODO throw exception
-		}
-
-		c.commit();
-		ps.close();
-		return false;
+		return rowCount == 1;
 	}
 
 	/**
@@ -224,8 +277,8 @@ public class HoldRequest implements Table {
 		ps = c.prepareStatement("INSERT INTO HoldRequest VALUES (hidCounter.nextVal,?,?,?)");
 
 		ps.setInt(1, borr.getBid());
-		ps.setString(2, b.getCallNumber());
-		ps.setString(3, issueDate.toString());
+		ps.setString(3, b.getCallNumber());
+		ps.setDate(2, new java.sql.Date(issueDate.getTime().getTime()));
 
 		int numRowsChanged = ps.executeUpdate();
 		if (numRowsChanged == 1) {
@@ -236,7 +289,6 @@ public class HoldRequest implements Table {
 				hid = rs.getInt(1);
 				return true;
 			}
-			c.commit();
 		}
 		return false;
 	}
@@ -252,11 +304,12 @@ public class HoldRequest implements Table {
 	@Override
 	public Collection<Table> getAll() throws SQLException {
 		Collection<Table> holdRequests = new ArrayList<Table>();
+                
 		ps = c.prepareStatement("SELECT * FROM HoldRequest");
 
 		rs = ps.executeQuery();
 
-		while (rs.next()) {
+		while (rs.next()) {/*
 			HoldRequest hr = new HoldRequest();
 			Book b = new Book();
 			Borrower borr = new Borrower();
@@ -271,7 +324,8 @@ public class HoldRequest implements Table {
 			hr.setB(b);
 			hr.setBorr(borr);
 			hr.getIssueDate().setTime(rs.getDate(4));
-			holdRequests.add(hr);
+			holdRequests.add(hr);*/
+                  holdRequests.add(new HoldRequest(rs));
 		}
 
 		return holdRequests;
@@ -307,10 +361,13 @@ public class HoldRequest implements Table {
 	 */
 	@Override
 	public Table get() throws SQLException {
-		if (hid != null)
-			return (new HoldRequest((Integer) hid));
-		else if (borr != null && b != null) {
-			return (new HoldRequest(borr, b));
+		if (hid != 0)
+                {
+                   HoldRequest tempHR = new HoldRequest(hid);
+                   if (tempHR.getHid() > 0)
+                   {
+                      return (new HoldRequest((Integer) hid));
+                   }
 		}
 		return null;
 	}
@@ -334,6 +391,7 @@ public class HoldRequest implements Table {
 		rs = ps.executeQuery();
 
 		while (rs.next()) {
+                  /*
 			HoldRequest hr = new HoldRequest();
 			Book b = new Book();
 
@@ -344,7 +402,10 @@ public class HoldRequest implements Table {
 			hr.setBorr(borr);
 			hr.setB(b);
 			hr.getIssueDate().setTime(rs.getDate(4));
-			holdRequests.add(hr);
+                   * 
+                   */
+                  
+			holdRequests.add(new HoldRequest(rs));
 		}
 
 		return holdRequests;
@@ -356,7 +417,7 @@ public class HoldRequest implements Table {
 	 * Given a book, this returns all the HoldRequests for a particular book.
 	 * 
 	 * @param b
-	 *            Book whose callNumber is shared with the HoldRequest
+	 *            Book whose callNo is shared with the HoldRequest
 	 * @return ArrayList of HoldRequests
 	 * @throws SQLException
 	 */
@@ -368,6 +429,7 @@ public class HoldRequest implements Table {
 		rs = ps.executeQuery();
 
 		while (rs.next()) {
+                  /*
 			HoldRequest hr = new HoldRequest();
 			Borrower borr = new Borrower();
 
@@ -378,13 +440,19 @@ public class HoldRequest implements Table {
 			hr.setBorr(borr);
 			hr.setB(b);
 			hr.getIssueDate().setTime(rs.getDate(4));
-			holdRequests.add(hr);
+                   * 
+                   */
+                  
+			holdRequests.add(new HoldRequest(rs));
 		}
 
 		return holdRequests;
 	}
 
 	/**
+         * This doesn't do what you want it to do, and I don't have time to
+         * rewrite it.  Don't use it.
+         * 
 	 * Return all HoldRequest objects made by a given Borrower for a given Book.
 	 * 
 	 * Given a borrower and a book, this returns all the HoldRequests for that
@@ -394,10 +462,11 @@ public class HoldRequest implements Table {
 	 * @param borr
 	 *            Borrower whose bid is shared with the HoldRequest
 	 * @param b
-	 *            Book whose callNumber is shared with the HoldRequest
+	 *            Book whose callNo is shared with the HoldRequest
 	 * @return ArrayList of HoldRequests
 	 * @throws SQLException
 	 */
+        @Deprecated
 	public Collection<Table> getAll(Borrower borr, Book b) throws SQLException {
 		Collection<Table> holdRequests = new ArrayList<Table>();
 		holdRequests.addAll(getAll(borr));
@@ -465,5 +534,118 @@ public class HoldRequest implements Table {
 	public void setBorr(Borrower borr) {
 		this.borr = borr;
 	}
+        
+        /**
+         * Returns the attributes of the class as a string.
+         * @return 
+         */
+        @Override
+        public String toString()
+        {
+          String holdrequest = "";
+          holdrequest += "hid = " + hid
+                  + "\ncall number = " + ((b == null) ?
+                  null : b.getCallNumber())
+                  + "\nbid = " + ((borr == null) ? 
+                  null : borr.getBid())
+                  + "\nissue date = " + ((issueDate == null) ?
+                  null : sdf.format(issueDate.getTime()));
+          return holdrequest;
+        }
+        
+        public static void main(String[] args) throws Exception{
+    
+          HoldRequest hr = new HoldRequest();/*
+          // test constructor
+          hr = new HoldRequest(100);
+          System.out.println(hr);
+          // test get
+          hr = new HoldRequest();
+          hr.setHid(100);
+          System.out.println(hr.get());
+          
+          System.out.println("");
+          // test getall
+          for (Table a : hr.getAll())
+          {
+            System.out.println(a);
+          }
+          // test display
+          String[][] hrstr = hr.display();
+          for (String[] a : hrstr)
+          {
+            for (String b : a)
+            {
+              System.out.print(b + '\t');
+            }
+            System.out.println();
+          }
+          // test for update
+          Book b = new Book();
+          b.setCallNumber("ZI372 C30 1984");
+          Borrower borr = new Borrower();
+          borr.setBid(1);
+          hr.setB(b);
+          hr.setBorr(borr);
+          hr.setIssueDate(new GregorianCalendar());
+          hr.update();
+          
+          
+          HoldRequest hr2 = new HoldRequest();
+          hr2.setHid(100);
+          hr2 =(HoldRequest) hr2.get();
+          System.out.println(hr);
+          
+          // test for insert
+          Book book = new Book();
+          book.setCallNumber("KH344 L18 2004");
+          Borrower borrower = new Borrower();
+          borrower.setBid(2);
+          hr.setB(book);
+          hr.setBorr(borrower);
+          hr.setIssueDate(new GregorianCalendar());
+          System.out.println(hr.insert());
+          int hid = hr.getHid();
+          System.out.println(hid);
+          
+          HoldRequest hr2 = new HoldRequest(hid);
+          System.out.println(hr2);
+          
+          HoldRequest deleteHR = new HoldRequest();
+          for (int i = 101; i <= 103; i++)
+          {
+            deleteHR.setHid(i);
+            System.out.println(deleteHR.delete());
+          }
+          for (int i = 101; i <= 103; i++)
+          {
+            deleteHR = new HoldRequest();
+            deleteHR.setHid(i);
+            deleteHR = (HoldRequest)deleteHR.get();
+            System.out.println(deleteHR);
+          }
+          
+          // test getall 
+          Book getAllBook = new Book();
+          getAllBook.setCallNumber("LP353 N145 1983");
+          Collection<Table> hrs = hr.getAll(getAllBook);
+          for (Table t : hrs)
+          {
+            System.out.println(t);
+          }
+          
+          Borrower getAllBorrower = new Borrower();
+          getAllBorrower.setBid(142);
+          Collection<Table> hrs2 = hr.getAll(getAllBorrower);
+          for (Table t : hrs2)
+          {
+            System.out.println(t);
+          }
+          
+          getAllBorrower.setBid(1);
+          Collection<Table> hrs3 = hr.getAll(getAllBorrower,getAllBook);
+          */
+        }
+  
 
 }
