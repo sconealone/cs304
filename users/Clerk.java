@@ -54,6 +54,7 @@ public class Clerk {
 		borr.setPassword(password);
 		borr.setPhone(phone);
 		borr.setSinOrStNum(sinOrStNum);
+		borr.setType(type);
 		borr.insert();
 	}
 
