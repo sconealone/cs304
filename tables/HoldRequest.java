@@ -138,6 +138,7 @@ public class HoldRequest implements Table {
          */
         private HoldRequest(ResultSet rs) throws SQLException
         {
+          c = Conn.getInstance().getConnection();
           hid = rs.getInt(1);
           b = new Book();
           borr = new Borrower();
@@ -187,6 +188,9 @@ public class HoldRequest implements Table {
 	 * Returns a String representation of the table.
 	 * 
 	 * Returns a 2-D String representation of the HoldRequest table.
+         * 
+         * TODO: see if this can be sped up by cutting out the call to getAll
+         * and just doing a parse from result set to 2d array
 	 */
 	@Override
 	public String[][] display() throws SQLException {
