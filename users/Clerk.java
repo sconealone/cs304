@@ -47,11 +47,8 @@ public class Clerk {
 			Calendar expiryDate, String type) throws SQLException {
 
 		Borrower borr = new Borrower();
-		BorrowerType btype = new BorrowerType();
-
 		borr.setAddress(address);
 		borr.setEmailAddress(emailAddress);
-		// TODO borr.setBookTimeLimit();
 		borr.setExpiryDate(expiryDate);
 		borr.setName(name);
 		borr.setPassword(password);
