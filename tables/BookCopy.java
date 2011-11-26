@@ -286,28 +286,27 @@ public class BookCopy implements Table {
 	 * 
 	 */
 	@Override
-	public Table get() throws SQLException {
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ? AND callNumber = ?");
-		ps.setString(2, this.b.getCallNumber());
-		ps.setString(1, this.copyNo);
-
-		rs = ps.executeQuery();
-		if (rs.next()) {
-			int paramIndex = 1;
+	public Table get() throws SQLException 
+        {
+          String sql = "SELECT * "
+                  + "FROM BookCopy "
+                  + "WHERE callNumber=? AND copyNo=?";
+          PreparedStatement stat = c.prepareStatement(sql);
+          stat.setString(1, b.getCallNumber());
+          stat.setString(2, copyNo);
           
-                        // call number
-                        Book book = new Book();
-                        book.setCallNumber(rs.getString(paramIndex++));
-                        b = book.get();
 
-                        // copy number
-                        copyNo = rs.getString(paramIndex++);
-
-                        // status
-                        status = rs.getString(paramIndex++);
-		}
-		return null;
-	}
+          ResultSet result = stat.executeQuery();
+          
+          if (result.next()) 
+          {
+            return new BookCopy(result);
+          }
+          else
+          {
+            return null;
+          }
+        }
 
 	// DEPENDING ON CONVENTION, THIS MIGHT BE DEFUNCT
 	/**
@@ -421,7 +420,7 @@ public class BookCopy implements Table {
   public static void main(String[] args) throws Exception {
     BookCopy bcget = new BookCopy();
     Book bcgetbook = new Book();
-    bcgetbook.setCallNumber("LP353 N145 1983");
+    bcgetbook.setCallNumber("GV345 R202 1997");
     bcget.setB(bcgetbook);
     bcget.setCopyNo("C1");
     bcget = (BookCopy) bcget.get();
