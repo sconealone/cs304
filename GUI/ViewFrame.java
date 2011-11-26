@@ -1297,6 +1297,20 @@ public class ViewFrame extends javax.swing.JFrame {
       case PROCESS_RETURN:
         break;
       case ADD_BOOK:
+          Book b = new Book();
+          b.setCallNumber(abCN.getText());
+          b.setIsbn(abISBN.getText());
+          b.setMainAuthor(abMainAuthorLabel.getName());
+          b.setTitle(abTitle.getText());
+          b.setPublisher(abPub.getText());
+          b.setYear(Integer.parseInt(abYear.getText()));
+          // add additional authors
+          String aa = abAA.getText();
+          // add additional subjects
+          String subs = abSubs.getText();
+          //add book copies
+          Object copiesAmount = abSpinner.getValue();
+          int test = Integer.parseInt(copiesAmount.toString());
         break;
       case ADD_COPY:
         break;
