@@ -506,26 +506,26 @@ public class Borrower implements Table {
             lof.add(f);
         }
 
-//        Statement stmt3 = con.createStatement();
-//        String sql3 = "SELECT HoldRequest.hid FROM Borrower, HoldRequest "
-//                + "WHERE Borrower.bid=HoldRequest.bid";
-//        ResultSet rsHolds = stmt3.executeQuery(sql3);
-//        ArrayList<HoldRequest> loh = new ArrayList<HoldRequest>();
-//        while (rsHolds.next()) {
-//            int hid = rsHolds.getInt(1);
-//            HoldRequest h = new HoldRequest();
-//            h.setHid(hid);
-//            h = (HoldRequest) h.get();
-//            loh.add(h);
-//        }
+        Statement stmt3 = con.createStatement();
+        String sql3 = "SELECT HoldRequest.hid FROM Borrower, HoldRequest "
+                + "WHERE Borrower.bid=HoldRequest.bid";
+        ResultSet rsHolds = stmt3.executeQuery(sql3);
+        ArrayList<HoldRequest> loh = new ArrayList<HoldRequest>();
+        while (rsHolds.next()) {
+            int hid = rsHolds.getInt(1);
+            HoldRequest h = new HoldRequest();
+            h.setHid(hid);
+            h = (HoldRequest) h.get();
+            loh.add(h);
+        }
 
         ArrayList<String[][]> loT = new ArrayList<String[][]>();
         String[][] borrowingArray = listOfBorrowingsTo2DArray(lob);
         String[][] fineArray = listOfFinesTo2DArray(lof);
-//        String[][] holdArray = listOfHoldsTo2DArray(loh);
+        String[][] holdArray = listOfHoldsTo2DArray(loh);
         loT.add(borrowingArray);
         loT.add(fineArray);
-//        loT.add(holdArray);
+        loT.add(holdArray);
 
         return loT;
     }

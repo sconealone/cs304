@@ -23,17 +23,17 @@ public class InsertFileGenerator {
     final int BORROWING = 2;
     final int FINE = 3;
     final int HOLD_REQUEST = 4;
-    String filename = "insert_test_values.sql";
+    String filename = "insert_test_values_medium.sql";
     try
     {
       int numBorrower, numBook, numBorrowing, numFine, numHoldRequest;
       if (args.length != 5)
       {
-        numBorrower = 300;
-        numBook = 300;
-        numBorrowing = 200;
-        numFine = 100;
-        numHoldRequest = 100;
+        numBorrower = 100;
+        numBook = 50;
+        numBorrowing = 50;
+        numFine = 10;
+        numHoldRequest = 10;
         System.out.println("Default number of tables to generate used.");
       }
       else
@@ -51,7 +51,7 @@ public class InsertFileGenerator {
       fout.write(ig.generate(numBorrower,numBook,numBorrowing,numFine,numHoldRequest));
       fout.close();
       
-      System.out.println("File generated as insert_test_values.sql");
+      System.out.println(filename);
     }
     catch (IOException e)
     {

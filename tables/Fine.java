@@ -131,7 +131,7 @@ public class Fine implements Table {
           int borid = rs.getInt(colIndex++);
           borrowing = new Borrowing();
           borrowing.setBorid(borid);
-//          borrowing = (Borrowing) borrowing.get();          
+//          borrowing = (Borrowing) borrowing.get();      TODO uncomment when bookcopy :: get works    
           
         }
         

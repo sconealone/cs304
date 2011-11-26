@@ -114,7 +114,14 @@ public class ViewFrame extends javax.swing.JFrame {
         currentHoldsPane = new javax.swing.JScrollPane();
         currentHoldsTable = new javax.swing.JTable();
         payFinePanel = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
+        payFineMsgLabel = new javax.swing.JLabel();
+        payFineInputPanel = new javax.swing.JPanel();
+        payFineBidLabel = new javax.swing.JLabel();
+        payFineBidTextField = new javax.swing.JTextField();
+        payFineBoridLabel = new javax.swing.JLabel();
+        payFineBoridTextField = new javax.swing.JTextField();
+        payFineAmtLabel = new javax.swing.JLabel();
+        payFineAmtTextField = new javax.swing.JTextField();
         holdRequestPanel = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         checkOutPanel = new javax.swing.JPanel();
@@ -156,7 +163,6 @@ public class ViewFrame extends javax.swing.JFrame {
         addBorrowerTextSinOrStNo = new javax.swing.JTextField();
         addBorrowerLabelType = new javax.swing.JLabel();
         addBorrowerComboBoxType = new javax.swing.JComboBox();
-        jScrollPane5 = new javax.swing.JScrollPane();
         checkOverduePanel = new javax.swing.JPanel();
         checkOverduePanelInfo = new javax.swing.JPanel();
         checkOverdueLabelBorrInfo = new javax.swing.JLabel();
@@ -389,9 +395,28 @@ public class ViewFrame extends javax.swing.JFrame {
         cardPanel.add(checkAccountPanel, "Check account");
 
         payFinePanel.setLayout(new java.awt.BorderLayout());
+        payFinePanel.add(payFineMsgLabel, java.awt.BorderLayout.CENTER);
 
-        jLabel4.setText("pay fine");
-        payFinePanel.add(jLabel4, java.awt.BorderLayout.CENTER);
+        payFineBidLabel.setText("Borrower's ID");
+        payFineInputPanel.add(payFineBidLabel);
+
+        payFineBidTextField.setPreferredSize(new java.awt.Dimension(50, 20));
+        payFineBidTextField.setRequestFocusEnabled(false);
+        payFineInputPanel.add(payFineBidTextField);
+
+        payFineBoridLabel.setText("Borrowing ID");
+        payFineInputPanel.add(payFineBoridLabel);
+
+        payFineBoridTextField.setPreferredSize(new java.awt.Dimension(50, 20));
+        payFineInputPanel.add(payFineBoridTextField);
+
+        payFineAmtLabel.setText("Amount");
+        payFineInputPanel.add(payFineAmtLabel);
+
+        payFineAmtTextField.setPreferredSize(new java.awt.Dimension(50, 20));
+        payFineInputPanel.add(payFineAmtTextField);
+
+        payFinePanel.add(payFineInputPanel, java.awt.BorderLayout.PAGE_START);
 
         cardPanel.add(payFinePanel, "Pay a fine");
 
@@ -508,11 +533,9 @@ public class ViewFrame extends javax.swing.JFrame {
                 addBorrowerComboBoxTypeActionPerformed(evt);
             }
         });
-
         addBorrowerPanel.add(addBorrowerComboBoxType);
 
         cardPanel.add(addBorrowerPanel, "card18");
-
 
         checkOverduePanel.setLayout(new java.awt.GridBagLayout());
 
@@ -1252,7 +1275,7 @@ public class ViewFrame extends javax.swing.JFrame {
               
               String[][] lob2D = loi.get(0);
               String[][] lof2D = loi.get(1);
-//              String[][] loh2D = loi.get(2);
+              String[][] loh2D = loi.get(2);
               
               String[] borHeader = lob2D[0];
               String[][] bor2DMinusHeader = new String[lob2D.length - 1][lob2D[0].length];
@@ -1266,11 +1289,11 @@ public class ViewFrame extends javax.swing.JFrame {
                   fine2DMinusHeader[i] = lof2D[i + 1];
               }
               
-//              String[] holdHeader = loh2D[0];
-//              String[][] hold2DMinusHeader = new String[loh2D.length - 1][loh2D[0].length];
-//              for (int i = 0; i < loh2D.length - 1; i++) {
-//                  hold2DMinusHeader[i] = loh2D[i + 1];
-//              }
+              String[] holdHeader = loh2D[0];
+              String[][] hold2DMinusHeader = new String[loh2D.length - 1][loh2D[0].length];
+              for (int i = 0; i < loh2D.length - 1; i++) {
+                  hold2DMinusHeader[i] = loh2D[i + 1];
+              }
               
               //print 2d array
               DefaultTableModel uTMBorrowing = new DefaultTableModel(bor2DMinusHeader, borHeader);
@@ -1281,9 +1304,9 @@ public class ViewFrame extends javax.swing.JFrame {
               finesTable.setModel(uTMFine);
               finesTable.repaint();
               
-//              DefaultTableModel uTMHold = new DefaultTableModel(hold2DMinusHeader, holdHeader);
-//              currentHoldsTable.setModel(uTMHold);
-//              currentHoldsTable.repaint();
+              DefaultTableModel uTMHold = new DefaultTableModel(hold2DMinusHeader, holdHeader);
+              currentHoldsTable.setModel(uTMHold);
+              currentHoldsTable.repaint();
               
               TabbedPane.repaint();
           }
@@ -1294,6 +1317,21 @@ public class ViewFrame extends javax.swing.JFrame {
       case HOLD_REQUEST:
         break;
       case PAY_FINE:
+          try {
+              String bidField = payFineBidTextField.getText();
+              String boridField = payFineBoridTextField.getText();
+              String amtField = payFineAmtTextField.getText();
+              
+              Borrower b = new Borrower();
+              b.setBid(Integer.parseInt(bidField));
+              b = b.get();
+              b.payFine(Integer.parseInt(boridField), Integer.parseInt(amtField));
+              
+              payFineMsgLabel.repaint();
+          }
+          catch (SQLException S){
+              S.printStackTrace();
+          }
         break;
       case ADD_BORROWER:
     	  Borrower borr = new Borrower();
@@ -2021,28 +2059,13 @@ private void addBorrowerComboBoxTypeActionPerformed(java.awt.event.ActionEvent e
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private javax.swing.JPanel holdRequestPanel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextArea4;
-    private javax.swing.JTextField jTextField10;
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
@@ -2050,7 +2073,15 @@ private void addBorrowerComboBoxTypeActionPerformed(java.awt.event.ActionEvent e
     private javax.swing.JComboBox navigationComboBox;
     private javax.swing.JMenu navigationMenu;
     private javax.swing.JPopupMenu.Separator navigationSeparator;
+    private javax.swing.JLabel payFineAmtLabel;
+    private javax.swing.JTextField payFineAmtTextField;
+    private javax.swing.JLabel payFineBidLabel;
+    private javax.swing.JTextField payFineBidTextField;
+    private javax.swing.JLabel payFineBoridLabel;
+    private javax.swing.JTextField payFineBoridTextField;
+    private javax.swing.JPanel payFineInputPanel;
     private javax.swing.JMenuItem payFineMenuItem;
+    private javax.swing.JLabel payFineMsgLabel;
     private javax.swing.JPanel payFinePanel;
     private javax.swing.JMenuItem popularReportMenuItem;
     private javax.swing.JLabel popularReportNSelectLabel;
