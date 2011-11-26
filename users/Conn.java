@@ -89,11 +89,14 @@ public class Conn {
       // get rid of the hard code
 //      String username = "ora_c7e8";
 //      String password = "a84148014";
+  
+//      jesse's database
+//      String username = "ora_v2v7";
+//      String password = "a36988103";
+//        connect(username, password);
       
-      String username = "ora_v2v7";
-      String password = "a36988103";
-       connect(username, password);
-//      connect(USERNAME, PASSWORD);
+      //other db
+      connect(USERNAME, PASSWORD);
  }
   
   private void connect(String username, String password)
