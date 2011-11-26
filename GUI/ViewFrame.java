@@ -151,11 +151,7 @@ public class ViewFrame extends javax.swing.JFrame {
         addBorrowerTextSinOrStNo = new javax.swing.JTextField();
         addBorrowerLabelType = new javax.swing.JLabel();
         addBorrowerComboBoxType = new javax.swing.JComboBox();
-        addBorrowerButtonAdd = new javax.swing.JButton();
-        addBorrowerAddsPanel = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
-        addBorrowerJListBorrToAdd = new javax.swing.JList();
-        addBorrowersButtonAddAll = new javax.swing.JButton();
         checkOverduePanel = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         checkOverdueLabelBorrInfo = new javax.swing.JLabel();
