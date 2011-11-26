@@ -16,14 +16,20 @@ import users.Conn;
  * 
  * @author Christiaan Fernando
  * 
+ * Changes 25 Nov
+ * 
+ * 1.Changed the string constants for in, out, hold, and overdue to match
+ * what's in the database.
+ * 
+ * 2. Changed all attribute references to callNo to callNumber
  */
 
 public class BookCopy implements Table {
 
-	private final String IN = "IN";
-	private final String OUT = "OUT";
-	private final String HOLD = "HOLD";
-	private final String OVERDUE = "OVERDUE";
+	private final String IN = "in";
+	private final String OUT = "out";
+	private final String HOLD = "on-hold";
+	private final String OVERDUE = "overdue";
 	// TODO Ensure status is only of these types. Either create custom
 	// exception, or try enum
 
@@ -119,7 +125,7 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public void update() throws SQLException {
-		ps = c.prepareStatement("UPDATE bookCopy SET status = '?' WHERE copyNo = '?', callNo = ?");
+		ps = c.prepareStatement("UPDATE bookCopy SET status = '?' WHERE copyNo = '?', callNumber = ?");
 
 		ps.setString(1, status);
 		ps.setString(2, copyNo);
@@ -139,7 +145,7 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public boolean delete() throws SQLException {
-		ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNo = '?', copyNo = ?");
+		ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNumber = '?', copyNo = ?");
 
 		ps.setString(1, b.getCallNumber());
 		ps.setString(2, copyNo);
@@ -231,7 +237,7 @@ public class BookCopy implements Table {
 	 */
 	public Collection<Table> getAll(Book b) throws SQLException {
 		Collection<Table> bc = new ArrayList<Table>();
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE callNo = ?");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE callNumber = ?");
 		ps.setString(1, b.getCallNumber());
 
 		rs = ps.executeQuery();
@@ -257,7 +263,7 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public Table get() throws SQLException {
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNo = ?");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNumber = ?");
 		ps.setString(1, this.b.getCallNumber());
 		ps.setString(2, this.copyNo);
 
@@ -288,7 +294,7 @@ public class BookCopy implements Table {
 	 * @throws SQLException
 	 */
 	public Table get(String copyNo, Book b) throws SQLException {
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNo = ?");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNumber = ?");
 		ps.setString(1, b.getCallNumber());
 		ps.setString(2, copyNo);
 

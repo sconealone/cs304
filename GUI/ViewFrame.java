@@ -1508,7 +1508,7 @@ public class ViewFrame extends javax.swing.JFrame {
         break;
       case REMOVE_BORROWER:
         removeBorrowerTextField.setText("");
-        break;
+        break;  
       case REPORT_POPULAR:
         popularReportYearTextField.setText("");
         popularReportNTextField.setText("");
