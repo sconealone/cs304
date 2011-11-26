@@ -1,214 +1,181 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package test;
 
-import static org.junit.Assert.*;
-
-import java.sql.Date;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import tables.*;
+import tables.HoldRequest;
+import java.util.GregorianCalendar;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.sql.ResultSetMetaData;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Iterator;
-
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
-import tables.*;
-
+/**
+ *
+ * @author Mitch
+ */
 public class HoldRequestTest {
-	private HoldRequest testhr;
-	private HoldRequest testhr1 = new HoldRequest();
-	private HoldRequest testhr2 = new HoldRequest();
-	private HoldRequest testhr3 = new HoldRequest();
-	private HoldRequest testhr4 = new HoldRequest();
-	private HoldRequest testhr5 = new HoldRequest();
-	private Book b1 = new Book();
-	private Book b2 = new Book();
-	private Borrower borr1 = new Borrower();
-	private Borrower borr2 = new Borrower();
-	private Borrower borr3 = new Borrower();
-	private Calendar cal1 = Calendar.getInstance();
-	private Calendar cal2 = Calendar.getInstance();
-	private Calendar cal3 = Calendar.getInstance();
+  
+  public HoldRequestTest() {
+  }
 
-	private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+  @BeforeClass
+  public static void setUpClass() throws Exception {
+  }
 
-	@Before
-	public void setUp() throws Exception {
-		populateDB();
-	}
+  @AfterClass
+  public static void tearDownClass() throws Exception {
+  }
+  
+  @Before
+  public void setUp() {
+    
+  }
+  
+  @After
+  public void tearDown() {
+  }
 
-	private void populateDB() {
-		b1.setCallNumber("CallNo1");
-		b2.setCallNumber("CallNo2");
+  
+  @Test
+  public void testConstructor() throws Exception
+  {
+    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+    System.out.println("constructor");
+    HoldRequest hr = new HoldRequest(100);
+    assertEquals((int)hr.getHid(),100);
+    assertEquals((int)hr.getBorr().getBid(),221);
+    assertEquals(hr.getB().getCallNumber(),"NK279 E3 1988");
+  }
+  
+ 
 
-		borr1.setBid(1);
-		borr2.setBid(2);
-		borr3.setBid(3);
+  /**
+   * Test of update method, of class HoldRequest.
+   */
+  @Test
+  public void testUpdate() throws Exception {
+    System.out.println("update");
+    
+          Book b = new Book();
+          b.setCallNumber("ZI372 C30 1984");
+          Borrower borr = new Borrower();
+          borr.setBid(1);
+          HoldRequest hr = new HoldRequest();
+          hr.setHid(97);
+          hr.setB(b);
+          hr.setBorr(borr);
+          hr.setIssueDate(new GregorianCalendar());
+          hr.update();
+          
+          
+          HoldRequest hr2 = new HoldRequest();
+          hr2.setHid(97);
+          hr2 =(HoldRequest) hr2.get();
+          
+          assertEquals(hr, hr2);
+  }
 
-		cal1.set(Calendar.YEAR, 2011);
-		cal1.set(Calendar.MONTH, 2);
-		cal1.set(Calendar.DATE, 10);
 
-		cal2.set(Calendar.YEAR, 2011);
-		cal2.set(Calendar.MONTH, 2);
-		cal2.set(Calendar.DATE, 20);
+  /**
+   * Test of insert method, of class HoldRequest.
+   */
+  @Test
+  public void testInsert() throws Exception {
+    System.out.println("insert");
+    Book book = new Book();
+    book.setCallNumber("KH344 L18 2004");
+    Borrower borrower = new Borrower();
+    borrower.setBid(2);
+    HoldRequest hr = new HoldRequest();
+    hr.setB(book);
+    hr.setBorr(borrower);
+    hr.setIssueDate(new GregorianCalendar());
+    hr.insert();
+    int hid = hr.getHid();
 
-		cal3.set(Calendar.YEAR, 2011);
-		cal3.set(Calendar.MONTH, 4);
-		cal3.set(Calendar.DATE, 20);
+    HoldRequest hr2 = new HoldRequest(101);
+    assertEquals(hr2, hr);
+  }
+  /**
+   * Test of delete method, of class HoldRequest.
+   */
+  @Test
+  public void testDelete() throws Exception {
+    
+          HoldRequest deleteHR = new HoldRequest();
+          for (int i = 101; i <= 103; i++)
+          {
+            deleteHR.setHid(i);
+            System.out.println(deleteHR.delete());
+          }
+          for (int i = 101; i <= 103; i++)
+          {
+            deleteHR = new HoldRequest();
+            deleteHR.setHid(i);
+            deleteHR = (HoldRequest)deleteHR.get();
+            assertEquals(deleteHR, null);
+          }
+          
+  }
 
-		testhr1.setBorr(borr1);
-		testhr1.setB(b1);
-		testhr1.setIssueDate(cal1);
 
-		testhr2.setBorr(borr2);
-		testhr2.setB(b1);
-		testhr2.setIssueDate(cal2);
 
-		testhr3.setBorr(borr1);
-		testhr3.setB(b2);
-		testhr3.setIssueDate(cal3);
+  /**
+   * Test of get method, of class HoldRequest.
+   */
+  @Test
+  public void testGet() throws Exception {
+    HoldRequest foo = new HoldRequest();
+    foo.setHid(98);
+    foo = (HoldRequest) foo.get();
+    assertEquals(foo.getB().getCallNumber(),"RF262 I354 1990");
+    assertEquals((int)foo.getBorr().getBid(),13);
+    Calendar dbdate = foo.getIssueDate();
+    Calendar testdate = new GregorianCalendar(2000, 8, 10);
+    assertEquals(dbdate.get(Calendar.YEAR), testdate.get(Calendar.YEAR));
+    assertEquals(dbdate.get(Calendar.MONTH), testdate.get(Calendar.MONTH));
+    assertEquals(dbdate.get(Calendar.DATE), testdate.get(Calendar.DATE));
+  }
 
-		try {
-			b1.insert();
-			b2.insert();
-			borr1.insert();
-			borr2.insert();
-			borr3.insert();
+  /**
+   * Test of getAll method, of class HoldRequest.
+   */
+  @Test
+  public void testGetAll_Borrower() throws Exception {
+    System.out.println("getAll");
+    Borrower getAllBorrower = new Borrower();
+    getAllBorrower.setBid(142);
+    Collection<Table> hrs2 = (new HoldRequest()).getAll(getAllBorrower);
+    for (Table t : hrs2)
+    {
+      assertEquals((int)((HoldRequest) t).getHid(),8);
+    }
+  }
 
-			testhr1.insert();
-			testhr2.insert();
-			testhr3.insert();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+  /**
+   * Test of getAll method, of class HoldRequest.
+   */
+  @Test
+  public void testGetAll_Book() throws Exception {
+    HoldRequest hr = new HoldRequest();
+    System.out.println("getAll");
+    Book getAllBook = new Book();
+    getAllBook.setCallNumber("LP353 N145 1983");
+    Collection<Table> hrs = hr.getAll(getAllBook);
+    for (Table t : hrs)
+    {
+      assertEquals((int)((HoldRequest) t).getHid(),8);
+    }
+  }
 
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		clearDB();
-	}
-
-	private void clearDB() throws SQLException {
-		testhr1.delete();
-		testhr2.delete();
-		testhr3.delete();
-		testhr4.delete();
-		testhr5.delete();
-		b1.delete();
-		b2.delete();
-		borr1.delete();
-		borr2.delete();
-		borr3.delete();
-	}
-
-	@Test
-	public final void testHoldRequest() {
-		testhr = new HoldRequest();
-
-		assertNotNull((Object) testhr);
-	}
-
-	@Test
-	public final void testHoldRequestCalendarBookBorrower() {
-		testhr = new HoldRequest(new Borrower(), new Book(),
-				Calendar.getInstance());
-
-		assertNotNull((Object) testhr);
-		assertTrue(testhr.getB() instanceof Book);
-		assertTrue(testhr.getBorr() instanceof Borrower);
-	}
-
-	@Test
-	public final void testDisplay() throws SQLException {
-		String[][] result = testhr.display();
-
-		assertEquals(result[1][0], borr1.getBid());
-		assertEquals(result[1][1], b1.getCallNumber());
-		assertEquals(result[1][2], sdf.format(cal1.getTime()));
-
-		assertEquals(result[2][0], borr2.getBid());
-		assertEquals(result[2][1], b1.getCallNumber());
-		assertEquals(result[2][2], sdf.format(cal2.getTime()));
-	}
-
-	@Test
-	public final void testUpdate() throws SQLException {
-		testhr2.setBorr(borr3);
-		testhr2.update();
-		testhr2.get();
-		assertEquals(testhr2.getBorr(), borr3);
-	}
-
-	@Test
-	public final void testDelete() throws SQLException {
-		testhr.setHid(testhr2.getHid());
-		testhr.get();
-		testhr.delete();
-		// testhr2 should not exist
-		fail("Not yet implemented"); // TODO
-	}
-
-	@Test
-	public final void testInsert() throws SQLException {
-		testhr2.setBorr(borr2);
-		testhr2.setB(b1);
-		testhr2.setIssueDate(cal2);
-
-		testhr2.insert();
-		testhr.setHid(testhr2.getHid());
-
-		assertEquals(testhr, testhr2);
-	}
-
-	@Test
-	public final void testGetAll() throws SQLException {
-		Collection<Table> hr = testhr1.getAll();
-		assertTrue(hr.contains(testhr1));
-		assertTrue(hr.contains(testhr2));
-	}
-
-	@Test
-	public final void testGetMeta() throws SQLException {
-		ResultSetMetaData md = testhr.getMeta();
-		String[] result = new String[md.getColumnCount()];
-
-		for (int j = 0; j < result[j].length(); j++) {
-			result[j] = md.getColumnName(j + 1);
-		}
-
-		assertEquals(result[0], "hid");
-		assertEquals(result[1], "bid");
-		assertEquals(result[2], "callNo");
-		assertEquals(result[3], "issueDate");
-	}
-
-	@Test
-	public final void testGetAllBorrower() throws SQLException {
-		Collection<Table> hr = testhr1.getAll(borr1);
-		assertTrue(hr.contains(testhr1));
-		assertFalse(hr.contains(testhr2));
-		assertTrue(hr.contains(testhr3));
-	}
-
-	@Test
-	public final void testGetAllBook() throws SQLException {
-		Collection<Table> hr = testhr1.getAll(b1);
-		assertTrue(hr.contains(testhr1));
-		assertTrue(hr.contains(testhr2));
-		assertFalse(hr.contains(testhr3));
-	}
-
-	@Test
-	public final void testGetAllBorrowerBook() throws SQLException {
-		Collection<Table> hr = testhr1.getAll(borr1, b1);
-		assertTrue(hr.contains(testhr1));
-		assertFalse(hr.contains(testhr2));
-		assertFalse(hr.contains(testhr3));
-	}
 }
