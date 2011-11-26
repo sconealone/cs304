@@ -7,6 +7,26 @@ Work assignments:
   HoldRequest GUI + functionality
   RemoveBookCopy GUI functionality
 
+-Christian GUI and Functionality :
+   -Checkout  
+    -check overdue
+    -process return
+    - add borrower GUI and functionality
+Jesse:
+Add book
+add copy
+unit tests for book copy
+
+Jenny:
+Search GUI
+Checkacct gui
+pay fine GUI
+check acct logic
+pay fine logic
+search title author logic
+
+
+
 ==============================================================
 
 Old work:

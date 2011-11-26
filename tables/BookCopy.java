@@ -68,12 +68,34 @@ public class BookCopy implements Table {
 	 *            The Book that shares the callNumber of the BookCopy object
 	 */
 	public BookCopy(String copyNo, Book b, String status) {
+		c = Conn.getInstance().getConnection();
 		this.copyNo = copyNo;
 		this.status = status;
 		this.b = b;
 
-		c = Conn.getInstance().getConnection();
 	}
+        
+        /**
+         * Constructs a book copy from a result set.
+         * Call result set :: next before calling this constructor
+         * @param rs 
+         */
+        private BookCopy(ResultSet rs) throws SQLException
+        {
+          c = Conn.getInstance().getConnection();
+          int paramIndex = 1;
+          
+          // call number
+          Book book = new Book();
+          book.setCallNumber(rs.getString(paramIndex++));
+          b = book.get();
+          
+          // copy number
+          copyNo = rs.getString(paramIndex++);
+          
+          // status
+          status = rs.getString(paramIndex++);
+        }
 
 	/**
 	 * Returns a String representation of the table.
@@ -265,18 +287,24 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public Table get() throws SQLException {
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNumber = ?");
-		ps.setString(1, this.b.getCallNumber());
-		ps.setString(2, this.copyNo);
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ? AND callNumber = ?");
+		ps.setString(2, this.b.getCallNumber());
+		ps.setString(1, this.copyNo);
 
 		rs = ps.executeQuery();
+		if (rs.next()) {
+			int paramIndex = 1;
+          
+                        // call number
+                        Book book = new Book();
+                        book.setCallNumber(rs.getString(paramIndex++));
+                        b = book.get();
 
-		while (rs.next()) {
-			BookCopy bc = new BookCopy();
-			bc.setCopyNo(copyNo);
-			bc.setB(b);
-			bc.setStatus(rs.getString(3));
-			return bc;
+                        // copy number
+                        copyNo = rs.getString(paramIndex++);
+
+                        // status
+                        status = rs.getString(paramIndex++);
 		}
 		return null;
 	}
@@ -296,9 +324,9 @@ public class BookCopy implements Table {
 	 * @throws SQLException
 	 */
 	public Table get(String copyNo, Book b) throws SQLException {
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNumber = ?");
-		ps.setString(1, b.getCallNumber());
-		ps.setString(2, copyNo);
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ? AND callNumber = ?");
+		ps.setString(2, b.getCallNumber());
+		ps.setString(1, copyNo);
 
 		rs = ps.executeQuery();
 
@@ -382,5 +410,25 @@ public class BookCopy implements Table {
 		return latestCopyNumber;
 		// end move this block to BookCopy class and call that method
 	}
+        
+        @Override
+        public String toString()
+        {
+          return null;
+        }
 
+        
+  public static void main(String[] args) throws Exception {
+    BookCopy bcget = new BookCopy();
+    Book bcgetbook = new Book();
+    bcgetbook.setCallNumber("LP353 N145 1983");
+    bcget.setB(bcgetbook);
+    bcget.setCopyNo("C1");
+    bcget = (BookCopy) bcget.get();
+    
+    System.out.println(bcget.getB().getCallNumber());
+    System.out.println(bcget.getB().getTitle());
+    System.out.println(bcget.status);
+    System.out.println(bcget.copyNo);
+  }
 }
