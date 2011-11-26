@@ -1281,6 +1281,7 @@ public class ViewFrame extends javax.swing.JFrame {
           b.setYear(Integer.parseInt(abYear.getText()));
           // add additional authors
           String aa = abAA.getText();
+          String[] aaArray = aa.split(",",0);
           // add additional subjects
           String subs = abSubs.getText();
           //add book copies
