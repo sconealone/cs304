@@ -68,7 +68,7 @@ public class Book implements Table {
 	@Override
 	public String[][] display() throws SQLException {
 
-		//thanks Mitch! v   
+		//credit to mitch for template!   
 		ArrayList<String[]> borrowingGrowable = new ArrayList<String[]>();
 
 		PreparedStatement ps = c.prepareStatement("SELECT * FROM Book");
@@ -82,22 +82,6 @@ public class Book implements Table {
 			columnNames[i] = md.getColumnName(i + 1);
 		}
 		borrowingGrowable.add(columnNames);
-
-		//		int max = Math.max(authors.size(), subjects.size());
-		//		String[][] stringTable = new String[8][max];
-		//		stringTable[0][0] = callNumber;
-		//		stringTable[1][0] = isbn;
-		//		stringTable[2][0] = title;
-		//		stringTable[3][0] = mainAuthor;
-		//		stringTable[4][0] = publisher;
-		//		stringTable[5][0] = String.valueOf(year);
-		//		//		for(int i =0; i< authors.size()-1; i++){
-		//		//			stringTable[6][i] = authors.get(i);
-		//		//		}
-		//		//		for(int i =0; i< subjects.size()-1; i++){
-		//		//			stringTable[7][i] = subjects.get(i);
-		//		//		}
-		//		return stringTable;
 
 		while (rs.next())
 		{
@@ -168,22 +152,17 @@ public class Book implements Table {
 	 * Pre: Assume the tuple exists in the database
 	 * deletes this object from the database
 	 * Note: checks the key of Book - callNumber
+	 * Post: returns true if no exception is thrown //note - is this the same as the statement executing succesfully?
 	 */
 	@Override
 	public boolean delete() throws SQLException {
-		Statement stmt = c.createStatement();
-		stmt.execute("DELETE FROM Book WHERE callNumber = "+ callNumber);
-		return true;
+		stmt = c.createStatement();
+		int rowModified = stmt.executeUpdate("DELETE FROM Book WHERE callNumber = "+ callNumber);
+		if(rowModified == 1) return true;
+		else return false;
+		
 	}
 
-	//	CREATE TABLE Book
-	//	(callNumber VARCHAR(32) NOT NULL,
-	//	isbn CHAR(13) NOT NULL UNIQUE,
-	//	title VARCHAR(32),
-	//	mainAuthor VARCHAR(32),
-	//	publisher VARCHAR(32),
-	//	year INT,
-	//	PRIMARY KEY(callNumber));
 
 	@Override
 	/**

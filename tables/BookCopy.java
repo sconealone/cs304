@@ -3,6 +3,7 @@ package tables;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,25 +16,34 @@ import users.Conn;
  * 
  * @author Christiaan Fernando
  * 
+ * Changes 25 Nov
+ * 
+ * 1.Changed the string constants for in, out, hold, and overdue to match
+ * what's in the database.
+ * 
+ * 2. Changed all attribute references to callNo to callNumber
  */
 
 public class BookCopy implements Table {
 
-	private final String IN = "IN";
-	private final String OUT = "OUT";
-	private final String HOLD = "HOLD";
-	private final String OVERDUE = "OVERDUE";
+	private final String IN = "in";
+	private final String OUT = "out";
+	private final String HOLD = "on-hold";
+	private final String OVERDUE = "overdue";
 	// TODO Ensure status is only of these types. Either create custom
 	// exception, or try enum
 
 	private final int BOOK_COPY_FIELDS = 3;
-	
-	//The fields for BookCopy in the table are copyNo, callNo, status in that order.
+
+	// The fields for BookCopy in the table are copyNo, callNo, status in that
+	// order.
 	private String copyNo;
 	private Book b;
 	private String status;
 
 	private Connection c;
+	private PreparedStatement ps;
+	private ResultSet rs;
 
 	/**
 	 * Default Constructor
@@ -72,25 +82,36 @@ public class BookCopy implements Table {
 	public String[][] display() throws SQLException {
 		String[][] result = null;
 		Collection<Table> bct = getAll();
-		
+
+		ResultSetMetaData md = getMeta();
+
 		if (bct.size() > 0) {
-			result = new String[bct.size()][BOOK_COPY_FIELDS];
+			result = new String[bct.size() + 1][md.getColumnCount()];
 			int i = 0;
-			
-			/*
-			 * result[i][0] = "copyNo";
-			 * result[i][2] = "callNo";
-			 * result[i][3] = "status";
-			 */
-			
+
 			Iterator<Table> bcItr = bct.iterator();
 			while (bcItr.hasNext()) {
-				int j = 0;
-				
-				//could probably organize this better
-				result[i][j] = ((BookCopy) bcItr.next()).getCopyNo();
-				result[i][j++] = ((BookCopy) bcItr.next()).getB().getCallNumber();
-				result[i][j++] =((BookCopy) bcItr.next()).getStatus();
+				for (int j = 0; j < result[i].length; j++) {
+					if (i == 0)
+						result[i][j] = md.getColumnName(j + 1);
+					else {
+						switch (j) {
+						case 0: // copyNo
+							result[i][j] = ((BookCopy) bcItr.next())
+									.getCopyNo();
+							break;
+						case 1: // callNo
+							result[i][j] = ((BookCopy) bcItr.next()).getB()
+									.getCallNumber();
+							break;
+						case 2: // status
+							result[i][j] = ((BookCopy) bcItr.next())
+									.getStatus();
+							break;
+						}
+					}
+				}
+				i++;
 			}
 		}
 		return result;
@@ -104,9 +125,7 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public void update() throws SQLException {
-		PreparedStatement ps;
-
-		ps = c.prepareStatement("UPDATE bookCopy SET status = '?' WHERE copyNo = '?', callNo = ?");
+		ps = c.prepareStatement("UPDATE bookCopy SET status = '?' WHERE copyNo = '?', callNumber = ?");
 
 		ps.setString(1, status);
 		ps.setString(2, copyNo);
@@ -126,9 +145,7 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public boolean delete() throws SQLException {
-		PreparedStatement ps;
-
-		ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNo = '?', copyNo = ?");
+		ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNumber = '?', copyNo = ?");
 
 		ps.setString(1, b.getCallNumber());
 		ps.setString(2, copyNo);
@@ -152,8 +169,6 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public boolean insert() throws SQLException {
-		PreparedStatement ps;
-
 		ps = c.prepareStatement("INSERT INTO BookCopy VALUES (?,?,?)");
 
 		ps.setString(1, copyNo);
@@ -178,9 +193,6 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public Collection<Table> getAll() throws SQLException {
-		PreparedStatement ps;
-		ResultSet rs;
-
 		Collection<Table> bc = new ArrayList<Table>();
 		ps = c.prepareStatement("SELECT * FROM BookCopy");
 
@@ -197,6 +209,22 @@ public class BookCopy implements Table {
 	}
 
 	/**
+	 * Returns the ResultSetMetaData object for the BookCopy table.
+	 * 
+	 * Returns an object that contains the meta data for the BookCopy table.
+	 * This is an internal helper method to be used by the display method.
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public ResultSetMetaData getMeta() throws SQLException {
+		ps = c.prepareStatement("SELECT * FROM BookCopy");
+
+		rs = ps.executeQuery();
+		return rs.getMetaData();
+	}
+
+	/**
 	 * Get all BookCopy objects in the BookCopy table that match the given Book.
 	 * 
 	 * Given a Book, find all the BookCopy objects in the BookCopy table that
@@ -208,11 +236,8 @@ public class BookCopy implements Table {
 	 * @throws SQLException
 	 */
 	public Collection<Table> getAll(Book b) throws SQLException {
-		PreparedStatement ps;
-		ResultSet rs;
-
 		Collection<Table> bc = new ArrayList<Table>();
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE callNo = ?");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE callNumber = ?");
 		ps.setString(1, b.getCallNumber());
 
 		rs = ps.executeQuery();
@@ -238,10 +263,7 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public Table get() throws SQLException {
-		PreparedStatement ps;
-		ResultSet rs;
-
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNo = ?");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNumber = ?");
 		ps.setString(1, this.b.getCallNumber());
 		ps.setString(2, this.copyNo);
 
@@ -256,9 +278,8 @@ public class BookCopy implements Table {
 		}
 		return null;
 	}
-	
-	
-	//DEPENDING ON CONVENTION, THIS MIGHT BE DEFUNCT
+
+	// DEPENDING ON CONVENTION, THIS MIGHT BE DEFUNCT
 	/**
 	 * Returns the BookCopy object corresponding with the given Book and copyNo.
 	 * 
@@ -273,10 +294,7 @@ public class BookCopy implements Table {
 	 * @throws SQLException
 	 */
 	public Table get(String copyNo, Book b) throws SQLException {
-		PreparedStatement ps;
-		ResultSet rs;
-
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNo = ?");
+		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ?, callNumber = ?");
 		ps.setString(1, b.getCallNumber());
 		ps.setString(2, copyNo);
 
@@ -336,32 +354,31 @@ public class BookCopy implements Table {
 	public void setB(Book b) {
 		this.b = b;
 	}
-        
-        /**
-         * Gets the latest copy number for the book whose callNumber matches
-         * the one passed in. 
-         * @param callNumber the unique call number of the book whose copy we
-         * are interested in
-         * @return null if there are no copies, otherwise the most recently
-         * added call number
-         * @throws SQLException if the database cannot be reached
-         */
-        public String getLatestCopyNo()
-                throws SQLException
-        {
-          // move this block to BookCopy class and call that method
-          String latestCopyNumber;
-          String sql = "SELECT MAX(copyNo) "
-                  + "FROM BookCopy "
-                  + "WHERE callNumber = ?"
-                  + "GROUP BY callNumber";
-          Connection con = Conn.getInstance().getConnection();
-          PreparedStatement ps = con.prepareStatement(sql);
-          ps.setString(1, b.getCallNumber());
-          ResultSet rs = ps.executeQuery();
-          latestCopyNumber = (rs.next()) ? rs.getString(1) : null;
-          return latestCopyNumber;
-          // end move this block to BookCopy class and call that method
-        }
+
+	/**
+	 * Gets the latest copy number for the book whose callNumber matches the one
+	 * passed in.
+	 * 
+	 * @param callNumber
+	 *            the unique call number of the book whose copy we are
+	 *            interested in
+	 * @return null if there are no copies, otherwise the most recently added
+	 *         call number
+	 * @throws SQLException
+	 *             if the database cannot be reached
+	 */
+	public String getLatestCopyNo() throws SQLException {
+		// move this block to BookCopy class and call that method
+		String latestCopyNumber;
+		String sql = "SELECT MAX(copyNo) " + "FROM BookCopy "
+				+ "WHERE callNumber = ?" + "GROUP BY callNumber";
+		Connection con = Conn.getInstance().getConnection();
+		PreparedStatement ps = con.prepareStatement(sql);
+		ps.setString(1, b.getCallNumber());
+		ResultSet rs = ps.executeQuery();
+		latestCopyNumber = (rs.next()) ? rs.getString(1) : null;
+		return latestCopyNumber;
+		// end move this block to BookCopy class and call that method
+	}
 
 }

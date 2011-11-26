@@ -26,7 +26,7 @@ import tables.Borrower;
  *
  * Created on 16-Nov-2011, 4:09:38 PM
  * 
- * TODO maybe changed UneditableTableModel to DefaultTableModel
+ * TODO maybe changed DefaultTableModel to DefaultTableModel
  */
 
 /**
@@ -104,15 +104,87 @@ public class ViewFrame extends javax.swing.JFrame {
         holdRequestPanel = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         checkOutPanel = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
+        checkOutFieldsPanel = new javax.swing.JPanel();
+        checkOutLabelBorid = new javax.swing.JLabel();
+        checkOutTextBorid = new javax.swing.JTextField();
+        checkOutLabelCallNo = new javax.swing.JLabel();
+        checkOutTextCallNo = new javax.swing.JTextField();
+        checkOutLabelCopyNo = new javax.swing.JLabel();
+        checkOutTextCopyNo = new javax.swing.JTextField();
         processReturnPanel = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
+        processReturnFieldsPanel = new javax.swing.JPanel();
+        processReturnLabelCallNo = new javax.swing.JLabel();
+        processReturnTextCallNo = new javax.swing.JTextField();
+        processReturnLabelCopyNo = new javax.swing.JLabel();
+        processReturnTextCopyNo = new javax.swing.JTextField();
+        processReturnLabelPlaceHolder = new javax.swing.JLabel();
+        processReturnButtonGetInfo = new javax.swing.JButton();
+        processReturnsInfoPanel = new javax.swing.JPanel();
+        processReturnTextAreaBookCopyInfo = new javax.swing.JScrollPane();
+        jTextArea2 = new javax.swing.JTextArea();
+        processReturnTextAreaHoldRequestInfo = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jPanel1 = new javax.swing.JPanel();
+        processReturnLabelPlaceHolder2 = new javax.swing.JLabel();
+        processReturnButtonMsgHoldRequest = new javax.swing.JButton();
         addBorrowerPanel = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
+        addBorrowerFieldsPanel = new javax.swing.JPanel();
+        addBorrowerLabelName = new javax.swing.JLabel();
+        addBorrowerTextName = new javax.swing.JTextField();
+        addBorrowerLabelAddress = new javax.swing.JLabel();
+        addBorrowerTextAddress = new javax.swing.JTextField();
+        addBorrowerLabelPhoneNo = new javax.swing.JLabel();
+        addBorrowerTextPhoneNo = new javax.swing.JTextField();
+        addBorrowerLabelEmail = new javax.swing.JLabel();
+        addBorrowerTextEmail = new javax.swing.JTextField();
+        addBorrowerLabelPassword = new javax.swing.JLabel();
+        addBorrowerTextPassword = new javax.swing.JTextField();
+        addBorrowerLabelSinOrStNo = new javax.swing.JLabel();
+        addBorrowerTextSinOrStNo = new javax.swing.JTextField();
+        addBorrowerLabelType = new javax.swing.JLabel();
+        addBorrowerComboBoxType = new javax.swing.JComboBox();
+        addBorrowerButtonAdd = new javax.swing.JButton();
+        addBorrowerAddsPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        addBorrowerJListBorrToAdd = new javax.swing.JList();
+        addBorrowersButtonAddAll = new javax.swing.JButton();
         checkOverduePanel = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        checkOverdueLabelBorrInfo = new javax.swing.JLabel();
+        checkOverdueTextAreaBorrInfo = new javax.swing.JScrollPane();
+        jTextArea3 = new javax.swing.JTextArea();
+        checkOverdueLabelBookCopyInfo = new javax.swing.JLabel();
+        checkOverdueTextAreaBookCopyInfo = new javax.swing.JScrollPane();
+        jTextArea4 = new javax.swing.JTextArea();
+        jPanel4 = new javax.swing.JPanel();
+        checkOverdueButtonBlock = new javax.swing.JButton();
+        checkOverdueButtonMessage = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        checkOverdueListOverdueInfo = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
         addNewBookPanel = new javax.swing.JPanel();
-        jLabel20 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        abCN = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        abISBN = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        abTitle = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        abMA = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        abPub = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        abYear = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        abAA = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        abSubs = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        abSpinner = new javax.swing.JSpinner();
+        jLabel14 = new javax.swing.JLabel();
+        jTextField10 = new javax.swing.JTextField();
         addNewCopyPanel = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
         removeBorrowerPanel = new javax.swing.JPanel();
@@ -139,7 +211,12 @@ public class ViewFrame extends javax.swing.JFrame {
         popularReportTablePane = new javax.swing.JScrollPane();
         popularReportTable = new javax.swing.JTable();
         checkedOutReportPanel = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
+        checkedOutReportFilterPanel = new javax.swing.JPanel();
+        checkedOutReportFilterCheckBox = new javax.swing.JCheckBox();
+        checkedOutReportTextField = new javax.swing.JTextField();
+        checkedOutReportTablePanel = new javax.swing.JPanel();
+        checkedOutReportTablePane = new javax.swing.JScrollPane();
+        checkedOutReportTable = new javax.swing.JTable();
         buttonPanel = new javax.swing.JPanel();
         doButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
@@ -311,38 +388,241 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(holdRequestPanel, "Place hold request");
 
-        checkOutPanel.setLayout(new java.awt.BorderLayout());
+        checkOutFieldsPanel.setLayout(new java.awt.GridLayout(3, 3));
 
-        jLabel7.setText("check out");
-        checkOutPanel.add(jLabel7, java.awt.BorderLayout.CENTER);
+        checkOutLabelBorid.setText("Borrower's Card Number");
+        checkOutFieldsPanel.add(checkOutLabelBorid);
+        checkOutFieldsPanel.add(checkOutTextBorid);
+
+        checkOutLabelCallNo.setText("Call Number");
+        checkOutFieldsPanel.add(checkOutLabelCallNo);
+        checkOutFieldsPanel.add(checkOutTextCallNo);
+
+        checkOutLabelCopyNo.setText("Copy Number");
+        checkOutFieldsPanel.add(checkOutLabelCopyNo);
+        checkOutFieldsPanel.add(checkOutTextCopyNo);
+
+        checkOutPanel.add(checkOutFieldsPanel);
 
         cardPanel.add(checkOutPanel, "Check-out books");
 
-        processReturnPanel.setLayout(new java.awt.BorderLayout());
+        processReturnPanel.setLayout(new java.awt.GridLayout(3, 1));
 
-        jLabel8.setText("process returns");
-        processReturnPanel.add(jLabel8, java.awt.BorderLayout.CENTER);
+        processReturnFieldsPanel.setLayout(new java.awt.GridLayout(3, 2));
+
+        processReturnLabelCallNo.setText("Call Number");
+        processReturnFieldsPanel.add(processReturnLabelCallNo);
+        processReturnFieldsPanel.add(processReturnTextCallNo);
+
+        processReturnLabelCopyNo.setText("Copy Number");
+        processReturnFieldsPanel.add(processReturnLabelCopyNo);
+        processReturnFieldsPanel.add(processReturnTextCopyNo);
+        processReturnFieldsPanel.add(processReturnLabelPlaceHolder);
+
+        processReturnButtonGetInfo.setText("Get Info");
+        processReturnFieldsPanel.add(processReturnButtonGetInfo);
+
+        processReturnPanel.add(processReturnFieldsPanel);
+
+        jTextArea2.setColumns(20);
+        jTextArea2.setRows(5);
+        processReturnTextAreaBookCopyInfo.setViewportView(jTextArea2);
+
+        processReturnsInfoPanel.add(processReturnTextAreaBookCopyInfo);
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        processReturnTextAreaHoldRequestInfo.setViewportView(jTextArea1);
+
+        processReturnsInfoPanel.add(processReturnTextAreaHoldRequestInfo);
+
+        processReturnPanel.add(processReturnsInfoPanel);
+
+        jPanel1.setLayout(new java.awt.GridLayout(1, 0));
+        jPanel1.add(processReturnLabelPlaceHolder2);
+
+        processReturnButtonMsgHoldRequest.setText("Send Message");
+        jPanel1.add(processReturnButtonMsgHoldRequest);
+
+        processReturnPanel.add(jPanel1);
 
         cardPanel.add(processReturnPanel, "Process a return");
 
-        addBorrowerPanel.setLayout(new java.awt.BorderLayout());
+        addBorrowerPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel9.setText("add new borrower");
-        addBorrowerPanel.add(jLabel9, java.awt.BorderLayout.CENTER);
+        addBorrowerFieldsPanel.setAutoscrolls(true);
+        addBorrowerFieldsPanel.setPreferredSize(new java.awt.Dimension(250, 180));
+        addBorrowerFieldsPanel.setRequestFocusEnabled(false);
+        addBorrowerFieldsPanel.setLayout(new java.awt.GridLayout(8, 2));
+
+        addBorrowerLabelName.setText("Name");
+        addBorrowerFieldsPanel.add(addBorrowerLabelName);
+
+        addBorrowerTextName.setName(""); // NOI18N
+        addBorrowerFieldsPanel.add(addBorrowerTextName);
+
+        addBorrowerLabelAddress.setText("Address");
+        addBorrowerFieldsPanel.add(addBorrowerLabelAddress);
+        addBorrowerFieldsPanel.add(addBorrowerTextAddress);
+
+        addBorrowerLabelPhoneNo.setText("Phone No");
+        addBorrowerFieldsPanel.add(addBorrowerLabelPhoneNo);
+        addBorrowerFieldsPanel.add(addBorrowerTextPhoneNo);
+
+        addBorrowerLabelEmail.setText("Email");
+        addBorrowerFieldsPanel.add(addBorrowerLabelEmail);
+        addBorrowerFieldsPanel.add(addBorrowerTextEmail);
+
+        addBorrowerLabelPassword.setText("Password");
+        addBorrowerFieldsPanel.add(addBorrowerLabelPassword);
+        addBorrowerFieldsPanel.add(addBorrowerTextPassword);
+
+        addBorrowerLabelSinOrStNo.setText("SIN No");
+        addBorrowerFieldsPanel.add(addBorrowerLabelSinOrStNo);
+        addBorrowerFieldsPanel.add(addBorrowerTextSinOrStNo);
+
+        addBorrowerLabelType.setText("BorrowerType");
+        addBorrowerFieldsPanel.add(addBorrowerLabelType);
+
+        addBorrowerComboBoxType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        addBorrowerFieldsPanel.add(addBorrowerComboBoxType);
+
+        addBorrowerButtonAdd.setText("Add To List");
+        addBorrowerFieldsPanel.add(addBorrowerButtonAdd);
+
+        addBorrowerPanel.add(addBorrowerFieldsPanel);
+
+        addBorrowerAddsPanel.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(130, 180));
+
+        addBorrowerJListBorrToAdd.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(addBorrowerJListBorrToAdd);
+
+        addBorrowerAddsPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        addBorrowersButtonAddAll.setText("Add Borrowers to DB");
+        addBorrowerAddsPanel.add(addBorrowersButtonAddAll, java.awt.BorderLayout.PAGE_END);
+
+        addBorrowerPanel.add(addBorrowerAddsPanel);
 
         cardPanel.add(addBorrowerPanel, "Add a new borrower");
 
-        checkOverduePanel.setLayout(new java.awt.BorderLayout());
+        checkOverduePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel10.setText("check overdue items");
-        checkOverduePanel.add(jLabel10, java.awt.BorderLayout.CENTER);
+        jPanel2.setLayout(new java.awt.GridLayout(5, 1));
+
+        checkOverdueLabelBorrInfo.setText("Borrower Info");
+        jPanel2.add(checkOverdueLabelBorrInfo);
+
+        jTextArea3.setColumns(20);
+        jTextArea3.setRows(5);
+        checkOverdueTextAreaBorrInfo.setViewportView(jTextArea3);
+
+        jPanel2.add(checkOverdueTextAreaBorrInfo);
+
+        checkOverdueLabelBookCopyInfo.setText("jLabel2");
+        jPanel2.add(checkOverdueLabelBookCopyInfo);
+
+        jTextArea4.setColumns(20);
+        jTextArea4.setRows(5);
+        checkOverdueTextAreaBookCopyInfo.setViewportView(jTextArea4);
+
+        jPanel2.add(checkOverdueTextAreaBookCopyInfo);
+
+        checkOverdueButtonBlock.setText("Block Borrower");
+        jPanel4.add(checkOverdueButtonBlock);
+
+        checkOverdueButtonMessage.setText("Message Borrower");
+        jPanel4.add(checkOverdueButtonMessage);
+
+        jPanel2.add(jPanel4);
+
+        checkOverduePanel.add(jPanel2);
+
+        jPanel3.setLayout(new java.awt.BorderLayout());
+
+        jList1.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        checkOverdueListOverdueInfo.setViewportView(jList1);
+
+        jPanel3.add(checkOverdueListOverdueInfo, java.awt.BorderLayout.CENTER);
+
+        checkOverduePanel.add(jPanel3);
 
         cardPanel.add(checkOverduePanel, "Check overdue books");
 
         addNewBookPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel20.setText("add new book");
-        addNewBookPanel.add(jLabel20, java.awt.BorderLayout.CENTER);
+        jLabel1.setText("Add New Book:  * = required, & = deliniate with commas");
+        addNewBookPanel.add(jLabel1, java.awt.BorderLayout.PAGE_START);
+
+        jPanel5.setLayout(new java.awt.GridLayout(10, 3, 5, 0));
+
+        jLabel2.setText("CallNumber  (*)");
+        jPanel5.add(jLabel2);
+
+        abCN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abCNActionPerformed(evt);
+            }
+        });
+        jPanel5.add(abCN);
+
+        jLabel8.setText("ISBN (*)");
+        jPanel5.add(jLabel8);
+
+        abISBN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abISBNActionPerformed(evt);
+            }
+        });
+        jPanel5.add(abISBN);
+
+        jLabel10.setText("Title");
+        jPanel5.add(jLabel10);
+        jPanel5.add(abTitle);
+
+        jLabel9.setText("Main Author");
+        jPanel5.add(jLabel9);
+        jPanel5.add(abMA);
+
+        jLabel6.setText("Publisher");
+        jPanel5.add(jLabel6);
+        jPanel5.add(abPub);
+
+        jLabel12.setText("Year");
+        jPanel5.add(jLabel12);
+        jPanel5.add(abYear);
+
+        jLabel11.setText("Additional Authors (&)");
+        jPanel5.add(jLabel11);
+        jPanel5.add(abAA);
+
+        jLabel13.setText("Subjects (*) (&)");
+        jPanel5.add(jLabel13);
+        jPanel5.add(abSubs);
+
+        jLabel7.setText("Create Copies");
+        jPanel5.add(jLabel7);
+
+        abSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 200, 1));
+        jPanel5.add(abSpinner);
+
+        jLabel14.setText("Operation Status");
+        jPanel5.add(jLabel14);
+
+        jTextField10.setText("Waiting for Input...");
+        jPanel5.add(jTextField10);
+
+        addNewBookPanel.add(jPanel5, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(addNewBookPanel, "Add new book");
 
@@ -481,8 +761,29 @@ public class ViewFrame extends javax.swing.JFrame {
 
         checkedOutReportPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel13.setText("checked out");
-        checkedOutReportPanel.add(jLabel13, java.awt.BorderLayout.CENTER);
+        checkedOutReportFilterPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter by subject"));
+        checkedOutReportFilterPanel.setLayout(new java.awt.GridBagLayout());
+
+        checkedOutReportFilterCheckBox.setText("Filter by subject: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        checkedOutReportFilterPanel.add(checkedOutReportFilterCheckBox, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        checkedOutReportFilterPanel.add(checkedOutReportTextField, gridBagConstraints);
+
+        checkedOutReportPanel.add(checkedOutReportFilterPanel, java.awt.BorderLayout.PAGE_START);
+
+        checkedOutReportTablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Report"));
+        checkedOutReportTablePanel.setLayout(new java.awt.BorderLayout());
+
+        checkedOutReportTable.setModel(new javax.swing.table.DefaultTableModel());
+        checkedOutReportTablePane.setViewportView(checkedOutReportTable);
+
+        checkedOutReportTablePanel.add(checkedOutReportTablePane, java.awt.BorderLayout.CENTER);
+
+        checkedOutReportPanel.add(checkedOutReportTablePanel, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(checkedOutReportPanel, "Checked-out report");
 
@@ -773,21 +1074,6 @@ public class ViewFrame extends javax.swing.JFrame {
    * @param evt 
    */
   private void doButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doButtonActionPerformed
-    /**
-     * A TableModel where you cant edit the cells
-     */
-    class UneditableTableModel extends DefaultTableModel
-    {
-      public UneditableTableModel (String[][] table, String[] header)
-      {
-        super(table,header);
-      }
-      @Override
-      public boolean isCellEditable(int rowIndex ,int colIndex)
-      {
-        return false;
-      }
-    }
     String[][] tableWithHeader = null;
     String[][] tableWithoutHeader = null;
     String[] header = null;
@@ -821,7 +1107,7 @@ public class ViewFrame extends javax.swing.JFrame {
           System.arraycopy(tableWithHeader[i+1], 0, tableWithoutHeader[i], 0, numCols);
         }
         entitiesTable.setModel(
-                new UneditableTableModel(tableWithoutHeader, header));
+                new DefaultTableModel(tableWithoutHeader, header));
         entitiesTable.repaint();
         break;
       case START:
@@ -861,7 +1147,7 @@ public class ViewFrame extends javax.swing.JFrame {
             }
             
             //print 2d array
-            UneditableTableModel uTM = new UneditableTableModel(TwoDMinusHeader,header1);
+            DefaultTableModel uTM = new DefaultTableModel(TwoDMinusHeader,header1);
             SearchTable.setModel(uTM);
             SearchTable.repaint();
         }
@@ -1118,10 +1404,48 @@ public class ViewFrame extends javax.swing.JFrame {
         {
           System.arraycopy(tableWithHeader[i+1], 0, tableWithoutHeader[i], 0, numCols);
         }
-        popularReportTable.setModel(new UneditableTableModel(tableWithoutHeader,header));
+        popularReportTable.setModel(new DefaultTableModel(tableWithoutHeader,header));
         popularReportTable.repaint();
-        break;
+        break; // END CASE POPULAR REPORT
+        
       case REPORT_CHECKED_OUT:
+        String[][] checkedOutReportWithHeader = null;
+        try
+        {
+          if (checkedOutReportFilterCheckBox.isSelected())
+          {
+            String subjectToFilterBy = checkedOutReportTextField.getText().trim();
+            checkedOutReportWithHeader = 
+                    controller.getSystemLibrarian().getCheckedOutBooksReport(subjectToFilterBy);
+          }
+          else
+          {
+            checkedOutReportWithHeader = 
+                    controller.getSystemLibrarian().getCheckedOutBooksReport();
+          }
+        }
+        catch (SQLException e)
+        {
+          String msg = "Could not retrieve data\n"
+                  + e.getMessage();
+          JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+        String[] checkedOutReportHeader = checkedOutReportWithHeader[0];
+        numRows = checkedOutReportWithHeader.length;
+        numRows--;
+        numCols = checkedOutReportWithHeader[0].length;
+        tableWithoutHeader = new String[numRows][];
+        for (int i = 0; i < numRows; i++)
+        {
+          tableWithoutHeader[i] = new String[numCols];
+        }
+        for (int i = 0; i < numRows; i++)
+        {
+          System.arraycopy(checkedOutReportWithHeader[i+1], 0, tableWithoutHeader[i], 0, numCols);
+        }
+        checkedOutReportTable.setModel(new DefaultTableModel(tableWithoutHeader, checkedOutReportHeader));
+        checkedOutReportTable.repaint();
         break;
       default:
     }
@@ -1223,7 +1547,7 @@ public class ViewFrame extends javax.swing.JFrame {
         break;
       case REMOVE_BORROWER:
         removeBorrowerTextField.setText("");
-        break;
+        break;  
       case REPORT_POPULAR:
         popularReportYearTextField.setText("");
         popularReportNTextField.setText("");
@@ -1231,6 +1555,10 @@ public class ViewFrame extends javax.swing.JFrame {
         popularReportTable.repaint();
         break;
       case REPORT_CHECKED_OUT:
+        checkedOutReportFilterCheckBox.setSelected(false);
+        checkedOutReportTextField.setText("");
+        checkedOutReportTable.setModel(new DefaultTableModel());
+        checkedOutReportTable.repaint();
         break;
       default:
     }
@@ -1248,6 +1576,14 @@ public class ViewFrame extends javax.swing.JFrame {
   private void reconnectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reconnectMenuItemActionPerformed
     controller.reconnect();
   }//GEN-LAST:event_reconnectMenuItemActionPerformed
+
+    private void abCNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abCNActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_abCNActionPerformed
+
+    private void abISBNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abISBNActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_abISBNActionPerformed
 
   /**
    * Parses a string of copy numbers, delimited by the comma, ','.
@@ -1361,11 +1697,42 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JTable SearchTable;
     private javax.swing.JTextField SearchTextField;
     private javax.swing.JPanel SearchTopPanel;
+
     private javax.swing.JTabbedPane TabbedPane;
+
+    private javax.swing.JTextField abAA;
+    private javax.swing.JTextField abCN;
+    private javax.swing.JTextField abISBN;
+    private javax.swing.JTextField abMA;
+    private javax.swing.JTextField abPub;
+    private javax.swing.JSpinner abSpinner;
+    private javax.swing.JTextField abSubs;
+    private javax.swing.JTextField abTitle;
+    private javax.swing.JTextField abYear;
+
     private javax.swing.JMenuItem addBookCopyMenuItem;
     private javax.swing.JMenuItem addBookMenuItem;
+    private javax.swing.JPanel addBorrowerAddsPanel;
+    private javax.swing.JButton addBorrowerButtonAdd;
+    private javax.swing.JComboBox addBorrowerComboBoxType;
+    private javax.swing.JPanel addBorrowerFieldsPanel;
+    private javax.swing.JList addBorrowerJListBorrToAdd;
+    private javax.swing.JLabel addBorrowerLabelAddress;
+    private javax.swing.JLabel addBorrowerLabelEmail;
+    private javax.swing.JLabel addBorrowerLabelName;
+    private javax.swing.JLabel addBorrowerLabelPassword;
+    private javax.swing.JLabel addBorrowerLabelPhoneNo;
+    private javax.swing.JLabel addBorrowerLabelSinOrStNo;
+    private javax.swing.JLabel addBorrowerLabelType;
     private javax.swing.JMenuItem addBorrowerMenuItem;
     private javax.swing.JPanel addBorrowerPanel;
+    private javax.swing.JTextField addBorrowerTextAddress;
+    private javax.swing.JTextField addBorrowerTextEmail;
+    private javax.swing.JTextField addBorrowerTextName;
+    private javax.swing.JTextField addBorrowerTextPassword;
+    private javax.swing.JTextField addBorrowerTextPhoneNo;
+    private javax.swing.JTextField addBorrowerTextSinOrStNo;
+    private javax.swing.JButton addBorrowersButtonAddAll;
     private javax.swing.JMenu addMenu;
     private javax.swing.JPanel addNewBookPanel;
     private javax.swing.JPanel addNewCopyPanel;
@@ -1374,13 +1741,36 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel cardPanel;
     private javax.swing.JMenuItem checkAccountMenuItem;
     private javax.swing.JPanel checkAccountPanel;
+    private javax.swing.JPanel checkOutFieldsPanel;
+    private javax.swing.JLabel checkOutLabelBorid;
+    private javax.swing.JLabel checkOutLabelCallNo;
+    private javax.swing.JLabel checkOutLabelCopyNo;
     private javax.swing.JMenuItem checkOutMenuItem;
     private javax.swing.JPanel checkOutPanel;
+    private javax.swing.JTextField checkOutTextBorid;
+    private javax.swing.JTextField checkOutTextCallNo;
+    private javax.swing.JTextField checkOutTextCopyNo;
+    private javax.swing.JButton checkOverdueButtonBlock;
+    private javax.swing.JButton checkOverdueButtonMessage;
+    private javax.swing.JLabel checkOverdueLabelBookCopyInfo;
+    private javax.swing.JLabel checkOverdueLabelBorrInfo;
+    private javax.swing.JScrollPane checkOverdueListOverdueInfo;
     private javax.swing.JMenuItem checkOverdueMenuItem;
     private javax.swing.JPanel checkOverduePanel;
+
     private javax.swing.JTable checkedOutBooksTable;
+
+    private javax.swing.JScrollPane checkOverdueTextAreaBookCopyInfo;
+    private javax.swing.JScrollPane checkOverdueTextAreaBorrInfo;
+    private javax.swing.JCheckBox checkedOutReportFilterCheckBox;
+    private javax.swing.JPanel checkedOutReportFilterPanel;
+
     private javax.swing.JMenuItem checkedOutReportMenuItem;
     private javax.swing.JPanel checkedOutReportPanel;
+    private javax.swing.JTable checkedOutReportTable;
+    private javax.swing.JScrollPane checkedOutReportTablePane;
+    private javax.swing.JPanel checkedOutReportTablePanel;
+    private javax.swing.JTextField checkedOutReportTextField;
     private javax.swing.JButton clearButton;
     private javax.swing.JMenu clerkMenu;
     private javax.swing.JTable currentHoldsTable;
@@ -1391,19 +1781,43 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private javax.swing.JPanel holdRequestPanel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel19;
+
     private javax.swing.JLabel jLabel20;
+
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JList jList1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextArea jTextArea3;
+    private javax.swing.JTextArea jTextArea4;
+    private javax.swing.JTextField jTextField10;
+
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
@@ -1423,8 +1837,20 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel popularReportTablePanel;
     private javax.swing.JLabel popularReportYearSelectLabel;
     private javax.swing.JTextField popularReportYearTextField;
+    private javax.swing.JButton processReturnButtonGetInfo;
+    private javax.swing.JButton processReturnButtonMsgHoldRequest;
+    private javax.swing.JPanel processReturnFieldsPanel;
+    private javax.swing.JLabel processReturnLabelCallNo;
+    private javax.swing.JLabel processReturnLabelCopyNo;
+    private javax.swing.JLabel processReturnLabelPlaceHolder;
+    private javax.swing.JLabel processReturnLabelPlaceHolder2;
     private javax.swing.JMenuItem processReturnMenuItem;
     private javax.swing.JPanel processReturnPanel;
+    private javax.swing.JScrollPane processReturnTextAreaBookCopyInfo;
+    private javax.swing.JScrollPane processReturnTextAreaHoldRequestInfo;
+    private javax.swing.JTextField processReturnTextCallNo;
+    private javax.swing.JTextField processReturnTextCopyNo;
+    private javax.swing.JPanel processReturnsInfoPanel;
     private javax.swing.JMenuItem quitMenuItem;
     private javax.swing.JMenuItem reconnectMenuItem;
     private javax.swing.JRadioButton removeBookBookRadioButton;
