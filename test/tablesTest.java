@@ -58,6 +58,12 @@ public class tablesTest{
 		//{"1234", "123          ","teilte","mainsss","pubb","1929"},
 	}
 
+	@Test public void testEquality(){
+		String a = new String("test");
+		String b = new String("test");
+		assertEquals(a,b);
+	}
+	
 	@Test public void testBookInsert() throws SQLException{
 		createBookObject();
 		assertTrue(b.insert());

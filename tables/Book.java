@@ -191,11 +191,9 @@ public class Book implements Table {
 
 		for(int i=0;i<subjects.size();i++){
 		HasSubject hS = new HasSubject(subjects.get(i),callNumber);
-			i++;
 		}
 		for(int i=0;i<authors.size();i++){
 			HasAuthor hA = new HasAuthor(authors.get(i),callNumber);
-			i++;
 		}
 		return true;
 
@@ -213,6 +211,7 @@ public class Book implements Table {
 	}
 
 	/**
+         * Pre: there must be a valid call number in this object
 	 * return the Book tuple corresponding to the callNumber field in this book object updated with the DB values
 	 * @throws SQLException 
 	 */
