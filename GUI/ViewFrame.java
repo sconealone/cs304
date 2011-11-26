@@ -90,7 +90,15 @@ public class ViewFrame extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         SearchTable = new javax.swing.JTable();
         checkAccountPanel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        searchAccountPanel = new javax.swing.JPanel();
+        SearchIdField = new javax.swing.JTextField();
+        TabbedPane = new javax.swing.JTabbedPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        checkedOutBooksTable = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        finesTable = new javax.swing.JTable();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        currentHoldsTable = new javax.swing.JTable();
         payFinePanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         holdRequestPanel = new javax.swing.JPanel();
@@ -265,8 +273,27 @@ public class ViewFrame extends javax.swing.JFrame {
 
         checkAccountPanel.setLayout(new java.awt.BorderLayout());
 
-        jLabel3.setText("check account");
-        checkAccountPanel.add(jLabel3, java.awt.BorderLayout.CENTER);
+        SearchIdField.setText("");
+        searchAccountPanel.add(SearchIdField);
+
+        checkAccountPanel.add(searchAccountPanel, java.awt.BorderLayout.PAGE_START);
+
+        checkedOutBooksTable.setModel(new javax.swing.table.DefaultTableModel());
+        jScrollPane2.setViewportView(checkedOutBooksTable);
+
+        TabbedPane.addTab("tab1", jScrollPane2);
+
+        finesTable.setModel(new javax.swing.table.DefaultTableModel());
+        jScrollPane3.setViewportView(finesTable);
+
+        TabbedPane.addTab("tab2", jScrollPane3);
+
+        currentHoldsTable.setModel(new javax.swing.table.DefaultTableModel());
+        jScrollPane4.setViewportView(currentHoldsTable);
+
+        TabbedPane.addTab("tab3", jScrollPane4);
+
+        checkAccountPanel.add(TabbedPane, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(checkAccountPanel, "Check account");
 
@@ -844,6 +871,18 @@ public class ViewFrame extends javax.swing.JFrame {
         }
         break;
       case CHECK_ACCOUNT:
+//          try {
+//              String searchIdField = SearchIdField.getText();
+//              String[][] BookTwoDArrayToPrint = null;
+//              Book b = new Book();
+//              Borrower bor = new Borrower();
+//              
+//              
+//        
+//          }
+//          catch (SQLException S){
+//              S.printStackTrace();
+//          }
         break;
       case HOLD_REQUEST:
         break;
@@ -1318,9 +1357,11 @@ public class ViewFrame extends javax.swing.JFrame {
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox SearchComboBox;
+    private javax.swing.JTextField SearchIdField;
     private javax.swing.JTable SearchTable;
     private javax.swing.JTextField SearchTextField;
     private javax.swing.JPanel SearchTopPanel;
+    private javax.swing.JTabbedPane TabbedPane;
     private javax.swing.JMenuItem addBookCopyMenuItem;
     private javax.swing.JMenuItem addBookMenuItem;
     private javax.swing.JMenuItem addBorrowerMenuItem;
@@ -1337,13 +1378,16 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JPanel checkOutPanel;
     private javax.swing.JMenuItem checkOverdueMenuItem;
     private javax.swing.JPanel checkOverduePanel;
+    private javax.swing.JTable checkedOutBooksTable;
     private javax.swing.JMenuItem checkedOutReportMenuItem;
     private javax.swing.JPanel checkedOutReportPanel;
     private javax.swing.JButton clearButton;
     private javax.swing.JMenu clerkMenu;
+    private javax.swing.JTable currentHoldsTable;
     private javax.swing.JButton doButton;
     private javax.swing.JTable entitiesTable;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JTable finesTable;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private javax.swing.JPanel holdRequestPanel;
@@ -1351,13 +1395,15 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuItem manualMenuItem;
@@ -1400,6 +1446,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JTextField removeBorrowerTextField;
     private javax.swing.JMenu removeMenu;
     private javax.swing.JMenu reportMenu;
+    private javax.swing.JPanel searchAccountPanel;
     private javax.swing.JMenuItem searchMenuItem;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JPanel startComboBoxPanel;
