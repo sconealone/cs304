@@ -16,12 +16,12 @@ import users.Conn;
  * 
  * @author Christiaan Fernando
  * 
- * Changes 25 Nov
+ *         Changes 25 Nov
  * 
- * 1.Changed the string constants for in, out, hold, and overdue to match
- * what's in the database.
+ *         1.Changed the string constants for in, out, hold, and overdue to
+ *         match what's in the database.
  * 
- * 2. Changed all attribute references to callNo to callNumber
+ *         2. Changed all attribute references to callNumber to callNumber
  */
 
 public class BookCopy implements Table {
@@ -33,9 +33,7 @@ public class BookCopy implements Table {
 	// TODO Ensure status is only of these types. Either create custom
 	// exception, or try enum
 
-	private final int BOOK_COPY_FIELDS = 3;
-
-	// The fields for BookCopy in the table are copyNo, callNo, status in that
+	// The fields for BookCopy in the table are copyNo, callNumber, status in that
 	// order.
 	private String copyNo;
 	private Book b;
@@ -63,7 +61,7 @@ public class BookCopy implements Table {
 	 * @param status
 	 *            The status of the BookCopy
 	 * @param b
-	 *            The Book that shares the callNo of the BookCopy object
+	 *            The Book that shares the callNumber of the BookCopy object
 	 */
 	public BookCopy(String copyNo, Book b, String status) {
 		this.copyNo = copyNo;
@@ -100,7 +98,7 @@ public class BookCopy implements Table {
 							result[i][j] = ((BookCopy) bcItr.next())
 									.getCopyNo();
 							break;
-						case 1: // callNo
+						case 1: // callNumber
 							result[i][j] = ((BookCopy) bcItr.next()).getB()
 									.getCallNumber();
 							break;
@@ -228,10 +226,10 @@ public class BookCopy implements Table {
 	 * Get all BookCopy objects in the BookCopy table that match the given Book.
 	 * 
 	 * Given a Book, find all the BookCopy objects in the BookCopy table that
-	 * have the Book's callNo.
+	 * have the Book's callNumber.
 	 * 
 	 * @param b
-	 *            The Book that shares the callNo of the BookCopy object
+	 *            The Book that shares the callNumber of the BookCopy object
 	 * @return
 	 * @throws SQLException
 	 */
@@ -289,7 +287,7 @@ public class BookCopy implements Table {
 	 * @param copyNo
 	 *            The copy number of the BookCopy object
 	 * @param b
-	 *            The Book that shares the callNo of the BookCopy object
+	 *            The Book that shares the callNumber of the BookCopy object
 	 * @return
 	 * @throws SQLException
 	 */
