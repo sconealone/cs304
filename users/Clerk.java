@@ -94,8 +94,7 @@ public class Clerk {
       try
       {
         connection.setAutoCommit(false);
-        //if (borrower.isValid()) 
-        if (true)
+        if (borrower.isValid()) 
         {
           for (int i = 0; i < copyNos.length; i++) 
           {
