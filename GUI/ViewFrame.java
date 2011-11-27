@@ -583,6 +583,7 @@ public class ViewFrame extends javax.swing.JFrame {
         abMainLabel.setText("Add New Book:  * = required, & = deliniate with commas");
         addNewBookPanel.add(abMainLabel, java.awt.BorderLayout.PAGE_START);
 
+        abMainPanel.setPreferredSize(new java.awt.Dimension(500, 252));
         abMainPanel.setLayout(new java.awt.GridBagLayout());
 
         abCNLabel.setText("CallNumber  (*)");
@@ -594,8 +595,10 @@ public class ViewFrame extends javax.swing.JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 50;
+        gridBagConstraints.ipadx = 300;
         abMainPanel.add(abCN, gridBagConstraints);
 
         abISBNLabel.setText("ISBN (*)");
@@ -1351,7 +1354,7 @@ public class ViewFrame extends javax.swing.JFrame {
               Borrower b = new Borrower();
               b.setBid(Integer.parseInt(bidField));
               b = b.get();
-              b.payFine(Integer.parseInt(boridField), Integer.parseInt(amtField));
+              //b.payFine(Integer.parseInt(boridField), Integer.parseInt(amtField));
               
               payFineMsgLabel.repaint();
           }
@@ -1388,7 +1391,7 @@ public class ViewFrame extends javax.swing.JFrame {
           abOpStatus.setText("...");
           
           
-          String regex1 = "([0-9]+|[a-z]+|[A-Z]+|[\\s]+)+";
+          String regex1 = "([0-9]+|[a-z]+|[A-Z]+|[\\s]+|,+)+";
           if(!abCN.getText().matches(regex1) ||
                   !abCN.getText().matches(regex1) ||
                   !abISBN.getText().matches(regex1) ||
