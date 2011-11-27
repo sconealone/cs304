@@ -570,6 +570,7 @@ public class Borrower implements Table {
         f.setFid(fid);
         f = (Fine) f.get();
         int owedAmountInCents = f.getAmount();
+        NumberFormat nf = new DecimalFormat("$0.00");
         if (amountInCents == owedAmountInCents) {
             if (f.delete())
             {
@@ -583,10 +584,20 @@ public class Borrower implements Table {
             f.setAmount(owedAmountInCents - amountInCents);
             owedAmountInCents = f.getAmount();
             f.update();
-            NumberFormat nf = new DecimalFormat("$0.00");
             return "You have paid " + nf.format(amountInCents/100.0)
                     + ", still owing " + nf.format(owedAmountInCents/100.0) +".";
-        } else {
+        } else if (amountInCents > 0 && amountInCents > owedAmountInCents){
+          if (f.delete())
+          {
+            return "Amount paid in full.  Your change is "+nf.format((amountInCents-owedAmountInCents)/100.0);
+          }
+          else
+          {
+              throw new SQLException("Payment refused.");
+          }
+        } 
+        
+        else {
           throw new NoPaymentException("Amount must be a positive amount.");
         }
     }
@@ -799,17 +810,34 @@ public class Borrower implements Table {
     borrower = (Borrower) borrower.get();
     System.out.println(borrower.isValid());
      *
-     */
+     
     
     try
     {
-      
+      Borrower paidInFullBorrower = new Borrower();
+      paidInFullBorrower.setBid(34);
+      System.out.println(paidInFullBorrower.payFine(3, 6726));
+    }
+    catch (NoPaymentException e)
+    {
+     
+    }
+    
+    
+    Borrower paidInHalfBorrower = new Borrower();
+    // pay 500 of 1090
+    paidInHalfBorrower.setBid(12);
+    System.out.println(paidInHalfBorrower.payFine(4, 500));
+    
+    try
+    {
+      Borrower paidNegative = new Borrower();
+      paidNegative.setBid(97);
+      System.out.println(paidNegative.payFine(5, -6726));
     }
     catch (NoPaymentException e)
     {
       System.out.println("good caught exception "+e.getMessage());
     }
-    
-    
-  }
+  }*/
 }
