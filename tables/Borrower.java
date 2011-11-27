@@ -68,6 +68,15 @@ public class Borrower implements Table {
         }
         String t = rs.getString(fieldIndex++);
         type = (rs.wasNull()) ? null : t;
+        
+        PreparedStatement ps = 
+                con.prepareStatement("SELECT bookTimeLimit "
+                                  + "FROM BorrowerType "
+                                  + "WHERE type = ?");
+        ps.setString(1, type);
+        ResultSet timeLimitResultSet = ps.executeQuery();
+        timeLimitResultSet.next();
+        bookTimeLimit = timeLimitResultSet.getInt(1);
     }
 
     
