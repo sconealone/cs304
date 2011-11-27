@@ -11,9 +11,15 @@ Work assignments:
 
 -Christian GUI and Functionality :
    -Checkout  
+<<<<<<< HEAD
+   -check overdue
+   -process return
+   -add borrower GUI and functionality
+
+=======
     -check overdue
     - add borrower GUI and functionality
-
+>>>>>>> 16f01651d857a84ef759d4860bd401eea8afcd09
 Jesse:
 Add book  - DONE w/ robust gui
 add copy - DONE with robust gui
