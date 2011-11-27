@@ -212,15 +212,12 @@ public class BookCopy implements Table {
 	@Override
 	public Collection<Table> getAll() throws SQLException {
 		Collection<Table> bc = new ArrayList<Table>();
-		ps = c.prepareStatement("SELECT * FROM BookCopy");
+		PreparedStatement ps = c.prepareStatement("SELECT * FROM BookCopy");
 
-		rs = ps.executeQuery();
+		ResultSet rs = ps.executeQuery();
 
 		while (rs.next()) {
-			Book b = new Book();
-			b.setCallNumber(rs.getString(2));
-			b = (Book) b.get();
-			bc.add(new BookCopy(rs.getString(1), b, rs.getString(3)));
+                  bc.add(new BookCopy(rs));
 		}
 
 		return bc;
@@ -235,6 +232,7 @@ public class BookCopy implements Table {
 	 * @return
 	 * @throws SQLException
 	 */
+        @Deprecated
 	public ResultSetMetaData getMeta() throws SQLException {
 		ps = c.prepareStatement("SELECT * FROM BookCopy");
 
@@ -261,7 +259,7 @@ public class BookCopy implements Table {
 		rs = ps.executeQuery();
 
 		while (rs.next()) {
-			bc.add(new BookCopy(rs.getString(1), b, rs.getString(3)));
+			bc.add(new BookCopy(rs));
 		}
 
 		return bc;
@@ -316,6 +314,7 @@ public class BookCopy implements Table {
 	 * @return
 	 * @throws SQLException
 	 */
+        @Deprecated
 	public Table get(String copyNo, Book b) throws SQLException {
 		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ? AND callNumber = ?");
 		ps.setString(2, b.getCallNumber());
@@ -420,12 +419,14 @@ public class BookCopy implements Table {
         @Override
         public String toString()
         {
-          return null;
+          return "callNumber: " + b.getCallNumber() + '\n'
+                  + "copyNo: " + copyNo + '\n'
+                  + "status: " + status + '\n';
         }
 
         
   public static void main(String[] args) throws Exception {
-    /*
+     /*
     BookCopy bcget = new BookCopy();
     Book bcgetbook = new Book();
     bcgetbook.setCallNumber("GV345 R202 1997");
@@ -437,7 +438,7 @@ public class BookCopy implements Table {
     System.out.println(bcget.getB().getTitle());
     System.out.println(bcget.status);
     System.out.println(bcget.copyNo);
-     * 
+    
      
     
     BookCopy bcupdate = new BookCopy();
@@ -461,7 +462,7 @@ public class BookCopy implements Table {
     bcinsert.setCopyNo(null);
     bcinsert.insert();
     
-    */
+    
     
     BookCopy bcdel = new BookCopy();
     Book bcdelbook = new Book();
@@ -474,7 +475,23 @@ public class BookCopy implements Table {
     System.out.println(bcdel.delete());
     
     System.out.println(bcdel.delete());
+    */
+    System.out.println("get all");
+    BookCopy getAll = new BookCopy();
+    Collection<Table> allbcs = getAll.getAll();
     
-    
+    for (Table t : allbcs)
+    {
+      System.out.println(t);
+    }
+    System.out.println();
+    System.out.println("get all copies of WY273 P213 1986");
+    Book getallbook = new Book();
+    getallbook.setCallNumber("WY273 P213 1986");
+    Collection<Table> allbcsforWY = getAll.getAll(getallbook);
+    for (Table t : allbcsforWY)
+    {
+      System.out.println(t);
+    }
   }
 }
