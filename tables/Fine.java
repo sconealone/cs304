@@ -329,12 +329,12 @@ public class Fine implements Table {
 	@Override
 	public Table get() throws SQLException
         {
-            Statement stmt1 = Conn.getInstance().getConnection().createStatement();
-		ResultSet rs = stmt1.executeQuery("SELECT * FROM Fine WHERE fid ='"+this.getFid() + "'");
+//            Statement stmt1 = Conn.getInstance().getConnection().createStatement();
+//		ResultSet rs = stmt1.executeQuery("SELECT * FROM Fine WHERE fid ='"+this.getFid() + "'");
 
-//          String sql = "SELECT * FROM Fine WHERE fid = '"+ fid + "'";
-//          PreparedStatement ps = con.prepareStatement(sql);
-//          ResultSet rs = ps.executeQuery();
+          String sql = "SELECT * FROM Fine WHERE fid = '"+ fid + "'";
+          PreparedStatement ps = con.prepareStatement(sql);
+          ResultSet rs = ps.executeQuery();
           if (rs.next())
           {
             return new Fine(rs);

@@ -418,8 +418,7 @@ public class Borrower implements Table {
      */
     public String[][] searchBookByTitle(String title) throws SQLException {
         Statement stmt = Conn.getInstance().getConnection().createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT Book.callNumber FROM Book "
-                + "WHERE Book.title='" + title + "'");
+        ResultSet rs = stmt.executeQuery("SELECT callNumber FROM Book WHERE upper(title) LIKE upper('%" + title+"%')");
         ArrayList<Book> lob = new ArrayList<Book>();
 
         while (rs.next()) {
@@ -444,8 +443,8 @@ public class Borrower implements Table {
     public String[][] searchBookByAuthor(String author) throws SQLException {
         Statement stmt = Conn.getInstance().getConnection().createStatement();
         String sql = "SELECT Book.CallNumber FROM Book, HasAuthor "
-                + "WHERE Book.CallNumber=HasAuthor.CallNumber AND HasAuthor.name='"
-                + author + "'";
+                + "WHERE Book.CallNumber=HasAuthor.CallNumber AND upper(HasAuthor.name) LIKE upper('%"
+                + author + "%')";
         ResultSet rs = stmt.executeQuery(sql);
         ArrayList<Book> lob = new ArrayList<Book>();
         while (rs.next()) {
@@ -470,8 +469,8 @@ public class Borrower implements Table {
     public String[][] searchBookBySubject(String subject) throws SQLException {
         Statement stmt = Conn.getInstance().getConnection().createStatement();
         String sql = "Select Book.CallNumber FROM Book, HasSubject "
-                + "WHERE Book.CallNumber = HasSubject.CallNumber AND HasSubject.subject = '"
-                + subject + "'";
+                + "WHERE Book.CallNumber = HasSubject.CallNumber AND upper(HasSubject.subject) LIKE"
+                + "upper('%" + subject + "%')";
         ResultSet rs = stmt.executeQuery(sql);
         ArrayList<Book> lob = new ArrayList<Book>();
         while (rs.next()) {
@@ -489,7 +488,7 @@ public class Borrower implements Table {
         Statement stmt1 = con.createStatement();
         String sql1 = "SELECT Borrowing.borid FROM Borrower, Book, Borrowing, BookCopy "
                 + "WHERE Book.callNumber=Borrowing.callNumber AND Borrower.bid=Borrowing.bid "
-                + "AND BookCopy.callNumber=Book.callNumber And BookCopy.status='out'";
+                + "AND BookCopy.callNumber=Book.callNumber AND BookCopy.status='out' AND Borrowing.bid='" + this.bid + "'";
         ResultSet rsCheckedOut = stmt1.executeQuery(sql1);
         ArrayList<Borrowing> lob = new ArrayList<Borrowing>();
         while (rsCheckedOut.next()) {
@@ -502,7 +501,7 @@ public class Borrower implements Table {
 
         Statement stmt2 = con.createStatement();
         String sql2 = "SELECT Fine.fid FROM Borrower, Fine, Borrowing "
-                + "WHERE Borrower.bid=Borrowing.bid AND Borrowing.borid=Fine.borid";
+                + "WHERE Borrower.bid=Borrowing.bid AND Borrowing.borid=Fine.borid AND Borrower.bid='" + this.bid + "'";
         ResultSet rsFines = stmt2.executeQuery(sql2);
         ArrayList<Fine> lof = new ArrayList<Fine>();
         while (rsFines.next()) {
@@ -517,7 +516,7 @@ public class Borrower implements Table {
 
         Statement stmt3 = con.createStatement();
         String sql3 = "SELECT HoldRequest.hid FROM Borrower, HoldRequest "
-                + "WHERE Borrower.bid=HoldRequest.bid";
+                + "WHERE Borrower.bid=HoldRequest.bid AND Borrower.bid='" + this.bid + "'";
         ResultSet rsHolds = stmt3.executeQuery(sql3);
         ArrayList<HoldRequest> loh = new ArrayList<HoldRequest>();
         while (rsHolds.next()) {
@@ -682,7 +681,8 @@ public class Borrower implements Table {
             // Counts number of copies of specific book that are out
             Statement stmt2 = con.createStatement();
             String sql2 = "SELECT COUNT(COPYNO) AS totalCopies FROM Book, BookCopy "
-                    + "WHERE BookCopy.callNumber='" + b.getCallNumber() + "' AND BookCopy.status<>'in'";
+                    + "WHERE BookCopy.callNumber='" + b.getCallNumber() + "' AND BookCopy.status='out' AND "
+                    + "Book.callNumber=BookCopy.callNumber";
             ResultSet rs2 = stmt2.executeQuery(sql2);
 
             if (rs2.next()) {
@@ -714,8 +714,8 @@ public class Borrower implements Table {
             twoDArray[i][1] = b.getBorrower().getBid().toString();
             twoDArray[i][2] = b.getBookCopy().getB().getCallNumber();
             twoDArray[i][3] = b.getBookCopy().getCopyNo();
-            twoDArray[i][4] = df.format(b.getOutDate().getTime());
-            twoDArray[i][5] = df.format(b.getInDate().getTime());
+            twoDArray[i][4] = !(b.getOutDate()==null) ? df.format(b.getOutDate().getTime()) : "null";
+            twoDArray[i][5] = !(b.getInDate()==null) ? df.format(b.getInDate().getTime()) : "null";
         }
         return twoDArray;
     }
