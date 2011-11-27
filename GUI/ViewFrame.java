@@ -126,8 +126,6 @@ public class ViewFrame extends javax.swing.JFrame {
         payFineBoridTextField = new javax.swing.JTextField();
         payFineAmtLabel = new javax.swing.JLabel();
         payFineAmtTextField = new javax.swing.JTextField();
-        holdRequestPanel = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
         checkOutPanel = new javax.swing.JPanel();
         checkOutFieldsPanel = new javax.swing.JPanel();
         checkOutLabelBorid = new javax.swing.JLabel();
@@ -241,6 +239,7 @@ public class ViewFrame extends javax.swing.JFrame {
         checkedOutReportTablePanel = new javax.swing.JPanel();
         checkedOutReportTablePane = new javax.swing.JScrollPane();
         checkedOutReportTable = new javax.swing.JTable();
+        holdRequestPanel = new GUI.PlaceHoldRequestPanel();
         buttonPanel = new javax.swing.JPanel();
         doButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
@@ -424,13 +423,6 @@ public class ViewFrame extends javax.swing.JFrame {
         payFinePanel.add(payFineInputPanel, java.awt.BorderLayout.PAGE_START);
 
         cardPanel.add(payFinePanel, "Pay a fine");
-
-        holdRequestPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel5.setText("hold request");
-        holdRequestPanel.add(jLabel5, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(holdRequestPanel, "Place hold request");
 
         checkOutFieldsPanel.setLayout(new java.awt.GridLayout(3, 3));
 
@@ -907,6 +899,7 @@ public class ViewFrame extends javax.swing.JFrame {
         checkedOutReportPanel.add(checkedOutReportTablePanel, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(checkedOutReportPanel, "Checked-out report");
+        cardPanel.add(holdRequestPanel, "Place hold request");
 
         mainPanel.add(cardPanel, java.awt.BorderLayout.CENTER);
 
@@ -1325,6 +1318,29 @@ public class ViewFrame extends javax.swing.JFrame {
           }
         break;
       case HOLD_REQUEST:
+        try
+        {
+          controller.getSystemBorrower().setBid(holdRequestPanel.getBid());
+          controller.getSystemBorrower().placeHoldRequest(holdRequestPanel.getCallNumber());
+          String holdRequestSuccessMessage = "Your hold request has been placed.  You will be informed when the book is ready.";
+          JOptionPane.showMessageDialog(this, holdRequestSuccessMessage, "Success", JOptionPane.INFORMATION_MESSAGE);
+          holdRequestPanel.clear();
+        }
+        catch (NumberFormatException nfe)
+        {
+          String holdRequestBidErrorMessage = "Invalid account ID.\nYour account ID is the number found on your library card.";
+          JOptionPane.showMessageDialog(this, holdRequestBidErrorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        catch (SQLException e)
+        {
+          String holdRequestErrorMessage = "Cannot place hold request at this time. Please try again later.\n"
+                  + e.getMessage();
+          JOptionPane.showMessageDialog(this, holdRequestErrorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        finally
+        {
+          controller.getSystemBorrower().setBid(-1);
+        }
         break;
       case PAY_FINE:
           try {
@@ -1868,6 +1884,7 @@ public class ViewFrame extends javax.swing.JFrame {
       case CHECK_ACCOUNT:
         break;
       case HOLD_REQUEST:
+        holdRequestPanel.clear();
         break;
       case PAY_FINE:
         break;
@@ -2153,8 +2170,7 @@ private void addBorrowerComboBoxTypeActionPerformed(java.awt.event.ActionEvent e
     private javax.swing.JTable finesTable;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
-    private javax.swing.JPanel holdRequestPanel;
-    private javax.swing.JLabel jLabel5;
+    private GUI.PlaceHoldRequestPanel holdRequestPanel;
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;

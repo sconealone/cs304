@@ -736,9 +736,21 @@ public class Borrower implements Table {
     }
         
   public static void main(String[] args) throws Exception {
+    /*
     Borrower borrower = new Borrower();
     borrower.setBid(1);
     borrower = (Borrower) borrower.get();
     System.out.println(borrower.isValid());
+     * 
+     */
+    Borrower borrower = new Borrower();
+    borrower.setBid(1);
+    Book book = new Book();
+    book.setCallNumber("VW88 X392 1996");
+    HoldRequest holdRequest = new HoldRequest(borrower, book, new GregorianCalendar());
+    holdRequest.insert();
+    borrower.placeHoldRequest("VW88 X392 1996");
+    
+    
   }
 }
