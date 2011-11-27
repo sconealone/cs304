@@ -69,11 +69,12 @@ public class Book implements Table {
 	public String[][] display() throws SQLException {
 
 		//credit to mitch for template!   
-		ArrayList<String[]> borrowingGrowable = new ArrayList<String[]>();
+		ArrayList<String[]> bookGrowable = new ArrayList<String[]>();
 
 		PreparedStatement ps = c.prepareStatement("SELECT * FROM Book");
 		ResultSet rs = ps.executeQuery();
-
+                
+                //rs.getMetaData().getColumnCount();
 		ResultSetMetaData md = rs.getMetaData();
 		int numFields = md.getColumnCount();
 		String[] columnNames = new String[numFields];
@@ -81,8 +82,8 @@ public class Book implements Table {
 		{
 			columnNames[i] = md.getColumnName(i + 1);
 		}
-		borrowingGrowable.add(columnNames);
-
+		bookGrowable.add(columnNames);
+               
 		while (rs.next())
 		{
 			String[] row = new String[numFields];
@@ -120,16 +121,17 @@ public class Book implements Table {
 			else row[fieldIndex] = Integer.toString(temp);
 
 
-			borrowingGrowable.add(row);
+			bookGrowable.add(row);
 		} 
 		rs.close();
-		int numRows = borrowingGrowable.size();
-		String[][] borrowing = new String[numRows][];
+                int numRows = bookGrowable.size();
+                
+		String[][] book = new String[numRows][];
 		for (int i = 0; i < numRows; i++)
 		{
-			borrowing[i] = borrowingGrowable.get(i);
+			book[i] = bookGrowable.get(i);
 		}
-		return borrowing;
+		return book;
 	}
 
 	/**
