@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -287,24 +288,30 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public Table get() throws SQLException {
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ? AND callNumber = ?");
-		ps.setString(2, this.b.getCallNumber());
-		ps.setString(1, this.copyNo);
+                Statement stmt1 = Conn.getInstance().getConnection().createStatement();
+		ResultSet rs = stmt1.executeQuery("SELECT * FROM BookCopy WHERE copyNo ='"+this.b.getCallNumber()
+                        +"' AND callNumber = '" + this.getCopyNo() + "'");
 
-		rs = ps.executeQuery();
+//		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ? AND callNumber = ?");
+//		ps.setString(2, this.b.getCallNumber());
+//		ps.setString(1, this.copyNo);
+
+//		rs = ps.executeQuery();
 		if (rs.next()) {
-			int paramIndex = 1;
-          
-                        // call number
-                        Book book = new Book();
-                        book.setCallNumber(rs.getString(paramIndex++));
-                        b = book.get();
-
-                        // copy number
-                        copyNo = rs.getString(paramIndex++);
-
-                        // status
-                        status = rs.getString(paramIndex++);
+//			int paramIndex = 1;
+//          
+//                        // call number
+//                        Book book = new Book();
+//                        book.setCallNumber(rs.getString(paramIndex++));
+//                        b = book.get();
+//
+//                        // copy number
+//                        copyNo = rs.getString(paramIndex++);
+//
+//                        // status
+//                        status = rs.getString(paramIndex++);
+                    BookCopy bc = new BookCopy(rs);
+                    return bc;
 		}
 		return null;
 	}
