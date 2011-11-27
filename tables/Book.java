@@ -144,9 +144,10 @@ public class Book implements Table {
 		stmt = c.createStatement();
 
 		//update the corresponding book tuple in the Book Table according to this objects key(callnum)
-		int rows = stmt.executeUpdate( "UPDATE Book SET callNumber = " +callNumber+",isbn = " +isbn+"," +
-				"title = " +title+",mainAuthor = " +mainAuthor+",publisher = " +publisher+",year = " +year+"," +
-				" WHERE callNumber = " +callNumber ) ;
+		String sql = "UPDATE Book SET callNumber = '" +callNumber+"',isbn = '" +isbn+"'," +
+				"title = '" +title+"',mainAuthor = '" +mainAuthor+"',publisher = '" +publisher+"',year = '" +year+"'" +
+				" WHERE callNumber = '" +callNumber+"'";
+		int rows = stmt.executeUpdate( sql ) ;
 	}
 
 
