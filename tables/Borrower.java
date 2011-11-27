@@ -8,6 +8,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -552,31 +554,40 @@ public class Borrower implements Table {
         holdRequest.insert();
     }
 
-    public void payFine(Integer borid, Integer amountInCents)
-            throws SQLException {
+    /**
+     * Pays a fine for this borrower.
+     * The borrower may pay the fine in full, or in part.
+     * When it is paid completely, the fine is deleted.
+     * @param fid
+     * @param amountInCents
+     * @return a message regarding the payment of the fine
+     * @throws SQLException if it can't complete the transaction in the db
+     * @throws NoPaymentException if the amount is not positive
+     */
+    public String payFine(Integer fid, Integer amountInCents)
+            throws SQLException, NoPaymentException{
         Fine f = new Fine();
-        Borrowing bor = new Borrowing();
-        bor.setBorid(borid);
-        f.setBorrowing(bor);
+        f.setFid(fid);
         f = (Fine) f.get();
-        if (amountInCents == f.getAmount()) {
-            Statement stmt = con.createStatement();
-            String sql = "DELETE FROM Fine WHERE EXISTS "
-                    + "(SELECT Borrower.bid FROM Borrower, Fine, Borrowing "
-                    + "WHERE Borrower.bid=Borrowing.bid AND Fine.borid="
-                    + borid + ")";
-            ResultSet rs = stmt.executeQuery(sql);
-            System.out.println("Amount paid in full.");
+        int owedAmountInCents = f.getAmount();
+        if (amountInCents == owedAmountInCents) {
+            if (f.delete())
+            {
+              return "Amount paid in full.";
+            }
+            else
+            {
+              throw new SQLException("Payment refused.");
+            }
+        } else if (amountInCents > 0 && amountInCents < owedAmountInCents) {
+            f.setAmount(owedAmountInCents - amountInCents);
+            owedAmountInCents = f.getAmount();
+            f.update();
+            NumberFormat nf = new DecimalFormat("$0.00");
+            return "You have paid " + nf.format(amountInCents/100.0)
+                    + ", still owing " + nf.format(owedAmountInCents/100.0) +".";
         } else {
-            Statement stmt = con.createStatement();
-            String sql = "UPDATE fine SET amount='"
-                    + (f.getAmount() - amountInCents)
-                    + "' "
-                    + "FROM Fine f INNER JOIN Borrowing bor ON f.borid=bor.borid "
-                    + "INNER JOIN Borrower b ON bor.bid=b.bid";
-            ResultSet rs = stmt.executeQuery(sql);
-            System.out.println("You have paid '" + amountInCents
-                    + "' cents, still owing '" + f.getAmount() + "' cents.");
+          throw new NoPaymentException("Amount must be a positive amount.");
         }
     }
 
@@ -781,11 +792,24 @@ public class Borrower implements Table {
     HoldRequest holdRequest = new HoldRequest(borrower, book, new GregorianCalendar());
     holdRequest.insert();
     borrower.placeHoldRequest("VW88 X392 1996");
-     */
+     
     
     Borrower borrower = new Borrower();
     borrower.setBid(2 );
     borrower = (Borrower) borrower.get();
     System.out.println(borrower.isValid());
+     *
+     */
+    
+    try
+    {
+      
+    }
+    catch (NoPaymentException e)
+    {
+      System.out.println("good caught exception "+e.getMessage());
+    }
+    
+    
   }
 }

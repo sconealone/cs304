@@ -339,6 +339,53 @@ public class Fine implements Table {
           
           return null;
 	}
+        
+        /**
+         * Gets all fines for the provided borrower
+         * @param borrower
+         * @return
+         * @throws SQLException 
+         */
+        public Collection<Table> get(Borrower borrower) throws SQLException
+        {
+          String sql =
+                  "SELECT fid, amount, issuedDate, paidDate, F.borid "
+                  + "FROM Fine F, Borrowing R "
+                  + "WHERE bid = "+borrower.getBid()+" AND F.borid=R.borid";
+          ArrayList<Table> fines = new ArrayList<Table>();
+          PreparedStatement ps = con.prepareStatement(sql);
+          ResultSet rs = ps.executeQuery();
+          final int FID = 1;
+          final int AMOUNT = 2;
+          final int ISSUEDDATE = 3;
+          final int PAIDDATE = 4;
+          final int BORID = 5;
+          while (rs.next())
+          {
+            int dbFid = rs.getInt(FID);
+            int dbAmount = rs.getInt(AMOUNT);
+            java.sql.Date sqlIssuedDate = rs.getDate(ISSUEDDATE);
+            Calendar dbIssuedDate = (sqlIssuedDate == null) ?
+                    null : new GregorianCalendar();
+            if (dbIssuedDate != null)
+            {
+              dbIssuedDate.setTime(sqlIssuedDate);
+            }
+            java.sql.Date sqlPaidDate = rs.getDate(PAIDDATE);
+            Calendar dbPaidDate = (sqlPaidDate == null) ?
+                    null : new GregorianCalendar();
+            if (dbPaidDate != null)
+            {
+              dbPaidDate.setTime(sqlPaidDate);
+            }
+            int dbBorid = rs.getInt(BORID);
+            Borrowing dbBorrowing = new Borrowing();
+            dbBorrowing.setBorid(dbBorid);
+            dbBorrowing = (Borrowing) dbBorrowing.get();
+            fines.add(new Fine(dbFid, dbAmount, dbIssuedDate, dbPaidDate, dbBorrowing));
+          } // end while
+          return fines;
+        }
 
   /**
    * @return the fid
