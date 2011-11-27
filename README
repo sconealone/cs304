@@ -10,13 +10,14 @@ Work assignments:
 
 -Christian GUI and Functionality :
    -Checkout  
-    -check overdue
-    -process return
-    - add borrower GUI and functionality
+   -check overdue
+   -process return
+   -add borrower GUI and functionality
+
 Jesse:
-Add book
-add copy
-unit tests for book copy
+Add book  - DONE w/ robust gui
+add copy - DONE with robust gui
+unit tests for book copy - DONE
 
 Jenny:
 Search GUI DONE

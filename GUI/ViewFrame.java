@@ -1388,7 +1388,7 @@ public class ViewFrame extends javax.swing.JFrame {
           abOpStatus.setText("...");
           
           
-          String regex1 = "([0-9]+|[a-z]+|[A-Z]+)+";
+          String regex1 = "([0-9]+|[a-z]+|[A-Z]+|[\\s]+)+";
           if(!abCN.getText().matches(regex1) ||
                   !abCN.getText().matches(regex1) ||
                   !abISBN.getText().matches(regex1) ||
@@ -1525,7 +1525,6 @@ public class ViewFrame extends javax.swing.JFrame {
               JOptionPane.showMessageDialog(this, admin, "Manual", JOptionPane.INFORMATION_MESSAGE);
               break;
           }
-          
           
           int lastCopyNum = Integer.parseInt(lastCopyNumber.substring(1));
           int numCopiesToAdd = Integer.parseInt(abcSpinner.getValue().toString());
