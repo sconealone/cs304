@@ -11,6 +11,8 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -21,7 +23,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import tables.Book;
+import tables.BookCopy;
 import tables.Borrower;
+import tables.HasAuthor;
+import tables.HasSubject;
 /*
  * ViewFrame.java
  *
@@ -1359,13 +1364,75 @@ public class ViewFrame extends javax.swing.JFrame {
           b.setPublisher(abPub.getText());
           b.setYear(Integer.parseInt(abYear.getText()));
           // add additional authors
+          
           String aa = abAA.getText();
+          //deliniate the string into sep. objects
           String[] aaArray = aa.split(",",0);
-          // add additional subjects
+          //create the array list from string[]
+          ArrayList<String> aLAA = new ArrayList<String>();
+          for(int i =0; i<aaArray.length;i++){
+              aLAA.add(aaArray[i]);
+          }
+          //set the book objects array list of additional authors
+          b.setAuthors(aLAA);
+          
+           // add additional subjects
           String subs = abSubs.getText();
+          //deliniateString
+          String[] subsArray = subs.split(",");
+          ArrayList<String> aLSubs = new ArrayList<String>();
+          //create the array list from string[]
+          for(int i =0; i<subsArray.length;i++){
+              aLSubs.add(subsArray[i]);
+          }
+          //set the book objects array list of  subjects
+          b.setSubjects(aLSubs);
+          
+          //try inserting the book into the database
+        try {
+            b.insert();
+        } catch (SQLException ex) {
+            Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+          
+//          if(aaArray[0]!=""){
+//          //add the hasAuthors tuples
+//          for(int i =0; i<aaArray.length;i++){
+//            try {
+//                HasAuthor h = new HasAuthor(aaArray[i],abCN.getText());
+//            } catch (SQLException ex) {
+//                Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
+//                System.out.println(ex.getMessage());
+//            }
+//          }
+//          
+//          }
+//          
+//          
+//          if(subsArray[0]!=""){
+//          //add the hasSubject tuples
+//          for(int i =0; i<subsArray.length;i++){
+//            try {
+//                HasSubject s = new HasSubject(subsArray[i],abCN.getText());
+//            } catch (SQLException ex) {
+//                Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
+//                System.out.println(ex.getMessage());
+//            }
+//          }
+//          }
           //add book copies
           Object copiesAmount = abSpinner.getValue();
           int test = Integer.parseInt(copiesAmount.toString());
+          for(int i =0; i<test;i++){
+            try {
+                BookCopy bC = new BookCopy("C"+Integer.toString(i),b,"in");
+                bC.insert();
+            } catch (SQLException ex) {
+                Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);                
+                System.out.println(ex.getMessage());
+
+            }
+          }
         break;
       case ADD_COPY:
         break;

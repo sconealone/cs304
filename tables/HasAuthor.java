@@ -48,7 +48,7 @@ public class HasAuthor implements Displayable
     int paramIndex = 1;
     callNumber = rs.getString(paramIndex++);
     name = rs.getString(paramIndex++);
-    
+   
   }
   /**
    * create a HasAuthor object and add it to the database
