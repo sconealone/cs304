@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -328,10 +329,12 @@ public class Fine implements Table {
 	@Override
 	public Table get() throws SQLException
         {
-          
-          String sql = "SELECT * FROM Fine WHERE fid = "+fid;
-          PreparedStatement ps = con.prepareStatement(sql);
-          ResultSet rs = ps.executeQuery();
+            Statement stmt1 = Conn.getInstance().getConnection().createStatement();
+		ResultSet rs = stmt1.executeQuery("SELECT * FROM Fine WHERE fid ='"+this.getFid() + "'");
+
+//          String sql = "SELECT * FROM Fine WHERE fid = '"+ fid + "'";
+//          PreparedStatement ps = con.prepareStatement(sql);
+//          ResultSet rs = ps.executeQuery();
           if (rs.next())
           {
             return new Fine(rs);

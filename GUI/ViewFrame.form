@@ -1225,7 +1225,7 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Waiting for Input..."/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[350, 28]"/>
+                          <Dimension value="[500, 28]"/>
                         </Property>
                       </Properties>
                     </Component>
