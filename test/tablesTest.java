@@ -36,8 +36,8 @@ public class tablesTest{
 	Book b;
 	static Connection c = Conn.getInstance().getConnection();
 
-	@Test
-	public void createBookObject() throws SQLException {
+	
+	public Book createBookObject() throws SQLException {
 		//create a book object
 		String cN = "123456789";
 		String isBun = "123412341234A";
@@ -56,8 +56,23 @@ public class tablesTest{
 		b= new Book(cN,isBun,titleArg,mainAuthorArg,pub,yr,authrs,subjectsArg);
 		//String sql1 = "INSERT INTO Book VALUES('1234','123','teilte','mainsss','pubb',1929)";
 		//{"1234", "123          ","teilte","mainsss","pubb","1929"},
+		return b;
 	}
 
+	@Test public void testCheckExists(){
+		try{
+		Book b = createBookObject();
+		b.insert();
+		assertTrue(b.checkExists());
+		b.delete();
+		assertFalse(b.checkExists());
+		}
+		catch(SQLException ex){
+			fail("sql exception");
+		}
+	}
+	
+	
 	@Test public void testBookInsert() throws SQLException{
 		createBookObject();
 		assertTrue(b.insert());
@@ -99,23 +114,38 @@ public class tablesTest{
 	 * pre: createBookObject() has been called, and it's book tuple exists as an instance and in the database;
 	 * @throws SQLException 
 	 */
-	
 	@Test
 	public void testBookDeleteValid() throws SQLException{
 		createBookObject();
+		
 		try {
 			assertTrue(b.delete());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		assertFalse(b.checkExists());
+		try{
+			assertFalse(b.delete());
+		}catch(SQLException e){
+			fail("sql exception");
+		}
+		
+		
 	}
 	
-	@Test
-	public void testBookDeleteInvalid() throws SQLException{
+	@Test 
+	public void testBookUpdate() throws SQLException{
 		createBookObject();
-		assertFalse(b.delete());
+		b.setMainAuthor("updatedMainAuthor");
+		b.update();
+		String mAChanged = b.getMainAuthor();
+		assertEquals(b.get().getMainAuthor(),mAChanged);
+		createBookObject();
+		
 	}
+	
+
 
 
 

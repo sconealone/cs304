@@ -105,41 +105,46 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public String[][] display() throws SQLException {
-		String[][] result = null;
-		Collection<Table> bct = getAll();
+          
+          String sql = "SELECT * FROM BookCopy";
+          ps = c.prepareStatement(sql);
+          rs = ps.executeQuery();
+          ResultSetMetaData md = rs.getMetaData();
+          int numCols = md.getColumnCount();
+          ArrayList<String[]> copiesGrowable = new ArrayList<String[]>();
+          String[] header = new String[numCols];
+          for (int i = 0; i < numCols; i++)
+          {
+            header[i] = md.getColumnName(i+1);
+          }
+          copiesGrowable.add(header);
 
-		ResultSetMetaData md = getMeta();
+          int colIndex, paramIndex;
+          while (rs.next())
+          {
+            String[] row = new String[numCols];
+            colIndex = 0;
+            paramIndex = 1;
+            // callNumber
+            row[colIndex++] = rs.getString(paramIndex++);
 
-		if (bct.size() > 0) {
-			result = new String[bct.size() + 1][md.getColumnCount()];
-			int i = 0;
+            // copyNo
+            row[colIndex++] = rs.getString(paramIndex++);
 
-			Iterator<Table> bcItr = bct.iterator();
-			while (bcItr.hasNext()) {
-				for (int j = 0; j < result[i].length; j++) {
-					if (i == 0)
-						result[i][j] = md.getColumnName(j + 1);
-					else {
-						switch (j) {
-						case 0: // copyNo
-							result[i][j] = ((BookCopy) bcItr.next())
-									.getCopyNo();
-							break;
-						case 1: // callNumber
-							result[i][j] = ((BookCopy) bcItr.next()).getB()
-									.getCallNumber();
-							break;
-						case 2: // status
-							result[i][j] = ((BookCopy) bcItr.next())
-									.getStatus();
-							break;
-						}
-					}
-				}
-				i++;
-			}
-		}
-		return result;
+            // status
+            // empty string handles null case
+            row[colIndex++] = ""+rs.getString(paramIndex++);
+
+            copiesGrowable.add(row);
+          }
+
+          int numRows = copiesGrowable.size();
+          String[][] copies = new String[numRows][];
+          for (int i = 0; i < numRows; i++)
+          {
+            copies[i] = copiesGrowable.get(i);
+          }
+          return copies;
 	}
 
 	/**
@@ -150,17 +155,13 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public void update() throws SQLException {
-		ps = c.prepareStatement("UPDATE bookCopy SET status = '?' WHERE copyNo = '?', callNumber = ?");
+          ps = c.prepareStatement("UPDATE bookCopy SET status = ? WHERE copyNo = ? AND callNumber = ?");
 
-		ps.setString(1, status);
-		ps.setString(2, copyNo);
-		ps.setString(3, b.getCallNumber());
-		int rowCount = ps.executeUpdate();
-		if (rowCount == 0) {
-			// Throw Exception
-		}
-		c.commit();
-		ps.close();
+          ps.setString(1, status);
+          ps.setString(2, copyNo);
+          ps.setString(3, b.getCallNumber());
+          ps.executeUpdate();
+		
 	}
 
 	/**
@@ -170,20 +171,14 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public boolean delete() throws SQLException {
-		ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNumber = '?', copyNo = ?");
+          ps = c.prepareStatement("DELETE FROM bookCopy WHERE callNumber = ?"
+                  + " AND copyNo = ?");
 
-		ps.setString(1, b.getCallNumber());
-		ps.setString(2, copyNo);
+          ps.setString(1, b.getCallNumber());
+          ps.setString(2, copyNo);
 
-		int rowCount = ps.executeUpdate();
-		if (rowCount == 0) {
-			// throw exception
-		}
-
-		c.commit();
-		ps.close();
-
-		return false;
+          int rowCount = ps.executeUpdate();
+          return rowCount == 1;
 	}
 
 	/**
@@ -194,21 +189,20 @@ public class BookCopy implements Table {
 	 */
 	@Override
 	public boolean insert() throws SQLException {
-		ps = c.prepareStatement("INSERT INTO BookCopy VALUES (?,?,?)");
+          ps = c.prepareStatement("INSERT INTO BookCopy VALUES (?,?,?)");
+          if (copyNo == null)
+          {
+            String latestCopyNo = getLatestCopyNo();
+            int unusedCopyNoInt = Integer.parseInt(latestCopyNo.substring(1));
+            unusedCopyNoInt++;
+            copyNo = "C" + unusedCopyNoInt;
+          }
+          ps.setString(2, copyNo);
+          ps.setString(1, b.getCallNumber());
+          ps.setString(3, "in");
 
-		ps.setString(1, copyNo);
-		ps.setString(2, b.getCallNumber());
-		ps.setString(3, status);
-
-		int rowCount = ps.executeUpdate();
-		if (rowCount == 0) {
-			// Throw Exception
-		}
-
-		c.commit();
-		ps.close();
-
-		return false;
+          int rowCount = ps.executeUpdate();
+          return rowCount == 1;
 	}
 
 	/**
@@ -219,15 +213,12 @@ public class BookCopy implements Table {
 	@Override
 	public Collection<Table> getAll() throws SQLException {
 		Collection<Table> bc = new ArrayList<Table>();
-		ps = c.prepareStatement("SELECT * FROM BookCopy");
+		PreparedStatement ps = c.prepareStatement("SELECT * FROM BookCopy");
 
-		rs = ps.executeQuery();
+		ResultSet rs = ps.executeQuery();
 
 		while (rs.next()) {
-			Book b = new Book();
-			b.setCallNumber(rs.getString(2));
-			b = (Book) b.get();
-			bc.add(new BookCopy(rs.getString(1), b, rs.getString(3)));
+                  bc.add(new BookCopy(rs));
 		}
 
 		return bc;
@@ -242,6 +233,7 @@ public class BookCopy implements Table {
 	 * @return
 	 * @throws SQLException
 	 */
+        @Deprecated
 	public ResultSetMetaData getMeta() throws SQLException {
 		ps = c.prepareStatement("SELECT * FROM BookCopy");
 
@@ -268,7 +260,7 @@ public class BookCopy implements Table {
 		rs = ps.executeQuery();
 
 		while (rs.next()) {
-			bc.add(new BookCopy(rs.getString(1), b, rs.getString(3)));
+			bc.add(new BookCopy(rs));
 		}
 
 		return bc;
@@ -287,34 +279,27 @@ public class BookCopy implements Table {
 	 * 
 	 */
 	@Override
-	public Table get() throws SQLException {
-                Statement stmt1 = Conn.getInstance().getConnection().createStatement();
-		ResultSet rs = stmt1.executeQuery("SELECT * FROM BookCopy WHERE copyNo ='"+this.b.getCallNumber()
-                        +"' AND callNumber = '" + this.getCopyNo() + "'");
+	public Table get() throws SQLException 
+        {
+          String sql = "SELECT * "
+                  + "FROM BookCopy "
+                  + "WHERE callNumber=? AND copyNo=?";
+          PreparedStatement stat = c.prepareStatement(sql);
+          stat.setString(1, b.getCallNumber());
+          stat.setString(2, copyNo);
+          
 
-//		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ? AND callNumber = ?");
-//		ps.setString(2, this.b.getCallNumber());
-//		ps.setString(1, this.copyNo);
-
-//		rs = ps.executeQuery();
-		if (rs.next()) {
-//			int paramIndex = 1;
-//          
-//                        // call number
-//                        Book book = new Book();
-//                        book.setCallNumber(rs.getString(paramIndex++));
-//                        b = book.get();
-//
-//                        // copy number
-//                        copyNo = rs.getString(paramIndex++);
-//
-//                        // status
-//                        status = rs.getString(paramIndex++);
-                    BookCopy bc = new BookCopy(rs);
-                    return bc;
-		}
-		return null;
-	}
+          ResultSet result = stat.executeQuery();
+          
+          if (result.next()) 
+          {
+            return new BookCopy(result);
+          }
+          else
+          {
+            return null;
+          }
+        }
 
 	// DEPENDING ON CONVENTION, THIS MIGHT BE DEFUNCT
 	/**
@@ -330,6 +315,7 @@ public class BookCopy implements Table {
 	 * @return
 	 * @throws SQLException
 	 */
+        @Deprecated
 	public Table get(String copyNo, Book b) throws SQLException {
 		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ? AND callNumber = ?");
 		ps.setString(2, b.getCallNumber());
@@ -393,8 +379,8 @@ public class BookCopy implements Table {
 	}
 
 	/**
-	 * Gets the latest copy number for the book whose callNumber matches the one
-	 * passed in.
+	 * Gets the latest copy number for the book whose callNumber matches 
+         * this book copy's book's call number
 	 * 
 	 * @param callNumber
 	 *            the unique call number of the book whose copy we are
@@ -407,11 +393,24 @@ public class BookCopy implements Table {
 	public String getLatestCopyNo() throws SQLException {
 		// move this block to BookCopy class and call that method
 		String latestCopyNumber;
-		String sql = "SELECT MAX(copyNo) " + "FROM BookCopy "
-				+ "WHERE callNumber = ?" + "GROUP BY callNumber";
+                
+                String sql = 
+                        "SELECT MAX(mCopyNo) "
+                        + "FROM ( SELECT callNumber, MAX(copyNo) AS mCopyNo, length(copyNo) AS lCopyNo"
+                        + "       FROM BookCopy "
+                        + "       WHERE callNumber = ? "
+                        + "       GROUP BY callNumber, length(copyNo))"
+                        + "WHERE lCopyNo IN "
+                        + "     ( SELECT max(length(copyNo))"
+                        + "       FROM BookCopy "
+                        + "       WHERE callNumber = ?)";
+                
+		/*String sql = "SELECT MAX(copyNo) " + "FROM BookCopy "
+				+ "WHERE callNumber = ?" + "GROUP BY callNumber";*/
 		Connection con = Conn.getInstance().getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setString(1, b.getCallNumber());
+                ps.setString(2, b.getCallNumber());
 		ResultSet rs = ps.executeQuery();
 		latestCopyNumber = (rs.next()) ? rs.getString(1) : null;
 		return latestCopyNumber;
@@ -421,14 +420,17 @@ public class BookCopy implements Table {
         @Override
         public String toString()
         {
-          return null;
+          return "callNumber: " + b.getCallNumber() + '\n'
+                  + "copyNo: " + copyNo + '\n'
+                  + "status: " + status + '\n';
         }
 
         
   public static void main(String[] args) throws Exception {
+     /*
     BookCopy bcget = new BookCopy();
     Book bcgetbook = new Book();
-    bcgetbook.setCallNumber("LP353 N145 1983");
+    bcgetbook.setCallNumber("GV345 R202 1997");
     bcget.setB(bcgetbook);
     bcget.setCopyNo("C1");
     bcget = (BookCopy) bcget.get();
@@ -437,5 +439,60 @@ public class BookCopy implements Table {
     System.out.println(bcget.getB().getTitle());
     System.out.println(bcget.status);
     System.out.println(bcget.copyNo);
+    
+     
+    
+    BookCopy bcupdate = new BookCopy();
+    Book bcupdatebook = new Book();
+    bcupdatebook.setCallNumber("AK315 X383 1999");
+    bcupdate.setB(bcupdatebook);
+    bcupdate.setCopyNo("C2");
+    bcupdate.setStatus("out");
+    bcupdate.update();
+    
+    System.out.println(bcupdate);
+    
+    BookCopy bcinsert = new BookCopy();
+    Book bcinsertbook = new Book();
+    bcinsertbook.setCallNumber("WY273 P213 1986");
+    bcinsert.setB(bcinsertbook);
+    bcinsert.insert();
+    int count = 40;
+    bcinsert.setCopyNo("C"+count);
+    bcinsert.insert();
+    bcinsert.setCopyNo(null);
+    bcinsert.insert();
+    
+    
+    
+    BookCopy bcdel = new BookCopy();
+    Book bcdelbook = new Book();
+    bcdelbook.setCallNumber("WY273 P213 1986");
+    bcdel.setB(bcdelbook);
+    bcdel.setCopyNo("C40");
+    System.out.println(bcdel.delete());
+    bcdel.setCopyNo("C41");
+    
+    System.out.println(bcdel.delete());
+    
+    System.out.println(bcdel.delete());
+    */
+    System.out.println("get all");
+    BookCopy getAll = new BookCopy();
+    Collection<Table> allbcs = getAll.getAll();
+    
+    for (Table t : allbcs)
+    {
+      System.out.println(t);
+    }
+    System.out.println();
+    System.out.println("get all copies of WY273 P213 1986");
+    Book getallbook = new Book();
+    getallbook.setCallNumber("WY273 P213 1986");
+    Collection<Table> allbcsforWY = getAll.getAll(getallbook);
+    for (Table t : allbcsforWY)
+    {
+      System.out.println(t);
+    }
   }
 }

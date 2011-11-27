@@ -12,6 +12,7 @@ import tables.BookCopy;
 import tables.Borrower;
 import tables.BorrowerType;
 import tables.Borrowing;
+import tables.CheckedOutBookCopy;
 import tables.Fine;
 import tables.HasAuthor;
 import tables.HasSubject;
@@ -34,6 +35,16 @@ public class Controller {
   {
     // necessary to initialize the connection to the database
     Conn.getInstance();
+    // silently fail. There will be other chances to flag overdue later.
+    // user doesn't need to worry about it
+    try
+    {
+      (new CheckedOutBookCopy()).flagOverdue();
+    }
+    catch (Exception e)
+    {
+      // do nothing
+    }
   }
   
   public void shutdown()

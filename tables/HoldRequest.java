@@ -189,12 +189,57 @@ public class HoldRequest implements Table {
 	 * 
 	 * Returns a 2-D String representation of the HoldRequest table.
          * 
-         * TODO: see if this can be sped up by cutting out the call to getAll
-         * and just doing a parse from result set to 2d array
 	 */
 	@Override
 	public String[][] display() throws SQLException {
-		String[][] result = null;
+                
+                String sql = "SELECT * FROM HoldRequest";
+                ps = c.prepareStatement(sql);
+                rs = ps.executeQuery();
+                ResultSetMetaData md = rs.getMetaData();
+                int numCols = md.getColumnCount();
+                ArrayList<String[]> requestsGrowable = new ArrayList<String[]>();
+                String[] header = new String[numCols];
+                for (int i = 0; i < numCols; i++)
+                {
+                  header[i] = md.getColumnName(i+1);
+                }
+                requestsGrowable.add(header);
+                
+                int colIndex, paramIndex;
+                while (rs.next())
+                {
+                  String[] row = new String[numCols];
+                  colIndex = 0;
+                  paramIndex = 1;
+                  // hid
+                  row[colIndex++] = ""+rs.getInt(paramIndex++);
+                  
+                  // bid
+                  row[colIndex++] = ""+rs.getInt(paramIndex++);
+                  
+                  //issuedDate
+                  java.sql.Date sqlDate = rs.getDate(paramIndex++);
+                  row[colIndex++] = (sqlDate == null) ?
+                          "null" : sdf.format(sqlDate);
+                  
+                  // callNo
+                  row[colIndex++] = rs.getString(paramIndex++);
+                  
+                  requestsGrowable.add(row);
+                }
+                
+                int numRows = requestsGrowable.size();
+                String[][] requests = new String[numRows][];
+                for (int i = 0; i < numRows; i++)
+                {
+                  requests[i] = requestsGrowable.get(i);
+                }
+                return requests;
+                
+                /*
+                
+                
 		Collection<Table> hrt = getAll();
 
 		ResultSetMetaData md = getMeta();
@@ -229,7 +274,7 @@ public class HoldRequest implements Table {
 
                   i++;
                 } // end while
-		return result;
+		return result;*/
 	}
 
 	/**
@@ -649,6 +694,16 @@ public class HoldRequest implements Table {
           getAllBorrower.setBid(1);
           Collection<Table> hrs3 = hr.getAll(getAllBorrower,getAllBook);
           */
+          
+          String[][] display = hr.display();
+          for (String[] a : display)
+          {
+            for (String b : a)
+            {
+              System.out.print(b + '\t');
+            }
+            System.out.println();
+          }
         }
   
 

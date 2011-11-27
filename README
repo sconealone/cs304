@@ -2,10 +2,11 @@ Next meeting
 
 Work assignments:
 - Mitch:
-  unit tests for HoldRequest
-  unit tests for BookCopy
-  HoldRequest GUI + functionality
-  RemoveBookCopy GUI functionality
+  unit tests for HoldRequest DONE
+  unit tests for BookCopy DONE
+  HoldRequest GUI + functionality DONE 
+  RemoveBookCopy GUI functionality: DONE
+  pay fine logic
 
 -Christian GUI and Functionality :
    -Checkout  
@@ -18,12 +19,11 @@ add copy
 unit tests for book copy
 
 Jenny:
-Search GUI
+Search GUI DONE
 Checkacct gui
 pay fine GUI
 check acct logic
-pay fine logic
-search title author logic
+search title author logic DONE
 
 
 

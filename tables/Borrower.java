@@ -68,6 +68,15 @@ public class Borrower implements Table {
         }
         String t = rs.getString(fieldIndex++);
         type = (rs.wasNull()) ? null : t;
+        
+        PreparedStatement ps = 
+                con.prepareStatement("SELECT bookTimeLimit "
+                                  + "FROM BorrowerType "
+                                  + "WHERE type = ?");
+        ps.setString(1, type);
+        ResultSet timeLimitResultSet = ps.executeQuery();
+        timeLimitResultSet.next();
+        bookTimeLimit = timeLimitResultSet.getInt(1);
     }
 
     
@@ -530,21 +539,17 @@ public class Borrower implements Table {
         return loT;
     }
 
-    public void placeHoldRequest(String isbn) throws SQLException {
-        Book b = new Book();
-        b.setIsbn(isbn);
-        b = b.get();
-        String call = b.getCallNumber();
-
-        Statement stmt = con.createStatement();
-        HoldRequest h;
-        String sql = "INSERT INTO HoldRequest (hid, bid, callNumber, issueDate) "
-                + "VALUES ('RANDHID',"
-                + this.bid
-                + "'"
-                + call
-                + "', GETDATE())";
-        ResultSet rs = stmt.executeQuery(sql);
+    /**
+     * Creates a hold request for the given book by this borrower
+     * @param callNumber the unique call number of the book this borrower wants
+     * @throws SQLException 
+     */
+    public void placeHoldRequest(String callNumber) throws SQLException 
+    {
+        Book book = new Book();
+        book.setCallNumber(callNumber);
+        HoldRequest holdRequest = new HoldRequest(this, book, new GregorianCalendar());
+        holdRequest.insert();
     }
 
     public void payFine(Integer borid, Integer amountInCents)
@@ -575,26 +580,51 @@ public class Borrower implements Table {
         }
     }
 
+    /**
+     * Decides if a borrower account is valid with respect to borrowing a new book.
+     * The borrower's account is valid if none of the following three cases is true.
+     * 1. The borrower has unpaid fines.
+     * 2. The borrower has overdue books.
+     * 3. The borrower's account is expired.
+     * @return
+     * @throws SQLException 
+     */
     public boolean isValid() throws SQLException {
         // if Borrower has unpaid fines
         Statement stmt = con.createStatement();
         String sql = "SELECT B.bid FROM Borrower B WHERE EXISTS "
                 + "(SELECT F.borid FROM Borrowing W, Fine F "
-                + "WHERE B.bid=W.bid AND W.borid=F.borid)";
+                + "WHERE B.bid=W.bid AND W.borid=F.borid) "
+                + "AND B.bid = "+bid;
         ResultSet rs = stmt.executeQuery(sql);
-        if (rs.next()) {
-            int id = rs.getInt(1);
-            if (id == this.bid) {
-                return false;
-            }
+        if (rs.next())
+        {
+          return false;
         }
 
         // if Borrower has overdue books
+        String overdueCheckSql =
+                "SELECT * "
+                + "FROM Borrower B, BookCopy C, Borrowing R "
+                + "WHERE B.bid = ? AND "
+                + " B.bid = R.bid AND "
+                + " R.callNumber = C.callNumber AND "
+                + " R.copyNo = C.copyNo AND "
+                + " C.status = 'overdue'";
+        PreparedStatement overdueCheckStatement = con.prepareStatement(overdueCheckSql);
+        overdueCheckStatement.setInt(1, bid);
+        ResultSet overdueCheckResultSet = overdueCheckStatement.executeQuery();
+        if (overdueCheckResultSet.next())
+        {
+          return false;
+        }
+        
+        /*
         Statement stmt2 = con.createStatement();
         String sql2 = "SELECT B.bid FROM Borrower B WHERE EXISTS "
                 + "(SELECT W.borid FROM Borrowing W, BorrowerType T "
                 + "WHERE B.bid=W.bid AND B.type=T.type AND "
-                + "DATEADD(W.outDate,T.bookTimeLimit,outDate) < Convert(datetime, Convert(int, GetDate())))";
+                + "DATEADD(W.outDate,T.bookTimeLimit,outDate) < Convert(datetime, Convert(int, sysdate())))";
         ResultSet rs2 = stmt2.executeQuery(sql2);
         if (rs2.next()) {
             int id = rs2.getInt(1);
@@ -602,6 +632,16 @@ public class Borrower implements Table {
                 return false;
             }
         }
+         * *
+         */
+        
+        // if Borrower's account is expired
+        if (expiryDate != null && expiryDate.before(new GregorianCalendar()))
+        {
+          return false;
+        }
+        
+        
         return true;
     }
 
@@ -729,4 +769,23 @@ public class Borrower implements Table {
         }
         return twoDArray;
     }
+        
+  public static void main(String[] args) throws Exception {
+    /*
+     * 
+    
+    Borrower borrower = new Borrower();
+    borrower.setBid(1);
+    Book book = new Book();
+    book.setCallNumber("VW88 X392 1996");
+    HoldRequest holdRequest = new HoldRequest(borrower, book, new GregorianCalendar());
+    holdRequest.insert();
+    borrower.placeHoldRequest("VW88 X392 1996");
+     */
+    
+    Borrower borrower = new Borrower();
+    borrower.setBid(2 );
+    borrower = (Borrower) borrower.get();
+    System.out.println(borrower.isValid());
+  }
 }

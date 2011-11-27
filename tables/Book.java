@@ -15,7 +15,7 @@ import users.Conn;
 public class Book implements Table {
 
 
-	//todo: handling not null?
+	
 	private String callNumber;
 	private String isbn;
 	private String title;
@@ -69,11 +69,12 @@ public class Book implements Table {
 	public String[][] display() throws SQLException {
 
 		//credit to mitch for template!   
-		ArrayList<String[]> borrowingGrowable = new ArrayList<String[]>();
+		ArrayList<String[]> bookGrowable = new ArrayList<String[]>();
 
 		PreparedStatement ps = c.prepareStatement("SELECT * FROM Book");
 		ResultSet rs = ps.executeQuery();
-
+                
+                //rs.getMetaData().getColumnCount();
 		ResultSetMetaData md = rs.getMetaData();
 		int numFields = md.getColumnCount();
 		String[] columnNames = new String[numFields];
@@ -81,8 +82,8 @@ public class Book implements Table {
 		{
 			columnNames[i] = md.getColumnName(i + 1);
 		}
-		borrowingGrowable.add(columnNames);
-
+		bookGrowable.add(columnNames);
+               
 		while (rs.next())
 		{
 			String[] row = new String[numFields];
@@ -120,16 +121,17 @@ public class Book implements Table {
 			else row[fieldIndex] = Integer.toString(temp);
 
 
-			borrowingGrowable.add(row);
+			bookGrowable.add(row);
 		} 
 		rs.close();
-		int numRows = borrowingGrowable.size();
-		String[][] borrowing = new String[numRows][];
+                int numRows = bookGrowable.size();
+                
+		String[][] book = new String[numRows][];
 		for (int i = 0; i < numRows; i++)
 		{
-			borrowing[i] = borrowingGrowable.get(i);
+			book[i] = bookGrowable.get(i);
 		}
-		return borrowing;
+		return book;
 	}
 
 	/**
@@ -142,9 +144,10 @@ public class Book implements Table {
 		stmt = c.createStatement();
 
 		//update the corresponding book tuple in the Book Table according to this objects key(callnum)
-		int rows = stmt.executeUpdate( "UPDATE Book SET callNumber = " +callNumber+",isbn = " +isbn+"," +
-				"title = " +title+",mainAuthor = " +mainAuthor+",publisher = " +publisher+",year = " +year+"," +
-				" WHERE callNumber = " +callNumber ) ;
+		String sql = "UPDATE Book SET callNumber = '" +callNumber+"',isbn = '" +isbn+"'," +
+				"title = '" +title+"',mainAuthor = '" +mainAuthor+"',publisher = '" +publisher+"',year = '" +year+"'" +
+				" WHERE callNumber = '" +callNumber+"'";
+		int rows = stmt.executeUpdate( sql ) ;
 	}
 
 
@@ -157,11 +160,27 @@ public class Book implements Table {
 	@Override
 	public boolean delete() throws SQLException {
 		stmt = c.createStatement();
-		int rowModified = stmt.executeUpdate("DELETE FROM Book WHERE callNumber = "+ callNumber);
+		int rowModified = stmt.executeUpdate("DELETE FROM Book WHERE callNumber = '"+ callNumber+"'");
 		if(rowModified == 1) return true;
 		else return false;
 		
 	}
+        
+       /**
+         * pre: no requirements
+         * 
+         * @return true if the tuple associated with this objects call number exist in the database 
+         */
+        public boolean checkExists() throws SQLException{
+            Statement stmt1 = c.createStatement();
+            String sql = "Select * FROM Book WHERE callNumber = '" + callNumber + "'";
+            ResultSet rs = stmt1.executeQuery(sql);
+            if (!rs.next() ) {
+                 System.out.println("no data fr call number "+ callNumber);
+                 return false;
+            }
+            return true;
+        }
 
 
 	@Override
@@ -191,11 +210,9 @@ public class Book implements Table {
 
 		for(int i=0;i<subjects.size();i++){
 		HasSubject hS = new HasSubject(subjects.get(i),callNumber);
-			i++;
 		}
 		for(int i=0;i<authors.size();i++){
 			HasAuthor hA = new HasAuthor(authors.get(i),callNumber);
-			i++;
 		}
 		return true;
 
@@ -213,12 +230,13 @@ public class Book implements Table {
 	}
 
 	/**
+         * Pre: there must be a valid call number in this object
 	 * return the Book tuple corresponding to the callNumber field in this book object updated with the DB values
 	 * @throws SQLException 
 	 */
 	@Override
 	public Book get() throws SQLException {
-		Statement stmt1 = Conn.getInstance().getConnection().createStatement();
+		Statement stmt1 = c.createStatement();
 		ResultSet rs = stmt1.executeQuery("SELECT * FROM Book WHERE callNumber ='"+callNumber+"'");
 
 		if(rs!=null && rs.next()){
@@ -228,12 +246,8 @@ public class Book implements Table {
 			mainAuthor = rs.getString(4);
 			publisher = rs.getString(5);
 			year = rs.getInt(6);
-
-			//how to handle authors/subjects?
-			//c.close();
 			return this;
 		}
-
 		return this;
 	}
 

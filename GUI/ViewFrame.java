@@ -4,13 +4,18 @@
  */
 package GUI;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -21,7 +26,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import tables.Book;
+import tables.BookCopy;
 import tables.Borrower;
+import tables.HasAuthor;
+import tables.HasSubject;
+import users.Conn;
 /*
  * ViewFrame.java
  *
@@ -117,8 +126,6 @@ public class ViewFrame extends javax.swing.JFrame {
         payFineBoridTextField = new javax.swing.JTextField();
         payFineAmtLabel = new javax.swing.JLabel();
         payFineAmtTextField = new javax.swing.JTextField();
-        holdRequestPanel = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
         checkOutPanel = new javax.swing.JPanel();
         checkOutFieldsPanel = new javax.swing.JPanel();
         checkOutLabelBorid = new javax.swing.JLabel();
@@ -192,6 +199,7 @@ public class ViewFrame extends javax.swing.JFrame {
         abSubs = new javax.swing.JTextField();
         abSpinnerLabel = new javax.swing.JLabel();
         abSpinner = new javax.swing.JSpinner();
+        abStatusPanel = new javax.swing.JPanel();
         abOpStatusLabel = new javax.swing.JLabel();
         abOpStatus = new javax.swing.JTextField();
         addNewCopyPanel = new javax.swing.JPanel();
@@ -231,6 +239,7 @@ public class ViewFrame extends javax.swing.JFrame {
         checkedOutReportTablePanel = new javax.swing.JPanel();
         checkedOutReportTablePane = new javax.swing.JScrollPane();
         checkedOutReportTable = new javax.swing.JTable();
+        holdRequestPanel = new GUI.PlaceHoldRequestPanel();
         buttonPanel = new javax.swing.JPanel();
         doButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
@@ -415,13 +424,6 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(payFinePanel, "Pay a fine");
 
-        holdRequestPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel5.setText("hold request");
-        holdRequestPanel.add(jLabel5, java.awt.BorderLayout.CENTER);
-
-        cardPanel.add(holdRequestPanel, "Place hold request");
-
         checkOutFieldsPanel.setLayout(new java.awt.GridLayout(3, 3));
 
         checkOutLabelBorid.setText("Borrower's Card Number");
@@ -576,7 +578,7 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(checkOverduePanel, "Check overdue books");
 
-        addNewBookPanel.setLayout(new java.awt.BorderLayout());
+        addNewBookPanel.setLayout(new java.awt.BorderLayout(0, 30));
 
         abMainLabel.setText("Add New Book:  * = required, & = deliniate with commas");
         addNewBookPanel.add(abMainLabel, java.awt.BorderLayout.PAGE_START);
@@ -651,6 +653,8 @@ public class ViewFrame extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         abMainPanel.add(abYearLabel, gridBagConstraints);
+
+        abYear.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 5;
@@ -689,18 +693,21 @@ public class ViewFrame extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         abMainPanel.add(abSpinner, gridBagConstraints);
 
+        addNewBookPanel.add(abMainPanel, java.awt.BorderLayout.LINE_START);
+
+        abStatusPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
         abOpStatusLabel.setText("Operation Status");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
-        abMainPanel.add(abOpStatusLabel, gridBagConstraints);
+        abStatusPanel.add(abOpStatusLabel);
 
         abOpStatus.setText("Waiting for Input...");
-        abMainPanel.add(abOpStatus);
+        abOpStatus.setPreferredSize(new java.awt.Dimension(350, 28));
+        abStatusPanel.add(abOpStatus);
 
-        addNewBookPanel.add(abMainPanel, java.awt.BorderLayout.WEST);
+        addNewBookPanel.add(abStatusPanel, java.awt.BorderLayout.PAGE_END);
 
         cardPanel.add(addNewBookPanel, "Add new book");
 
@@ -726,7 +733,7 @@ public class ViewFrame extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         abcMainPanel.add(abcCN, gridBagConstraints);
 
-        abcSpinner.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), null, Integer.valueOf(1000), Integer.valueOf(1)));
+        abcSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 1000, 1));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -892,6 +899,7 @@ public class ViewFrame extends javax.swing.JFrame {
         checkedOutReportPanel.add(checkedOutReportTablePanel, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(checkedOutReportPanel, "Checked-out report");
+        cardPanel.add(holdRequestPanel, "Place hold request");
 
         mainPanel.add(cardPanel, java.awt.BorderLayout.CENTER);
 
@@ -1310,6 +1318,29 @@ public class ViewFrame extends javax.swing.JFrame {
           }
         break;
       case HOLD_REQUEST:
+        try
+        {
+          controller.getSystemBorrower().setBid(holdRequestPanel.getBid());
+          controller.getSystemBorrower().placeHoldRequest(holdRequestPanel.getCallNumber());
+          String holdRequestSuccessMessage = "Your hold request has been placed.  You will be informed when the book is ready.";
+          JOptionPane.showMessageDialog(this, holdRequestSuccessMessage, "Success", JOptionPane.INFORMATION_MESSAGE);
+          holdRequestPanel.clear();
+        }
+        catch (NumberFormatException nfe)
+        {
+          String holdRequestBidErrorMessage = "Invalid account ID.\nYour account ID is the number found on your library card.";
+          JOptionPane.showMessageDialog(this, holdRequestBidErrorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        catch (SQLException e)
+        {
+          String holdRequestErrorMessage = "Cannot place hold request at this time. Please try again later.\n"
+                  + e.getMessage();
+          JOptionPane.showMessageDialog(this, holdRequestErrorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        finally
+        {
+          controller.getSystemBorrower().setBid(-1);
+        }
         break;
       case PAY_FINE:
           try {
@@ -1351,29 +1382,170 @@ public class ViewFrame extends javax.swing.JFrame {
       case PROCESS_RETURN:
         break;
       case ADD_BOOK:
+          //check user input using a regular expression
+          abOpStatus.setForeground(Color.BLACK);
+          abOpStatus.setBackground(Color.WHITE);
+          abOpStatus.setText("...");
+          String regex = "[0-9]+";
+          if(!abYear.getText().matches(regex)){
+              abOpStatus.setText("Year Must be A number");
+              abOpStatus.setBackground(Color.RED);
+              break;
+          }
+          String[][] testTable;
+          Book testExistanceBook = new Book();
+          try {
+              testTable = testExistanceBook.display();
+          } catch (SQLException ex) {
+              Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
+              //tell  user
+              abOpStatus.setText("fatal database exception");
+              abOpStatus.setBackground(Color.RED);
+              break;
+          }
+          int rows = testTable.length;
+          String testableCN = abCN.getSelectedText();
+          boolean bookExists = false;
+          if(rows>0){
+              for(int i =0; i<rows; i++){
+                  if(testTable[i][0].equals(testableCN)){
+                      bookExists = true;
+                  }
+              }
+          }
+          
+          if(bookExists){
+              abOpStatus.setText("Book Exists");
+              abOpStatus.setForeground(Color.red);
+              break;
+          }
+          
+          
+          //create the bopk object with user input
           Book b = new Book();
           b.setCallNumber(abCN.getText());
           b.setIsbn(abISBN.getText());
-          b.setMainAuthor(abMainAuthorLabel.getName());
+          b.setMainAuthor(abMA.getText());
           b.setTitle(abTitle.getText());
           b.setPublisher(abPub.getText());
           b.setYear(Integer.parseInt(abYear.getText()));
+          
           // add additional authors
           String aa = abAA.getText();
+          //deliniate the string into sep. objects
           String[] aaArray = aa.split(",",0);
+          //create the array list from string[]
+          ArrayList<String> aLAA = new ArrayList<String>();
+          for(int i =0; i<aaArray.length;i++){
+              aLAA.add(aaArray[i]);
+          }
+          //set the book objects array list of additional authors
+          b.setAuthors(aLAA);
+          
           // add additional subjects
           String subs = abSubs.getText();
+          //deliniateString
+          String[] subsArray = subs.split(",");
+          ArrayList<String> aLSubs = new ArrayList<String>();
+          //create the array list from string[]
+          for(int i =0; i<subsArray.length;i++){
+              aLSubs.add(subsArray[i]);
+          }
+          //set the book objects array list of  subjects
+          b.setSubjects(aLSubs);
+          
+          //try inserting the book into the database ( which also inserts the subjects and authors)
+          try {
+              b.insert();
+          } catch (SQLException ex) {
+              Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
+              abOpStatus.setForeground(Color.red);
+              abOpStatus.setText("error: "+ ex.getErrorCode());
+          }
+          
           //add book copies
           Object copiesAmount = abSpinner.getValue();
           int test = Integer.parseInt(copiesAmount.toString());
-        break;
+          for(int i =0; i<test;i++){
+              try {
+                  BookCopy bC = new BookCopy("C"+Integer.toString(i),b,"in");
+                  bC.insert();
+              } catch (SQLException ex) {
+                  Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
+                  System.out.println(ex.getMessage());
+                  abOpStatus.setForeground(Color.red);
+                  abOpStatus.setText("error: "+ ex.getErrorCode());
+                  break;
+              }
+          }
+          //clean up UI
+          String clear = "";
+          abOpStatus.setBackground(Color.green);
+          abOpStatus.setText(abSpinner.getValue().toString() + " copies of the Book with callnumber " + abCN.getText() + " have been added! ");
+          abCN.setText(clear);
+          abISBN.setText(clear);
+          abTitle.setText(clear);
+          abMA.setText(clear);
+          abPub.setText(clear);
+          abYear.setText(clear);
+          abAA.setText(clear);
+          abSubs.setText(clear);
+          abSpinner.setValue(1);
+          
+          break;
       case ADD_COPY:
-        break;
+          Book b1 = new Book();
+          b1.setCallNumber(abcCN.getText());
+          BookCopy bC1 = new BookCopy();
+          bC1.setB(b1);
+          bC1.setStatus("in");
+          
+          
+          //fetch the last copy number given the above call number
+          String lastCopyNumber;
+          try {
+              lastCopyNumber = bC1.getLatestCopyNo();
+          } catch (SQLException ex) {
+              Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
+              //prompt the user with popup box
+              String admin = "It seems there is something wrong with the Database. :( Contact your administrator";
+              JOptionPane.showMessageDialog(this, admin, "Manual", JOptionPane.INFORMATION_MESSAGE);
+              break;
+          }
+          if(lastCopyNumber==null) {
+              //promptuser
+              String admin = "It looks like this book doesn't exist in database. Please add book first";
+              JOptionPane.showMessageDialog(this, admin, "Manual", JOptionPane.INFORMATION_MESSAGE);
+              break;
+          }
+          
+          
+          int lastCopyNum = Integer.parseInt(lastCopyNumber.substring(1));
+          int numCopiesToAdd = Integer.parseInt(abcSpinner.getValue().toString());
+          
+          for(int i =0; i< numCopiesToAdd;i++){
+              int newCopyNum = lastCopyNum + i +1;
+              bC1.setCopyNo("C" + newCopyNum);
+              try {
+                  bC1.insert();
+              } catch (SQLException ex) {
+                  Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
+                  //prompt user of catastrophic error
+                  String admin1 = "It seems there is something wrong with the Database. :( Contact your administrator";
+                  JOptionPane.showMessageDialog(this, admin1, "Manual", JOptionPane.INFORMATION_MESSAGE);
+                  break;
+              }
+          }
+          //prompt user of success
+          System.out.println("book copy success!");
+          String success = "Success!";
+          JOptionPane.showMessageDialog(this, success, "Manual", JOptionPane.INFORMATION_MESSAGE);
+          break;
       case REMOVE_BOOK:
         String removeBookCallNumber = 
-                removeBookPrimaryNoTextField.getText().trim() + ' '
-                + removeBookSecondaryNoTextField.getText().trim() + ' '
-                + removeBookYearTextField.getText().trim();
+                removeBookPrimaryNoTextField.getText().trim().toUpperCase() + ' '
+                + removeBookSecondaryNoTextField.getText().trim().toUpperCase() + ' '
+                + removeBookYearTextField.getText().trim().toUpperCase();
         
         try
         {
@@ -1440,7 +1612,7 @@ public class ViewFrame extends javax.swing.JFrame {
               return;
             }
 
-            if (controller.getSystemLibrarian().removeBook(removeBookCallNumber))
+            if (controller.getSystemLibrarian().removeBookCopy(removeBookCallNumber, mapCopyNumberIntsToCopyNumberStrings(copyNumbersToRemove)))
             {
               String msg = "Copies successfully removed.";
               JOptionPane.showMessageDialog(this, msg, "Success", JOptionPane.PLAIN_MESSAGE);
@@ -1451,6 +1623,7 @@ public class ViewFrame extends javax.swing.JFrame {
               JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
               return;
             }
+            clearButtonActionPerformed(null);
           }
         } // end try
         catch (SQLException e)
@@ -1711,6 +1884,7 @@ public class ViewFrame extends javax.swing.JFrame {
       case CHECK_ACCOUNT:
         break;
       case HOLD_REQUEST:
+        holdRequestPanel.clear();
         break;
       case PAY_FINE:
         break;
@@ -1727,6 +1901,10 @@ public class ViewFrame extends javax.swing.JFrame {
       case ADD_COPY:
         break;
       case REMOVE_BOOK:
+        removeBookPrimaryNoTextField.setText("");
+        removeBookSecondaryNoTextField.setText("");
+        removeBookYearTextField.setText("");
+        removeBookWhichCopiesTextField.setText("");
         break;
       case REMOVE_BORROWER:
         removeBorrowerTextField.setText("");
@@ -1912,6 +2090,7 @@ private void addBorrowerComboBoxTypeActionPerformed(java.awt.event.ActionEvent e
     private javax.swing.JLabel abPubLabel;
     private javax.swing.JSpinner abSpinner;
     private javax.swing.JLabel abSpinnerLabel;
+    private javax.swing.JPanel abStatusPanel;
     private javax.swing.JTextField abSubs;
     private javax.swing.JLabel abSubsLabel;
     private javax.swing.JTextField abTitle;
@@ -1991,8 +2170,7 @@ private void addBorrowerComboBoxTypeActionPerformed(java.awt.event.ActionEvent e
     private javax.swing.JTable finesTable;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
-    private javax.swing.JPanel holdRequestPanel;
-    private javax.swing.JLabel jLabel5;
+    private GUI.PlaceHoldRequestPanel holdRequestPanel;
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
@@ -2113,4 +2291,22 @@ private void addBorrowerComboBoxTypeActionPerformed(java.awt.event.ActionEvent e
     private static final String REPORT_POPULAR="Popular books report";
     private static final String REPORT_CHECKED_OUT="Checked-out report";
     private JSplitPane splitPane;
+    
+    /**
+     * Changes a an integer representation of a copy number to a string
+     * representation
+     * i.e. 1 becomes C1
+     * @param copyNumbersAsInts
+     * @return 
+     */
+    private static String[] mapCopyNumberIntsToCopyNumberStrings(int[] copyNumbersAsInts)
+    {
+      int numCopyNumbers = copyNumbersAsInts.length;
+      String[] copyNumbersAsStrings = new String[numCopyNumbers];
+      for (int i = 0; i < numCopyNumbers; i++)
+      {
+        copyNumbersAsStrings[i] = "C" + copyNumbersAsInts[i];
+      }
+      return copyNumbersAsStrings;
+    }
 }
