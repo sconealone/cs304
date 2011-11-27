@@ -4,8 +4,9 @@ Work assignments:
 - Mitch:
   unit tests for HoldRequest DONE
   unit tests for BookCopy DONE
-  HoldRequest GUI + functionality
-  RemoveBookCopy GUI functionality
+  HoldRequest GUI DONE 
+    + functionality: waiting for everyone to be together so we can synchronize viewframe updates
+  RemoveBookCopy GUI functionality: need to fix a bug where i call the wrong remove method
 
 -Christian GUI and Functionality :
    -Checkout  

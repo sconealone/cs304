@@ -68,6 +68,15 @@ public class Borrower implements Table {
         }
         String t = rs.getString(fieldIndex++);
         type = (rs.wasNull()) ? null : t;
+        
+        PreparedStatement ps = 
+                con.prepareStatement("SELECT bookTimeLimit "
+                                  + "FROM BorrowerType "
+                                  + "WHERE type = ?");
+        ps.setString(1, type);
+        ResultSet timeLimitResultSet = ps.executeQuery();
+        timeLimitResultSet.next();
+        bookTimeLimit = timeLimitResultSet.getInt(1);
     }
 
     
@@ -530,21 +539,17 @@ public class Borrower implements Table {
         return loT;
     }
 
-    public void placeHoldRequest(String isbn) throws SQLException {
-        Book b = new Book();
-        b.setIsbn(isbn);
-        b = b.get();
-        String call = b.getCallNumber();
-
-        Statement stmt = con.createStatement();
-        HoldRequest h;
-        String sql = "INSERT INTO HoldRequest (hid, bid, callNumber, issueDate) "
-                + "VALUES ('RANDHID',"
-                + this.bid
-                + "'"
-                + call
-                + "', GETDATE())";
-        ResultSet rs = stmt.executeQuery(sql);
+    /**
+     * Creates a hold request for the given book by this borrower
+     * @param callNumber the unique call number of the book this borrower wants
+     * @throws SQLException 
+     */
+    public void placeHoldRequest(String callNumber) throws SQLException 
+    {
+        Book book = new Book();
+        book.setCallNumber(callNumber);
+        HoldRequest holdRequest = new HoldRequest(this, book, new GregorianCalendar());
+        holdRequest.insert();
     }
 
     public void payFine(Integer borid, Integer amountInCents)
@@ -594,7 +599,7 @@ public class Borrower implements Table {
         String sql2 = "SELECT B.bid FROM Borrower B WHERE EXISTS "
                 + "(SELECT W.borid FROM Borrowing W, BorrowerType T "
                 + "WHERE B.bid=W.bid AND B.type=T.type AND "
-                + "DATEADD(W.outDate,T.bookTimeLimit,outDate) < Convert(datetime, Convert(int, GetDate())))";
+                + "DATEADD(W.outDate,T.bookTimeLimit,outDate) < Convert(datetime, Convert(int, sysdate())))";
         ResultSet rs2 = stmt2.executeQuery(sql2);
         if (rs2.next()) {
             int id = rs2.getInt(1);
@@ -729,4 +734,11 @@ public class Borrower implements Table {
         }
         return twoDArray;
     }
+        
+  public static void main(String[] args) throws Exception {
+    Borrower borrower = new Borrower();
+    borrower.setBid(1);
+    borrower = (Borrower) borrower.get();
+    System.out.println(borrower.isValid());
+  }
 }

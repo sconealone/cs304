@@ -1527,9 +1527,9 @@ public class ViewFrame extends javax.swing.JFrame {
           break;
       case REMOVE_BOOK:
         String removeBookCallNumber = 
-                removeBookPrimaryNoTextField.getText().trim() + ' '
-                + removeBookSecondaryNoTextField.getText().trim() + ' '
-                + removeBookYearTextField.getText().trim();
+                removeBookPrimaryNoTextField.getText().trim().toUpperCase() + ' '
+                + removeBookSecondaryNoTextField.getText().trim().toUpperCase() + ' '
+                + removeBookYearTextField.getText().trim().toUpperCase();
         
         try
         {
@@ -1596,7 +1596,7 @@ public class ViewFrame extends javax.swing.JFrame {
               return;
             }
 
-            if (controller.getSystemLibrarian().removeBook(removeBookCallNumber))
+            if (controller.getSystemLibrarian().removeBookCopy(removeBookCallNumber, mapCopyNumberIntsToCopyNumberStrings(copyNumbersToRemove)))
             {
               String msg = "Copies successfully removed.";
               JOptionPane.showMessageDialog(this, msg, "Success", JOptionPane.PLAIN_MESSAGE);
@@ -1607,6 +1607,7 @@ public class ViewFrame extends javax.swing.JFrame {
               JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
               return;
             }
+            clearButtonActionPerformed(null);
           }
         } // end try
         catch (SQLException e)
@@ -1883,6 +1884,10 @@ public class ViewFrame extends javax.swing.JFrame {
       case ADD_COPY:
         break;
       case REMOVE_BOOK:
+        removeBookPrimaryNoTextField.setText("");
+        removeBookSecondaryNoTextField.setText("");
+        removeBookYearTextField.setText("");
+        removeBookWhichCopiesTextField.setText("");
         break;
       case REMOVE_BORROWER:
         removeBorrowerTextField.setText("");
@@ -2270,4 +2275,22 @@ private void addBorrowerComboBoxTypeActionPerformed(java.awt.event.ActionEvent e
     private static final String REPORT_POPULAR="Popular books report";
     private static final String REPORT_CHECKED_OUT="Checked-out report";
     private JSplitPane splitPane;
+    
+    /**
+     * Changes a an integer representation of a copy number to a string
+     * representation
+     * i.e. 1 becomes C1
+     * @param copyNumbersAsInts
+     * @return 
+     */
+    private static String[] mapCopyNumberIntsToCopyNumberStrings(int[] copyNumbersAsInts)
+    {
+      int numCopyNumbers = copyNumbersAsInts.length;
+      String[] copyNumbersAsStrings = new String[numCopyNumbers];
+      for (int i = 0; i < numCopyNumbers; i++)
+      {
+        copyNumbersAsStrings[i] = "C" + copyNumbersAsInts[i];
+      }
+      return copyNumbersAsStrings;
+    }
 }

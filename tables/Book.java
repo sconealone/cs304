@@ -158,8 +158,8 @@ public class Book implements Table {
 	 */
 	@Override
 	public boolean delete() throws SQLException {
-		Statement stmt1 = c.createStatement();
-		int rowModified = stmt1.executeUpdate("DELETE FROM Book WHERE callNumber = "+ callNumber);
+		stmt = c.createStatement();
+		int rowModified = stmt.executeUpdate("DELETE FROM Book WHERE callNumber = '"+ callNumber+"'");
 		if(rowModified == 1) return true;
 		else return false;
 		
