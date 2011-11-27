@@ -393,11 +393,24 @@ public class BookCopy implements Table {
 	public String getLatestCopyNo() throws SQLException {
 		// move this block to BookCopy class and call that method
 		String latestCopyNumber;
-		String sql = "SELECT MAX(copyNo) " + "FROM BookCopy "
-				+ "WHERE callNumber = ?" + "GROUP BY callNumber";
+                
+                String sql = 
+                        "SELECT MAX(mCopyNo) "
+                        + "FROM ( SELECT callNumber, MAX(copyNo) AS mCopyNo, length(copyNo) AS lCopyNo"
+                        + "       FROM BookCopy "
+                        + "       WHERE callNumber = ? "
+                        + "       GROUP BY callNumber, length(copyNo))"
+                        + "WHERE lCopyNo IN "
+                        + "     ( SELECT max(length(copyNo))"
+                        + "       FROM BookCopy "
+                        + "       WHERE callNumber = ?)";
+                
+		/*String sql = "SELECT MAX(copyNo) " + "FROM BookCopy "
+				+ "WHERE callNumber = ?" + "GROUP BY callNumber";*/
 		Connection con = Conn.getInstance().getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		ps.setString(1, b.getCallNumber());
+                ps.setString(2, b.getCallNumber());
 		ResultSet rs = ps.executeQuery();
 		latestCopyNumber = (rs.next()) ? rs.getString(1) : null;
 		return latestCopyNumber;
@@ -435,21 +448,32 @@ public class BookCopy implements Table {
     bcupdate.setStatus("out");
     bcupdate.update();
     
-    System.out.println(bcupdate);*/
+    System.out.println(bcupdate);
     
     BookCopy bcinsert = new BookCopy();
     Book bcinsertbook = new Book();
     bcinsertbook.setCallNumber("WY273 P213 1986");
     bcinsert.setB(bcinsertbook);
     bcinsert.insert();
-    int count = 18;
+    int count = 40;
     bcinsert.setCopyNo("C"+count);
     bcinsert.insert();
     bcinsert.setCopyNo(null);
     bcinsert.insert();
     
+    */
     
+    BookCopy bcdel = new BookCopy();
+    Book bcdelbook = new Book();
+    bcdelbook.setCallNumber("WY273 P213 1986");
+    bcdel.setB(bcdelbook);
+    bcdel.setCopyNo("C40");
+    System.out.println(bcdel.delete());
+    bcdel.setCopyNo("C41");
     
+    System.out.println(bcdel.delete());
+    
+    System.out.println(bcdel.delete());
     
     
   }
