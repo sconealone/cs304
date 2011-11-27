@@ -583,6 +583,7 @@ public class ViewFrame extends javax.swing.JFrame {
         abMainLabel.setText("Add New Book:  * = required, & = deliniate with commas");
         addNewBookPanel.add(abMainLabel, java.awt.BorderLayout.PAGE_START);
 
+        abMainPanel.setPreferredSize(new java.awt.Dimension(500, 252));
         abMainPanel.setLayout(new java.awt.GridBagLayout());
 
         abCNLabel.setText("CallNumber  (*)");
@@ -594,8 +595,10 @@ public class ViewFrame extends javax.swing.JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 50;
+        gridBagConstraints.ipadx = 300;
         abMainPanel.add(abCN, gridBagConstraints);
 
         abISBNLabel.setText("ISBN (*)");
@@ -704,7 +707,7 @@ public class ViewFrame extends javax.swing.JFrame {
         abStatusPanel.add(abOpStatusLabel);
 
         abOpStatus.setText("Waiting for Input...");
-        abOpStatus.setPreferredSize(new java.awt.Dimension(350, 28));
+        abOpStatus.setPreferredSize(new java.awt.Dimension(500, 28));
         abStatusPanel.add(abOpStatus);
 
         addNewBookPanel.add(abStatusPanel, java.awt.BorderLayout.PAGE_END);
@@ -1351,7 +1354,7 @@ public class ViewFrame extends javax.swing.JFrame {
               Borrower b = new Borrower();
               b.setBid(Integer.parseInt(bidField));
               b = b.get();
-              b.payFine(Integer.parseInt(boridField), Integer.parseInt(amtField));
+              //b.payFine(Integer.parseInt(boridField), Integer.parseInt(amtField));
               
               payFineMsgLabel.repaint();
           }
@@ -1386,39 +1389,45 @@ public class ViewFrame extends javax.swing.JFrame {
           abOpStatus.setForeground(Color.BLACK);
           abOpStatus.setBackground(Color.WHITE);
           abOpStatus.setText("...");
-          String regex = "[0-9]+";
-          if(!abYear.getText().matches(regex)){
+          
+          
+          String regex1 = "([0-9]+|[a-z]+|[A-Z]+|[\\s]+|,+)+";
+          if(!abCN.getText().matches(regex1) ||
+                  !abCN.getText().matches(regex1) ||
+                  !abISBN.getText().matches(regex1) ||
+                  !abTitle.getText().matches(regex1) ||
+                  !abMA.getText().matches(regex1) ||
+                  !abPub.getText().matches(regex1) ||
+                  !abYear.getText().matches(regex1) ||
+                  !abAA.getText().matches(regex1) ||
+                  !abSubs.getText().matches(regex1) ||
+                  !abSpinner.getValue().toString().matches(regex1)){
+          abOpStatus.setForeground(Color.RED);
+          abOpStatus.setBackground(Color.WHITE);
+          abOpStatus.setText("Looks like you have bad input, please check again");
+          break;
+          }
+          String onlyNumberRegex = "[0-9]+";
+          if(!abYear.getText().matches(onlyNumberRegex)){
               abOpStatus.setText("Year Must be A number");
               abOpStatus.setBackground(Color.RED);
               break;
           }
-          String[][] testTable;
-          Book testExistanceBook = new Book();
-          try {
-              testTable = testExistanceBook.display();
-          } catch (SQLException ex) {
-              Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
-              //tell  user
-              abOpStatus.setText("fatal database exception");
-              abOpStatus.setBackground(Color.RED);
-              break;
-          }
-          int rows = testTable.length;
-          String testableCN = abCN.getSelectedText();
-          boolean bookExists = false;
-          if(rows>0){
-              for(int i =0; i<rows; i++){
-                  if(testTable[i][0].equals(testableCN)){
-                      bookExists = true;
-                  }
-              }
-          }
-          
-          if(bookExists){
-              abOpStatus.setText("Book Exists");
-              abOpStatus.setForeground(Color.red);
-              break;
-          }
+
+           Book bTest = new Book();
+          bTest.setCallNumber(abCN.getText());
+        try {
+            if(bTest.checkExists()){
+                abOpStatus.setText("Book Exists");
+                abOpStatus.setForeground(Color.red);
+                break;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
+             abOpStatus.setText("Sql exception");
+             abOpStatus.setForeground(Color.red);
+             break;
+        }
           
           
           //create the bopk object with user input
@@ -1461,6 +1470,7 @@ public class ViewFrame extends javax.swing.JFrame {
               Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
               abOpStatus.setForeground(Color.red);
               abOpStatus.setText("error: "+ ex.getErrorCode());
+              break;
           }
           
           //add book copies
@@ -1518,7 +1528,6 @@ public class ViewFrame extends javax.swing.JFrame {
               JOptionPane.showMessageDialog(this, admin, "Manual", JOptionPane.INFORMATION_MESSAGE);
               break;
           }
-          
           
           int lastCopyNum = Integer.parseInt(lastCopyNumber.substring(1));
           int numCopiesToAdd = Integer.parseInt(abcSpinner.getValue().toString());

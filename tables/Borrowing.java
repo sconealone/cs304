@@ -514,7 +514,7 @@ public class Borrowing implements Table {
 		 * // getall Collection<Table> allBorrowings = b.getAll();
 		 * Iterator<Table> i = allBorrowings.iterator(); while (i.hasNext()) {
 		 * System.out.println(((Borrowing) i.next()) + "\n"); }
-		 */
+		 
 		// insert
 		b.borid = -1;
 		b.borr = new Borrower();
@@ -530,6 +530,10 @@ public class Borrowing implements Table {
 			System.out.println("auto-generated key: " + b.borid);
 		} else {
 			System.out.println("test failed, not inserted");
-		}
+		}*/
+                Borrowing borrowinget = new Borrowing();
+                borrowinget.setBorid(1);
+                borrowinget = (Borrowing) borrowinget.get();
+                System.out.println(borrowinget);
 	}
 }

@@ -104,7 +104,7 @@ public class Conn {
   private void connect(String username, String password)
   {
       int attemptCount = 0;
-      while (attemptCount < 3)
+      while (attemptCount < 1)
       {
         try 
         {
@@ -122,7 +122,7 @@ public class Conn {
           JOptionPane.showMessageDialog(null, "Can't connect to Oracle.\nSet SSH tunnel.", "Error", JOptionPane.ERROR_MESSAGE);
         }
       }
-      if (attemptCount >= 3)
+      if (attemptCount >= 1)
       {
         JOptionPane.showMessageDialog(null, "Too many failed attempts.\nExiting.", "Error", JOptionPane.ERROR_MESSAGE);
         System.exit(-1);
