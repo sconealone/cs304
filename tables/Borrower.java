@@ -838,6 +838,6 @@ public class Borrower implements Table {
     catch (NoPaymentException e)
     {
       System.out.println("good caught exception "+e.getMessage());
-    }
-  }*/
+    }*/
+  }
 }
