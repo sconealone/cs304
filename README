@@ -3,7 +3,7 @@ Next meeting
 Work assignments:
 - Mitch:
   unit tests for HoldRequest DONE
-  unit tests for BookCopy get, display, insert, delete work. Do not add more than 10 copies for now.
+  unit tests for BookCopy DONE
   HoldRequest GUI + functionality
   RemoveBookCopy GUI functionality
 
