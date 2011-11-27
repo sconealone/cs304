@@ -599,7 +599,7 @@ public class Borrower implements Table {
         String sql2 = "SELECT B.bid FROM Borrower B WHERE EXISTS "
                 + "(SELECT W.borid FROM Borrowing W, BorrowerType T "
                 + "WHERE B.bid=W.bid AND B.type=T.type AND "
-                + "DATEADD(W.outDate,T.bookTimeLimit,outDate) < Convert(datetime, Convert(int, GetDate())))";
+                + "DATEADD(W.outDate,T.bookTimeLimit,outDate) < Convert(datetime, Convert(int, sysdate())))";
         ResultSet rs2 = stmt2.executeQuery(sql2);
         if (rs2.next()) {
             int id = rs2.getInt(1);
@@ -734,4 +734,11 @@ public class Borrower implements Table {
         }
         return twoDArray;
     }
+        
+  public static void main(String[] args) throws Exception {
+    Borrower borrower = new Borrower();
+    borrower.setBid(1);
+    borrower = (Borrower) borrower.get();
+    System.out.println(borrower.isValid());
+  }
 }
