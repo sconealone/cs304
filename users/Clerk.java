@@ -105,7 +105,7 @@ public class Clerk {
             bookCopy.setB(book);
             bookCopy.setCopyNo(copyNos[i]);
             bookCopy = (BookCopy) bookCopy.get();
-            if (bookCopy.getStatus().equals("in")) 
+            if (bookCopy.getStatus().equals("in") || bookCopy.getStatus().equals("on-hold")) 
             {
               bookCopy.setStatus("out");
               bookCopy.update();
@@ -162,6 +162,7 @@ public class Clerk {
             row[DUEDATE] = df.format(borrowing.getDueDate().getTime());
             borrowingReceipt[i] = row;
           }
+          connection.commit();
           return borrowingReceipt;
         }
         else
@@ -169,10 +170,11 @@ public class Clerk {
           String msg = "This borrower is not valid.";
           throw new InvalidBorrowerException(msg);
         }
+        
       } // end try
       finally
       {
-        connection.commit();
+        connection.rollback();
         connection.setAutoCommit(true);
       }
     }
