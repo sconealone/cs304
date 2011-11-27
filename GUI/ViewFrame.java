@@ -1367,6 +1367,9 @@ public class ViewFrame extends javax.swing.JFrame {
         break;
       case ADD_BOOK:
           //check user input using a regular expression
+          abOpStatus.setForeground(Color.BLACK);
+          abOpStatus.setBackground(Color.WHITE);
+          abOpStatus.setText("...");
           String regex = "[0-9]+";
           if(!abYear.getText().matches(regex)){
               abOpStatus.setText("Year Must be A number");
@@ -1440,6 +1443,8 @@ public class ViewFrame extends javax.swing.JFrame {
               b.insert();
           } catch (SQLException ex) {
               Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE, null, ex);
+              abOpStatus.setForeground(Color.red);
+              abOpStatus.setText("error: "+ ex.getErrorCode());
           }
           
           //add book copies
@@ -1454,6 +1459,7 @@ public class ViewFrame extends javax.swing.JFrame {
                   System.out.println(ex.getMessage());
                   abOpStatus.setForeground(Color.red);
                   abOpStatus.setText("error: "+ ex.getErrorCode());
+                  break;
               }
           }
           //clean up UI

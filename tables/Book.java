@@ -15,7 +15,7 @@ import users.Conn;
 public class Book implements Table {
 
 
-	//todo: handling not null?
+	
 	private String callNumber;
 	private String isbn;
 	private String title;
@@ -158,12 +158,28 @@ public class Book implements Table {
 	 */
 	@Override
 	public boolean delete() throws SQLException {
-		stmt = c.createStatement();
-		int rowModified = stmt.executeUpdate("DELETE FROM Book WHERE callNumber = "+ callNumber);
+		Statement stmt1 = c.createStatement();
+		int rowModified = stmt1.executeUpdate("DELETE FROM Book WHERE callNumber = "+ callNumber);
 		if(rowModified == 1) return true;
 		else return false;
 		
 	}
+        
+       /**
+         * pre: no requirements
+         * 
+         * @return true if the tuple associated with this objects call number exist in the database 
+         */
+        public boolean checkExists() throws SQLException{
+            Statement stmt1 = c.createStatement();
+            String sql = "Select * FROM Book WHERE callNumber = '" + callNumber + "'";
+            ResultSet rs = stmt1.executeQuery(sql);
+            if (!rs.next() ) {
+                 System.out.println("no data fr call number "+ callNumber);
+                 return false;
+            }
+            return true;
+        }
 
 
 	@Override
@@ -219,7 +235,7 @@ public class Book implements Table {
 	 */
 	@Override
 	public Book get() throws SQLException {
-		Statement stmt1 = Conn.getInstance().getConnection().createStatement();
+		Statement stmt1 = c.createStatement();
 		ResultSet rs = stmt1.executeQuery("SELECT * FROM Book WHERE callNumber ='"+callNumber+"'");
 
 		if(rs!=null && rs.next()){
@@ -229,12 +245,8 @@ public class Book implements Table {
 			mainAuthor = rs.getString(4);
 			publisher = rs.getString(5);
 			year = rs.getInt(6);
-
-			//how to handle authors/subjects?
-			//c.close();
 			return this;
 		}
-
 		return this;
 	}
 

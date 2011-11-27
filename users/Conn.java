@@ -40,8 +40,8 @@ public class Conn {
   private final String USERNAME = "ora_x9u7";
   private final String PASSWORD = "a25703091";
    */
-  private final String USERNAME = "ora_c7e8";
-  private final String PASSWORD = "a84148014";
+//  private final String USERNAME = "ora_c7e8";
+//  private final String PASSWORD = "a84148014";
   
   
   private final String CONNECTURL = "jdbc:oracle:thin:@localhost:1521:ug";
@@ -90,13 +90,13 @@ public class Conn {
 //      String username = "ora_c7e8";
 //      String password = "a84148014";
   
-//      jesse's database
-//      String username = "ora_v2v7";
-//      String password = "a36988103";
-//        connect(username, password);
+      //jesse's database
+      String username = "ora_v2v7";
+      String password = "a36988103";
+        connect(username, password);
       
       //other db
-      connect(USERNAME, PASSWORD);
+//      connect(USERNAME, PASSWORD);
  }
   
   private void connect(String username, String password)
