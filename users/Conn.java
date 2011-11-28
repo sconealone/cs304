@@ -119,13 +119,8 @@ public class Conn {
         catch (SQLException ex) 
         {
           // handle couldn't connect
-          JOptionPane.showMessageDialog(null, "Can't connect to Oracle.\nSet SSH tunnel.", "Error", JOptionPane.ERROR_MESSAGE);
+          JOptionPane.showMessageDialog(null, "Can't connect to Oracle.\nSet SSH tunnel and reconnect from File Menu.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-      }
-      if (attemptCount >= 1)
-      {
-        JOptionPane.showMessageDialog(null, "Too many failed attempts.\nExiting.", "Error", JOptionPane.ERROR_MESSAGE);
-        System.exit(-1);
       }
   }
   

@@ -440,7 +440,7 @@ public class ViewFrame extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         payFineInputPanel.add(payFineAmtLabel, gridBagConstraints);
 
-        payFineInstructionLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        payFineInstructionLabel.setFont(new java.awt.Font("Tahoma", 0, 12));
         payFineInstructionLabel.setText("Obtain the Fine ID by checking your account for outstanding fines.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -450,7 +450,7 @@ public class ViewFrame extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 3, 5);
         payFineInputPanel.add(payFineInstructionLabel, gridBagConstraints);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12));
         jLabel1.setText("The Fine ID will be in the first column of the Fine tab.");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -483,22 +483,42 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(payFinePanel, "Pay a fine");
 
-        checkOutPanel.setLayout(new java.awt.GridLayout(2, 1));
+        checkOutPanel.setLayout(new java.awt.BorderLayout());
 
-        checkOutFieldsPanel.setLayout(new java.awt.GridLayout(4, 2));
+        checkOutFieldsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Check out books"));
+        checkOutFieldsPanel.setLayout(new java.awt.GridBagLayout());
 
         checkOutLabelBorid.setText("Borrower's Card Number");
-        checkOutFieldsPanel.add(checkOutLabelBorid);
-        checkOutFieldsPanel.add(checkOutTextBorid);
+        checkOutFieldsPanel.add(checkOutLabelBorid, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 120;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        checkOutFieldsPanel.add(checkOutTextBorid, gridBagConstraints);
 
         checkOutLabelCallNo.setText("Call Number");
-        checkOutFieldsPanel.add(checkOutLabelCallNo);
-        checkOutFieldsPanel.add(checkOutTextCallNo);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        checkOutFieldsPanel.add(checkOutLabelCallNo, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 120;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        checkOutFieldsPanel.add(checkOutTextCallNo, gridBagConstraints);
 
         checkOutLabelCopyNo.setText("Copy Number");
-        checkOutFieldsPanel.add(checkOutLabelCopyNo);
-        checkOutFieldsPanel.add(checkOutTextCopyNo);
-        checkOutFieldsPanel.add(checkOutDummyLabel);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        checkOutFieldsPanel.add(checkOutLabelCopyNo, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 120;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        checkOutFieldsPanel.add(checkOutTextCopyNo, gridBagConstraints);
+        checkOutFieldsPanel.add(checkOutDummyLabel, new java.awt.GridBagConstraints());
 
         checkOutButtonAdd.setText("Add to Checkout Queue");
         checkOutButtonAdd.addActionListener(new java.awt.event.ActionListener() {
@@ -506,9 +526,16 @@ public class ViewFrame extends javax.swing.JFrame {
                 checkOutButtonAddActionPerformed(evt);
             }
         });
-        checkOutFieldsPanel.add(checkOutButtonAdd);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        checkOutFieldsPanel.add(checkOutButtonAdd, gridBagConstraints);
 
-        checkOutPanel.add(checkOutFieldsPanel);
+        checkOutPanel.add(checkOutFieldsPanel, java.awt.BorderLayout.NORTH);
+
+        checkOutFieldsPanelReceipt.setBorder(javax.swing.BorderFactory.createTitledBorder("Receipt"));
+        checkOutFieldsPanelReceipt.setLayout(new java.awt.BorderLayout());
 
         checkOutTableReceiptTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -520,9 +547,9 @@ public class ViewFrame extends javax.swing.JFrame {
         ));
         checkOutTableReceipt.setViewportView(checkOutTableReceiptTable);
 
-        checkOutFieldsPanelReceipt.add(checkOutTableReceipt);
+        checkOutFieldsPanelReceipt.add(checkOutTableReceipt, java.awt.BorderLayout.CENTER);
 
-        checkOutPanel.add(checkOutFieldsPanelReceipt);
+        checkOutPanel.add(checkOutFieldsPanelReceipt, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(checkOutPanel, "Check-out books");
 
@@ -1340,10 +1367,12 @@ public class ViewFrame extends javax.swing.JFrame {
 	 * @param evt
 	 */
 	private void doButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_doButtonActionPerformed
-		String[][] tableWithHeader = null;
-		String[][] tableWithoutHeader = null;
-		String[] header = null;
-		int numRows, numCols;
+              String[][] tableWithHeader = null;
+              String[][] tableWithoutHeader = null;
+              String[] header = null;
+              int numRows, numCols;
+              try
+              {
 		switch (state) {
 		case TABLES:
 			try {
@@ -1411,7 +1440,7 @@ public class ViewFrame extends javax.swing.JFrame {
 				SearchTable.setModel(uTM);
 				SearchTable.repaint();
 			} catch (SQLException S) {
-				S.printStackTrace();
+				JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+S.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 
 			}
 			break;
@@ -1464,7 +1493,7 @@ public class ViewFrame extends javax.swing.JFrame {
 
 				TabbedPane.repaint();
 			} catch (SQLException S) {
-				S.printStackTrace();
+				JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+S.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			break;
 		case HOLD_REQUEST:
@@ -1602,8 +1631,8 @@ public class ViewFrame extends javax.swing.JFrame {
 			} catch (Exception e2) {
 				// TODO Auto-generated catch block
                                 //TODO Need to fix this
-				JOptionPane.showMessageDialog(new Frame(), e2.toString(), "Have a good day",
-					JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(this, e2.toString(), "Have a good day",
+					JOptionPane.ERROR_MESSAGE);
 				break;
 			}
 			//"ITEM", "CALLNUMBER","COPYNO","TITLE","OUTDATE","DUEDATE"
@@ -1640,7 +1669,7 @@ public class ViewFrame extends javax.swing.JFrame {
 			checkOutTableReceiptTable.repaint();
 			
 
-			JOptionPane.showMessageDialog(new Frame(), "The Borrower checked out.", "Have a good day",
+			JOptionPane.showMessageDialog(this, "The Borrower checked out.", "Have a good day",
 					JOptionPane.INFORMATION_MESSAGE);
 			
 			break;
@@ -1687,8 +1716,7 @@ public class ViewFrame extends javax.swing.JFrame {
                 checkOverdueTable.repaint();
 
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 
 			break;
@@ -2197,6 +2225,12 @@ public class ViewFrame extends javax.swing.JFrame {
 			break;
 		default:
 		}
+                
+          }
+          catch (Exception e)
+          {
+            JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+          }
 	}// GEN-LAST:event_doButtonActionPerformed
 
 	/**
@@ -2303,6 +2337,14 @@ public class ViewFrame extends javax.swing.JFrame {
                         expiryYearTextField.setText("");
 			break;
 		case CHECK_OUT:
+                        checkOutTextBorid.setText("");
+                        checkOutTextBorid.setEditable(true);
+                        checkOutTextCallNo.setText("");
+                        checkOutTextCopyNo.setText("");
+                        checkOutTableReceiptTable.setModel
+                                (new DefaultTableModel
+                                        (new Object [][] {}, 
+                                        new String [] {"Borrower ID", "Call Number", "Copy Number"}));
 			break;
 		case CHECK_OVERDUE:
 			break;
