@@ -674,7 +674,7 @@ public class ViewFrame extends javax.swing.JFrame {
         addBorrowerPanel.add(addBorrowerComboBoxType, gridBagConstraints);
 
         expiryDateLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        expiryDateLabel.setText("ExpiryDate (dd/mm/yyy)");
+        expiryDateLabel.setText("ExpiryDate (dd/mm/yyyy)");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 8;
@@ -1605,7 +1605,8 @@ public class ViewFrame extends javax.swing.JFrame {
                                 {
                                   throw new SQLException("Insert failed.");
                                 }
-                                JOptionPane.showMessageDialog(this, "Borrower successfully added", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(this, "Borrower successfully added.\nBorrower ID "+borr.getBid()+" generated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                clearButtonActionPerformed(null);
 			} catch (SQLException e1) {
 				JOptionPane.showMessageDialog(this, "Borrower could not be added.\n"+e1.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
 			}

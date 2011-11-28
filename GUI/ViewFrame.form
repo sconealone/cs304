@@ -1038,7 +1038,7 @@
                 <Component class="javax.swing.JLabel" name="expiryDateLabel">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="11"/>
-                    <Property name="text" type="java.lang.String" value="ExpiryDate (dd/mm/yyy)"/>
+                    <Property name="text" type="java.lang.String" value="ExpiryDate (dd/mm/yyyy)"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
