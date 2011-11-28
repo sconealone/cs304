@@ -150,6 +150,16 @@ public class Controller {
 
   public void reconnect() {
     Conn.getInstance().reconnect();
+    // silently fail. There will be other chances to flag overdue later.
+    // user doesn't need to worry about it
+    try
+    {
+      (new CheckedOutBookCopy()).flagOverdue();
+    }
+    catch (Exception e)
+    {
+      // do nothing
+    }
   }
 }
 

@@ -705,7 +705,7 @@ public class Borrower implements Table {
             // Counts number of copies of specific book that are out
             Statement stmt2 = con.createStatement();
             String sql2 = "SELECT COUNT(COPYNO) AS totalCopies FROM Book, BookCopy "
-                    + "WHERE BookCopy.callNumber='" + b.getCallNumber() + "' AND BookCopy.status='out' AND "
+                    + "WHERE BookCopy.callNumber='" + b.getCallNumber() + "' AND (BookCopy.status='out' OR BookCopy.status='overdue') AND "
                     + "Book.callNumber=BookCopy.callNumber";
             ResultSet rs2 = stmt2.executeQuery(sql2);
 
