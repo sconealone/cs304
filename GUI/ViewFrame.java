@@ -42,6 +42,7 @@ import tables.BookCopy;
 import tables.BookCopyEvilTwinException;
 import tables.Borrower;
 import tables.Borrowing;
+import tables.Fine;
 import tables.HasAuthor;
 import tables.HasSubject;
 import tables.NoPaymentException;
@@ -141,12 +142,13 @@ public class ViewFrame extends javax.swing.JFrame {
         payFinePanel = new javax.swing.JPanel();
         payFineMsgLabel = new javax.swing.JLabel();
         payFineInputPanel = new javax.swing.JPanel();
-        payFineBidLabel = new javax.swing.JLabel();
-        payFineBidTextField = new javax.swing.JTextField();
-        payFineBoridLabel = new javax.swing.JLabel();
-        payFineBoridTextField = new javax.swing.JTextField();
+        payFineFidLabel = new javax.swing.JLabel();
         payFineAmtLabel = new javax.swing.JLabel();
-        payFineAmtTextField = new javax.swing.JTextField();
+        payFineInstructionLabel = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        paddingLabel = new javax.swing.JLabel();
+        payFineFidTextField = new javax.swing.JTextField();
+        payFineAmountTextField = new javax.swing.JTextField();
         checkOutPanel = new javax.swing.JPanel();
         checkOutFieldsPanel = new javax.swing.JPanel();
         checkOutLabelBorid = new javax.swing.JLabel();
@@ -361,11 +363,14 @@ public class ViewFrame extends javax.swing.JFrame {
 
         searchPanel.setLayout(new java.awt.BorderLayout());
 
-        SearchComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Title", "Subject", "Author"}));
-        SearchTopPanel.add(SearchComboBox);
+        SearchTopPanel.setLayout(new java.awt.GridBagLayout());
 
-        SearchTextField.setText("jTextField1");
-        SearchTopPanel.add(SearchTextField);
+        SearchComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Title", "Subject", "Author"}));
+        SearchTopPanel.add(SearchComboBox, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 200;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        SearchTopPanel.add(SearchTextField, gridBagConstraints);
 
         searchPanel.add(SearchTopPanel, java.awt.BorderLayout.PAGE_START);
 
@@ -378,26 +383,29 @@ public class ViewFrame extends javax.swing.JFrame {
 
         checkAccountPanel.setLayout(new java.awt.BorderLayout());
 
+        searchAccountPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Borrower ID"));
+        searchAccountPanel.setLayout(new java.awt.GridBagLayout());
+
         SearchIdField.setText("");
         SearchIdField.setPreferredSize(new java.awt.Dimension(150, 20));
-        searchAccountPanel.add(SearchIdField);
+        searchAccountPanel.add(SearchIdField, new java.awt.GridBagConstraints());
 
         checkAccountPanel.add(searchAccountPanel, java.awt.BorderLayout.PAGE_START);
 
         checkedOutBooksTable.setModel(new javax.swing.table.DefaultTableModel());
         checkOutBooksPane.setViewportView(checkedOutBooksTable);
 
-        TabbedPane.addTab("tab1", checkOutBooksPane);
+        TabbedPane.addTab("Currently checked out books", checkOutBooksPane);
 
         finesTable.setModel(new javax.swing.table.DefaultTableModel());
         finesPane.setViewportView(finesTable);
 
-        TabbedPane.addTab("tab2", finesPane);
+        TabbedPane.addTab("Outstanding fines", finesPane);
 
         currentHoldsTable.setModel(new javax.swing.table.DefaultTableModel());
         currentHoldsPane.setViewportView(currentHoldsTable);
 
-        TabbedPane.addTab("tab3", currentHoldsPane);
+        TabbedPane.addTab("Placed hold requests", currentHoldsPane);
 
         checkAccountPanel.add(TabbedPane, java.awt.BorderLayout.CENTER);
 
@@ -406,24 +414,62 @@ public class ViewFrame extends javax.swing.JFrame {
         payFinePanel.setLayout(new java.awt.BorderLayout());
         payFinePanel.add(payFineMsgLabel, java.awt.BorderLayout.CENTER);
 
-        payFineBidLabel.setText("Borrower's ID");
-        payFineInputPanel.add(payFineBidLabel);
+        payFineInputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Pay a fine"));
+        payFineInputPanel.setLayout(new java.awt.GridBagLayout());
 
-        payFineBidTextField.setPreferredSize(new java.awt.Dimension(50, 20));
-        payFineBidTextField.setRequestFocusEnabled(false);
-        payFineInputPanel.add(payFineBidTextField);
-
-        payFineBoridLabel.setText("Borrowing ID");
-        payFineInputPanel.add(payFineBoridLabel);
-
-        payFineBoridTextField.setPreferredSize(new java.awt.Dimension(50, 20));
-        payFineInputPanel.add(payFineBoridTextField);
+        payFineFidLabel.setText("Fine ID");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        payFineInputPanel.add(payFineFidLabel, gridBagConstraints);
 
         payFineAmtLabel.setText("Amount");
-        payFineInputPanel.add(payFineAmtLabel);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        payFineInputPanel.add(payFineAmtLabel, gridBagConstraints);
 
-        payFineAmtTextField.setPreferredSize(new java.awt.Dimension(50, 20));
-        payFineInputPanel.add(payFineAmtTextField);
+        payFineInstructionLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        payFineInstructionLabel.setText("Obtain the Fine ID by checking your account for outstanding fines.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 3, 5);
+        payFineInputPanel.add(payFineInstructionLabel, gridBagConstraints);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel1.setText("The Fine ID will be in the first column of the Fine tab.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
+        payFineInputPanel.add(jLabel1, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 25;
+        payFineInputPanel.add(paddingLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        payFineInputPanel.add(payFineFidTextField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        payFineInputPanel.add(payFineAmountTextField, gridBagConstraints);
 
         payFinePanel.add(payFineInputPanel, java.awt.BorderLayout.PAGE_START);
 
@@ -1329,21 +1375,63 @@ public class ViewFrame extends javax.swing.JFrame {
 			}
 			break;
 		case PAY_FINE:
-			try {
-				String bidField = payFineBidTextField.getText();
-				String boridField = payFineBoridTextField.getText();
-				String amtField = payFineAmtTextField.getText();
+                  Fine f = new Fine();
+                  Borrower bor = new Borrower();
+                  Integer fid = 0;
+                  double amount = 0;
+                  String msgFine = "";
 
-				Borrower b = new Borrower();
-				b.setBid(Integer.parseInt(bidField));
-				b = b.get();
-				// b.payFine(Integer.parseInt(boridField),
-				// Integer.parseInt(amtField));
+                  String fineIDField = payFineFidTextField.getText();
+                  String amountField = payFineAmountTextField.getText();
+                  boolean okayToContinue = true;
+                  try {
+                    fid = Integer.parseInt(fineIDField);
+                  } catch (NumberFormatException nfe) {
+                    okayToContinue = false;
+                    JOptionPane.showMessageDialog(this, "Fine ID must be a whole number.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                  }
+                  try {
+                    amount = Double.parseDouble(amountField);
+                  } catch (NumberFormatException nfe) {
+                    okayToContinue = false;
+                    JOptionPane.showMessageDialog(this, "Amount must be a dollar value.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                  }
 
-				payFineMsgLabel.repaint();
-			} catch (SQLException S) {
-				S.printStackTrace();
-			}
+                  if (okayToContinue == true) {
+
+                    try {
+                      try {
+                        f.setFid(fid);
+                        f = (Fine) f.get();
+                        bor = f.getBorrowing().getBorrower();
+                      } catch (NullPointerException npe) {
+                        okayToContinue = false;
+                        JOptionPane.showMessageDialog(this, "The fine and/or its associated borrower do not exist.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                      }
+                      if (okayToContinue == true) {
+                        try {
+                          msgFine = bor.payFine(fid, (int)(amount*100));
+                        } catch (SQLException e) {
+                          okayToContinue = false;
+                          JOptionPane.showMessageDialog(this, "Payment refused.",
+                                  "Error", JOptionPane.ERROR_MESSAGE);
+                        } catch (NoPaymentException npe) {
+                          okayToContinue = false;
+                          JOptionPane.showMessageDialog(this, "Amount must be a positive amount.",
+                                  "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                        payFineMsgLabel.setText(msgFine);
+                        payFineMsgLabel.repaint();
+                      }
+                    } catch (SQLException e) {
+                      okayToContinue = false;
+                      JOptionPane.showMessageDialog(this, e.getMessage(),
+                              "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                  }
 			break;
 		case ADD_BORROWER:
 			try {
@@ -2330,6 +2418,7 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem holdRequestMenuItem;
     private GUI.PlaceHoldRequestPanel holdRequestPanel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenu librarianMenu;
     private javax.swing.JPanel mainPanel;
@@ -2338,13 +2427,13 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox navigationComboBox;
     private javax.swing.JMenu navigationMenu;
     private javax.swing.JPopupMenu.Separator navigationSeparator;
+    private javax.swing.JLabel paddingLabel;
+    private javax.swing.JTextField payFineAmountTextField;
     private javax.swing.JLabel payFineAmtLabel;
-    private javax.swing.JTextField payFineAmtTextField;
-    private javax.swing.JLabel payFineBidLabel;
-    private javax.swing.JTextField payFineBidTextField;
-    private javax.swing.JLabel payFineBoridLabel;
-    private javax.swing.JTextField payFineBoridTextField;
+    private javax.swing.JLabel payFineFidLabel;
+    private javax.swing.JTextField payFineFidTextField;
     private javax.swing.JPanel payFineInputPanel;
+    private javax.swing.JLabel payFineInstructionLabel;
     private javax.swing.JMenuItem payFineMenuItem;
     private javax.swing.JLabel payFineMsgLabel;
     private javax.swing.JPanel payFinePanel;

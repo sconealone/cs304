@@ -471,7 +471,7 @@ public class Borrower implements Table {
     public String[][] searchBookBySubject(String subject) throws SQLException {
         Statement stmt = Conn.getInstance().getConnection().createStatement();
         String sql = "Select Book.CallNumber FROM Book, HasSubject "
-                + "WHERE Book.CallNumber = HasSubject.CallNumber AND upper(HasSubject.subject) LIKE"
+                + "WHERE Book.CallNumber = HasSubject.CallNumber AND upper(HasSubject.subject) LIKE "
                 + "upper('%" + subject + "%')";
         ResultSet rs = stmt.executeQuery(sql);
         ArrayList<Book> lob = new ArrayList<Book>();
