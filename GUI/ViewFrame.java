@@ -2275,13 +2275,32 @@ public class ViewFrame extends javax.swing.JFrame {
                         SearchTable.repaint();
 			break;
 		case CHECK_ACCOUNT:
+                        SearchIdField.setText("");
+                        checkedOutBooksTable.setModel(new DefaultTableModel());
+                        checkedOutBooksTable.repaint();
+                        finesTable.setModel(new DefaultTableModel());
+                        finesTable.repaint();
+                        currentHoldsTable.setModel(new DefaultTableModel());
+                        currentHoldsTable.repaint();
 			break;
 		case HOLD_REQUEST:
 			holdRequestPanel.clear();
 			break;
 		case PAY_FINE:
+                        payFineFidTextField.setText("");
+                        payFineAmountTextField.setText("");
+                        payFineMsgLabel.setText("");
 			break;
 		case ADD_BORROWER:
+                        addBorrowerTextAddress.setText("");
+                        addBorrowerTextEmail.setText("");
+                        addBorrowerTextName.setText("");
+                        addBorrowerTextPassword.setText("");
+                        addBorrowerTextPhoneNo.setText("");
+                        addBorrowerTextSinOrStNo.setText("");
+                        expiryDateTextField.setText("");
+                        expiryMonthTextField.setText("");
+                        expiryYearTextField.setText("");
 			break;
 		case CHECK_OUT:
 			break;
