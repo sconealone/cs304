@@ -8,7 +8,7 @@ package users;
  *
  * @author Mitch
  */
-class InvalidBorrowerException extends Exception {
+public class InvalidBorrowerException extends Exception {
 
   public InvalidBorrowerException() { super(); }
   

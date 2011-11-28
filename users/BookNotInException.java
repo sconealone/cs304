@@ -8,7 +8,7 @@ package users;
  *
  * @author Mitch
  */
-class BookNotInException extends Exception {
+public class BookNotInException extends Exception {
 
   public BookNotInException() { super(); }
   
