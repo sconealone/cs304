@@ -70,7 +70,7 @@ public class CheckedOutBookCopy //extends BookCopy
               + "R.bid = B.bid AND "
               + "B.type = T.type AND "
               + "C.status = 'out' AND "
-              + "(R.outDate + T.bookTimeLimit) < SYSDATE)";
+              + "(R.outDate + T.bookTimeLimit*7) < SYSDATE)";
     Connection con = Conn.getInstance().getConnection();
     PreparedStatement ps = con.prepareStatement(sql);
     int copiesUpdated = ps.executeUpdate();

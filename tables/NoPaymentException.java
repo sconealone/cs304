@@ -8,7 +8,7 @@ package tables;
  *
  * @author Mitch
  */
-class NoPaymentException extends Exception {
+public class NoPaymentException extends Exception {
 
   public NoPaymentException() {super();}
   public NoPaymentException(String string) {super(string);}

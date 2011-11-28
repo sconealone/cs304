@@ -207,7 +207,7 @@ public class Borrowing implements Table {
 		ps.setDate(paramIndex++, sqlOutDate, outDate);
 
 		java.sql.Date sqlInDate = (inDate == null) ? null : new java.sql.Date(
-				outDate.getTime().getTime());
+				inDate.getTime().getTime());
 		ps.setDate(paramIndex++, sqlInDate, inDate);
 
 		ps.executeUpdate();
@@ -305,6 +305,59 @@ public class Borrowing implements Table {
 		return null;
 	}
 
+        
+        /**
+         * Gets the borrowing for the book copy that is out.
+         * Semantically there can only ever be one borrowing for any given
+         * book copy that is out of the library, since the copy's status is 
+         * changed to in upon return.
+         * @param callNumber
+         * @param copyNo
+         * @return 
+         * @throws SQLException
+         * @throws BookCopyEvilTwinException if more than one borrowing registers
+         * this copy as not having an in date
+         */
+        public Borrowing getOutBorrowing(BookCopy outCopy) 
+                throws SQLException, BookCopyEvilTwinException, NoSuchCopyException
+        {
+          String sql = "SELECT DISTINCT R.borid "
+                  + "FROM Borrowing R, CheckedOutBookCopy C "
+                  + "WHERE C.callNumber = ? AND C.copyNo = ? AND R.borid = C.borid";
+          PreparedStatement ps = con.prepareStatement(sql);
+          ps.setString(1, outCopy.getB().getCallNumber());
+          ps.setString(2, outCopy.getCopyNo());
+          ResultSet rs = ps.executeQuery();
+          final int BORID = 1;
+          
+          Borrowing borrowing = null;
+          
+          if (rs.next())
+          {
+            // borid
+            int dbBorid = rs.getInt(BORID);
+            
+            
+            borrowing = new Borrowing();
+            borrowing.setBorid(dbBorid);
+            borrowing = (Borrowing) borrowing.get();
+          }
+          else
+          {
+            String msg = "There is no copy of that book that has not been returned.";
+            throw new NoSuchCopyException(msg);
+          }
+          if (!rs.next())
+          {
+            return borrowing;
+          }
+          else
+          {
+            String msg = "That book is flagged as being borrowed by two borrowers at the same time.";
+            throw new BookCopyEvilTwinException(msg);
+          }
+        }
+        
 	/**
 	 * Creates a new entry in the database for this Borrowing object. A new
 	 * borid will be generated, and the calling object's borid attribute will be
@@ -466,7 +519,7 @@ public class Borrowing implements Table {
 
 	}
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, BookCopyEvilTwinException, NoSuchCopyException {
 		Borrowing b = new Borrowing();
 		/*
 		 * // display test String[][] table = b.display(); for (String[] row :
@@ -502,13 +555,29 @@ public class Borrowing implements Table {
 			System.out.println("auto-generated key: " + b.borid);
 		} else {
 			System.out.println("test failed, not inserted");
-		}*/
+		}
                 Borrowing borrowinget = new Borrowing();
                 borrowinget.setBorid(1);
                 borrowinget = (Borrowing) borrowinget.get();
+
+                System.out.println(borrowinget);
+                
+                // testing getOutBorrowing
+                BookCopy outBookCopy = new BookCopy();
+                String outCallNumber = "hi345 p298 1989".toUpperCase();
+                String copyNo = "C1";
+                Book outBook = new Book();
+                outBook.setCallNumber(outCallNumber);
+                outBookCopy.setB(outBook);
+                outBookCopy.setCopyNo(copyNo);
+                Borrowing outBorrowing = new Borrowing();
+                outBorrowing = outBorrowing.getOutBorrowing(outBookCopy);
+                System.out.println(outBorrowing);
+                
+
                 System.out.println(borrowinget);
                 
                 Collection<Table> col = borrowinget.getOverdue();
-                System.out.println("Number of overdue books: " + col.size());
+                System.out.println("Number of overdue books: " + col.size());*/
 	}
 }

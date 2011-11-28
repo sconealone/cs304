@@ -85,6 +85,7 @@ public class Fine implements Table {
                       Calendar paidDate,
                       Borrowing borrowing)
         {
+          con = Conn.getInstance().getConnection();
           this.fid = fid;
           if (amount != null && amount < 0)
           {
