@@ -566,6 +566,7 @@ public class ViewFrame extends javax.swing.JFrame {
         abMainLabel.setText("Add New Book:  * = required, & = deliniate with commas");
         addNewBookPanel.add(abMainLabel, java.awt.BorderLayout.PAGE_START);
 
+        abMainPanel.setPreferredSize(new java.awt.Dimension(500, 252));
         abMainPanel.setLayout(new java.awt.GridBagLayout());
 
         abCNLabel.setText("CallNumber  (*)");
@@ -577,8 +578,10 @@ public class ViewFrame extends javax.swing.JFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 50;
+        gridBagConstraints.ipadx = 300;
         abMainPanel.add(abCN, gridBagConstraints);
 
         abISBNLabel.setText("ISBN (*)");
@@ -1999,6 +2002,7 @@ public class ViewFrame extends javax.swing.JFrame {
 			}
 			// else leave it out
 		}
+
 
 		// tokenize by ','
 		String[] copyNumbersSplitOnComma = copyNumbersFilteredForC.split(",");
