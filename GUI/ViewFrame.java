@@ -1562,9 +1562,9 @@ public class ViewFrame extends javax.swing.JFrame {
                                 borr.setPassword(addBorrowerTextPassword.getText().trim());
                                 int expiryDate = Integer.parseInt(expiryDateTextField.getText().trim());
                                 int expiryMonth = Integer.parseInt(expiryMonthTextField.getText().trim());
-                                expiryMonth--;
+                                expiryMonth--; // 0 is JANUARY
                                 int expiryYear = Integer.parseInt(expiryYearTextField.getText().trim());
-                                if (expiryDate <= 0 || expiryMonth <=0 || expiryYear <=0)
+                                if (expiryDate <= 0 || expiryMonth <0 || expiryYear <=0 || expiryMonth>11 ||expiryDate > 31)
                                 {
                                   throw new NumberFormatException("Date must be positive numbers");
                                 }
