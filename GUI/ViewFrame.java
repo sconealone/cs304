@@ -1480,9 +1480,6 @@ public class ViewFrame extends javax.swing.JFrame {
 			DefaultTableModel checkOutmodel = new DefaultTableModel();
 			results = get2DArrayMinusHeader(results);
                         
-                        JOptionPane.showMessageDialog(new Frame(), "Results has " + results.length + " rows and " + results[0].length + " columns.", "Have a good day",
-					JOptionPane.INFORMATION_MESSAGE);
-                        
 			String[] item = new String[results.length];
 			String[] callNo = new String[results.length];
 			String[] copyNo = new String[results.length];
@@ -1558,10 +1555,6 @@ public class ViewFrame extends javax.swing.JFrame {
 				
 				checkOverdueTable.setModel(model);
                 checkOverdueTable.repaint();
-
-				JOptionPane.showMessageDialog(new Frame(), "The table has "
-						+ lbw.size() + " elements.", "Have a good day",
-						JOptionPane.INFORMATION_MESSAGE);
 
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
