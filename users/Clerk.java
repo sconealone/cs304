@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
+
+import javax.swing.DefaultListModel;
 
 import tables.Book;
 import tables.BookCopy;
@@ -22,7 +25,7 @@ import tables.Table;
  * This class encapsulates the functionality of the Clerk user. This class is
  * not complete yet.
  * 
- * @author Masterfod
+ * @author Christiaan Fernando
  * 
  */
 public class Clerk {
@@ -241,10 +244,15 @@ public class Clerk {
    * @throws SQLException
    * 
    */
-  public void checkOverdue() throws SQLException {
+  public String[] checkOverdue() throws SQLException {
           Borrowing bwing = new Borrowing();
-          BookCopy bc = bwing.getBookCopy();
+          BookCopy bc = new BookCopy();
           Collection<Table> lbw = bwing.getOverdue();
+          HashMap<Borrower, BookCopy> overdue = new HashMap<Borrower, BookCopy>();
+          
+          String[] borrStr = new String[lbw.size()];
+          String[] bcpyStr = new String[lbw.size()];
+          int i = 0;
 
           if (lbw.size() > 0) {
                   Iterator<Table> bwItr = lbw.iterator();
@@ -254,10 +262,25 @@ public class Clerk {
                           Borrower borr = new Borrower();
                           borr.setBid(bwing.getBorid());
                           borr = (Borrower) borr.get();
+                          
+                          bc = bwing.getBookCopy();
                           bc.setStatus("overdue");
                           bc.update();
+                          
+                          overdue.put(borr, bc);
+                          borrStr[i] = borr.getName();
+                          bcpyStr[i] = bc.getCopyNo();
+                          i++;
                   }
           }
+          
+          String[] result = new String[overdue.size()];
+        		  
+          for (i = 0; i < overdue.size(); i++) {
+        	  result[i] = (borrStr[i] + ":" + bcpyStr[i]);
+          }
+          
+          return result;
   }
 
   /**

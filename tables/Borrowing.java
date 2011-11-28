@@ -257,56 +257,28 @@ public class Borrowing implements Table {
 	/**
 	 * Return all overdue Borrowing objects
 	 * 
-	 * Returns all Borrowing objects that have an inDate that are older than the
-	 * current date.
+	 * Returns all Borrowing objects from the CheckedOutBookCopy View that have a status of 'overdue'
 	 * 
 	 * @return Table of overdue Borrowing items
 	 * @throws SQLException
 	 */
 	public Collection<Table> getOverdue() throws SQLException {
 		ArrayList<Table> borrowings = new ArrayList<Table>();
+                Borrowing bwing = new Borrowing();
 
+                (new CheckedOutBookCopy()).flagOverdue();
 		PreparedStatement ps = con
-				.prepareStatement("SELECT * FROM Borrowing WHERE inDate < ?");
-		ps.setDate(1, null, Calendar.getInstance());
-
+				.prepareStatement("SELECT DISTINCT borid FROM CheckedOutBookCopy WHERE status = 'overdue'");
+                
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
-			borrowings.add(new Borrowing(rs));
+                    bwing.setBorid(rs.getInt(1));
+			borrowings.add(bwing.get());
 
 		} // end while(rs.next())
 		rs.close();
 
 		return borrowings;
-	}
-
-	/**
-	 * Return the Borrowing object for a returned BookCopy.
-	 * 
-	 * Returns the latest Borrowing object that corresponds to a returned
-	 * BookCopy.
-	 * 
-	 * @param bc
-	 *            Returned BookCopy
-	 * @return Borrowing item
-	 * @throws SQLException
-	 */
-
-	public Table getOverdue(BookCopy bc) throws SQLException {
-		PreparedStatement ps = con
-				.prepareStatement("SELECT * FROM Borrowing WHERE callNumber = ?, copyNo = ?, inDate < ?");
-		ps.setString(1, bc.getB().getCallNumber());
-		ps.setString(2, bc.getCopyNo());
-		ps.setDate(3, null, Calendar.getInstance());
-
-		ResultSet rs = ps.executeQuery();
-		Borrowing bw = null;
-		while (rs.next()) {
-			bw = new Borrowing(rs);
-
-		} // end while(rs.next())
-		rs.close();
-		return bw;
 	}
 
 	/**
@@ -535,5 +507,8 @@ public class Borrowing implements Table {
                 borrowinget.setBorid(1);
                 borrowinget = (Borrowing) borrowinget.get();
                 System.out.println(borrowinget);
+                
+                Collection<Table> col = borrowinget.getOverdue();
+                System.out.println("Number of overdue books: " + col.size());
 	}
 }
