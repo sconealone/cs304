@@ -405,7 +405,11 @@ public class Clerk {
       System.out.println();
     }
     */
-    systemClerk.processReturn("WN304 B143 2005", "C1", 2000);
+    //systemClerk.processReturn("WN304 B143 2005", "C1", 2000);
+    
+    String[] callnos = {"WN304 B143 2005","TA342 F162 2002"};
+    String[] copynos = {"C1","C1"};
+    systemClerk.checkOutItems(105, callnos, copynos);
     
   }
 }

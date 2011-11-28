@@ -14,6 +14,8 @@ import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -31,8 +33,10 @@ import users.InvalidBorrowerException;
 
 import javax.swing.JSplitPane;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
@@ -178,6 +182,10 @@ public class ViewFrame extends javax.swing.JFrame {
         addBorrowerTextSinOrStNo = new javax.swing.JTextField();
         addBorrowerLabelType = new javax.swing.JLabel();
         addBorrowerComboBoxType = new javax.swing.JComboBox();
+        expiryDateLabel = new javax.swing.JLabel();
+        expiryDateTextField = new javax.swing.JTextField();
+        expiryMonthTextField = new javax.swing.JTextField();
+        expiryYearTextField = new javax.swing.JTextField();
         checkOverduePanel = new javax.swing.JPanel();
         checkOverdueLabelBorrInfo = new javax.swing.JLabel();
         checkOverdueScrollPaneInfo = new javax.swing.JScrollPane();
@@ -518,39 +526,111 @@ public class ViewFrame extends javax.swing.JFrame {
 
         cardPanel.add(checkOutPanel, "Check-out books");
 
+        addBorrowerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Add a new borrower"));
         addBorrowerPanel.setAutoscrolls(true);
         addBorrowerPanel.setPreferredSize(new java.awt.Dimension(250, 180));
         addBorrowerPanel.setRequestFocusEnabled(false);
-        addBorrowerPanel.setLayout(new java.awt.GridLayout(8, 2));
+        addBorrowerPanel.setLayout(new java.awt.GridBagLayout());
 
         addBorrowerLabelName.setText("Name");
-        addBorrowerPanel.add(addBorrowerLabelName);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerLabelName, gridBagConstraints);
 
         addBorrowerTextName.setName(""); // NOI18N
-        addBorrowerPanel.add(addBorrowerTextName);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.ipadx = 120;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerTextName, gridBagConstraints);
 
         addBorrowerLabelAddress.setText("Address");
-        addBorrowerPanel.add(addBorrowerLabelAddress);
-        addBorrowerPanel.add(addBorrowerTextAddress);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerLabelAddress, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.ipadx = 120;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerTextAddress, gridBagConstraints);
 
         addBorrowerLabelPhoneNo.setText("Phone No");
-        addBorrowerPanel.add(addBorrowerLabelPhoneNo);
-        addBorrowerPanel.add(addBorrowerTextPhoneNo);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerLabelPhoneNo, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.ipadx = 120;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerTextPhoneNo, gridBagConstraints);
 
         addBorrowerLabelEmail.setText("Email");
-        addBorrowerPanel.add(addBorrowerLabelEmail);
-        addBorrowerPanel.add(addBorrowerTextEmail);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerLabelEmail, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.ipadx = 120;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerTextEmail, gridBagConstraints);
 
         addBorrowerLabelPassword.setText("Password");
-        addBorrowerPanel.add(addBorrowerLabelPassword);
-        addBorrowerPanel.add(addBorrowerTextPassword);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerLabelPassword, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.ipadx = 120;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerTextPassword, gridBagConstraints);
 
         addBorrowerLabelSinOrStNo.setText("SIN No");
-        addBorrowerPanel.add(addBorrowerLabelSinOrStNo);
-        addBorrowerPanel.add(addBorrowerTextSinOrStNo);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerLabelSinOrStNo, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.ipadx = 120;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerTextSinOrStNo, gridBagConstraints);
 
         addBorrowerLabelType.setText("BorrowerType");
-        addBorrowerPanel.add(addBorrowerLabelType);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerLabelType, gridBagConstraints);
 
         addBorrowerComboBoxType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Student", "Faculty", "Staff" }));
         addBorrowerComboBoxType.addActionListener(new java.awt.event.ActionListener() {
@@ -558,9 +638,45 @@ public class ViewFrame extends javax.swing.JFrame {
                 addBorrowerComboBoxTypeActionPerformed(evt);
             }
         });
-        addBorrowerPanel.add(addBorrowerComboBoxType);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.ipadx = 50;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(addBorrowerComboBoxType, gridBagConstraints);
 
-        cardPanel.add(addBorrowerPanel, "card18");
+        expiryDateLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        expiryDateLabel.setText("ExpiryDate (dd/mm/yyy)");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(expiryDateLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(expiryDateTextField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(expiryMonthTextField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        addBorrowerPanel.add(expiryYearTextField, gridBagConstraints);
+
+        cardPanel.add(addBorrowerPanel, "Add a new borrower");
 
         checkOverduePanel.setLayout(new java.awt.BorderLayout());
 
@@ -1437,18 +1553,37 @@ public class ViewFrame extends javax.swing.JFrame {
 			try {
 				Borrower borr = new Borrower();
 
-				borr.setName(addBorrowerTextName.getText());
-				borr.setAddress(addBorrowerTextAddress.getText());
-				borr.setPhone(addBorrowerTextPhoneNo.getText());
-				borr.setEmailAddress(addBorrowerTextEmail.getText());
+				borr.setName(addBorrowerTextName.getText().trim());
+				borr.setAddress(addBorrowerTextAddress.getText().trim());
+				borr.setPhone(addBorrowerTextPhoneNo.getText().trim());
+				borr.setEmailAddress(addBorrowerTextEmail.getText().trim());
 				borr.setSinOrStNum(Integer.parseInt(addBorrowerTextSinOrStNo
-						.getText()));
-
-				borr.insert();
+						.getText().trim()));
+                                borr.setPassword(addBorrowerTextPassword.getText().trim());
+                                int expiryDate = Integer.parseInt(expiryDateTextField.getText().trim());
+                                int expiryMonth = Integer.parseInt(expiryMonthTextField.getText().trim());
+                                expiryMonth--;
+                                int expiryYear = Integer.parseInt(expiryYearTextField.getText().trim());
+                                if (expiryDate <= 0 || expiryMonth <=0 || expiryYear <=0)
+                                {
+                                  throw new NumberFormatException("Date must be positive numbers");
+                                }
+                                Calendar expiryDateCalendar = new GregorianCalendar(expiryYear, expiryMonth, expiryDate, 23, 59);
+                                DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                                borr.setExpiryDate(expiryDateCalendar);
+                                borr.setType((String) addBorrowerComboBoxType.getSelectedItem());
+				if (!borr.insert())
+                                {
+                                  throw new SQLException("Insert failed.");
+                                }
+                                JOptionPane.showMessageDialog(this, "Borrower successfully added", "Success", JOptionPane.INFORMATION_MESSAGE);
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showMessageDialog(this, "Borrower could not be added.\n"+e1.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
 			}
+                        catch (NumberFormatException expiryNfe)
+                        {
+                          JOptionPane.showMessageDialog(this, "Date entered incorrectly.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
 			break;
 		case CHECK_OUT:
 			//get a string representation of the table
@@ -2135,6 +2270,9 @@ public class ViewFrame extends javax.swing.JFrame {
 			navigationComboBox.setSelectedItem(this.START);
 			break;
 		case SEARCH:
+                        SearchTextField.setText("");
+                        SearchTable.setModel(new DefaultTableModel());
+                        SearchTable.repaint();
 			break;
 		case CHECK_ACCOUNT:
 			break;
@@ -2412,6 +2550,10 @@ public class ViewFrame extends javax.swing.JFrame {
     private javax.swing.JTable currentHoldsTable;
     private javax.swing.JButton doButton;
     private javax.swing.JTable entitiesTable;
+    private javax.swing.JLabel expiryDateLabel;
+    private javax.swing.JTextField expiryDateTextField;
+    private javax.swing.JTextField expiryMonthTextField;
+    private javax.swing.JTextField expiryYearTextField;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JScrollPane finesPane;
     private javax.swing.JTable finesTable;

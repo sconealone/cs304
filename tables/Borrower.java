@@ -239,21 +239,22 @@ public class Borrower implements Table {
      * @return true if Borrower is inserted, false otherwise
      * @throws SQLException 
      */
+    @Override
     public boolean insert() throws SQLException {
 
-        Date sqlDate = new Date(expiryDate.getTimeInMillis());
+        java.sql.Date sqlDate = new java.sql.Date(expiryDate.getTime().getTime());
 
         PreparedStatement ps = con.prepareStatement("INSERT INTO Borrower "
                 + "(bid,password,name,address,phone,emailAddress,sinOrStNo,expiryDate,type) VALUES (bidCounter.nextval,?,?,?,?,?,?,?,?)");
 
-        ps.setString(2, password);
-        ps.setString(3, name);
-        ps.setString(4, address);
-        ps.setString(5, phone);
-        ps.setString(6, emailAddress);
-        ps.setInt(7, sinOrStNum);
-        ps.setDate(8, sqlDate);
-        ps.setString(9, type);
+        ps.setString(1, password);
+        ps.setString(2, name);
+        ps.setString(3, address);
+        ps.setString(4, phone);
+        ps.setString(5, emailAddress);
+        ps.setInt(6, sinOrStNum);
+        ps.setDate(7, sqlDate);
+        ps.setString(8, type);
         int numRowsChanged = ps.executeUpdate();
         if (numRowsChanged == 1) {
             ps.close();
