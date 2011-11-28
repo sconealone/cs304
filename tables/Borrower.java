@@ -631,7 +631,8 @@ public class Borrower implements Table {
                 + " B.bid = R.bid AND "
                 + " R.callNumber = C.callNumber AND "
                 + " R.copyNo = C.copyNo AND "
-                + " C.status = 'overdue'";
+                + " C.status = 'overdue' AND " 
+                + " R.inDate IS NULL";
         PreparedStatement overdueCheckStatement = con.prepareStatement(overdueCheckSql);
         overdueCheckStatement.setInt(1, bid);
         ResultSet overdueCheckResultSet = overdueCheckStatement.executeQuery();

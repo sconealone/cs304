@@ -1466,24 +1466,55 @@ public class ViewFrame extends javax.swing.JFrame {
 				copyNos[i] = (String) checkOutTableReceiptTable.getValueAt(i, 2);
 			}
 			
-			String[][] results;
+			String[][] results = null;
 			try {
 				results = controller.getSystemClerk().checkOutItems(Integer.parseInt((String) checkOutTableReceiptTable.getValueAt(0, 0)), callNos, copyNos);
-			} catch (NumberFormatException | SQLException | BookNotInException
-					| InvalidBorrowerException e2) {
+			} catch (Exception e2) {
 				// TODO Auto-generated catch block
-				e2.printStackTrace();
+                                //TODO Need to fix this
+				JOptionPane.showMessageDialog(new Frame(), e2.toString(), "Have a good day",
+					JOptionPane.INFORMATION_MESSAGE);
+				break;
 			}
 			//"ITEM", "CALLNUMBER","COPYNO","TITLE","OUTDATE","DUEDATE"
-			DefaultTableModel model = new DefaultTableModel();
+			DefaultTableModel checkOutmodel = new DefaultTableModel();
 			results = get2DArrayMinusHeader(results);
-			String[] item = results[0];
-			String[] callNo = results[1];
-			String[] copyNo = results[2];
-			String[] title = results[3];
-			
+                        
+                        JOptionPane.showMessageDialog(new Frame(), "Results has " + results.length + " rows and " + results[0].length + " columns.", "Have a good day",
+					JOptionPane.INFORMATION_MESSAGE);
+                        
+			String[] item = new String[results.length];
+			String[] callNo = new String[results.length];
+			String[] copyNo = new String[results.length];
+			String[] title = new String[results.length];
+			String[] outDate = new String[results.length];
+			String[] dueDate = new String[results.length];
+                        
+                        for (int i = 0; i < results.length; i++) {
+                            int n = 0;
+                            item[i] = results[i][n++];
+                            callNo[i] = results[i][n++];
+                            copyNo[i] = results[i][n++];
+                            title[i] = results[i][n++];
+                            outDate[i] = results[i][n++];
+                            dueDate[i] = results[i][n++];
+                        }
 			
 			//redraw table to reflect receipt, set add button to inactive
+			
+			checkOutmodel.addColumn("Item", item);
+			checkOutmodel.addColumn("Call Number", callNo);
+			checkOutmodel.addColumn("Copy Number", copyNo);
+			checkOutmodel.addColumn("Title", title);
+			checkOutmodel.addColumn("Out Date", outDate);
+			checkOutmodel.addColumn("Due Date", dueDate);
+			
+			checkOutTableReceiptTable.setModel(checkOutmodel);
+			checkOutTableReceiptTable.repaint();
+			
+
+			JOptionPane.showMessageDialog(new Frame(), "The Borrower checked out.", "Have a good day",
+					JOptionPane.INFORMATION_MESSAGE);
 			
 			break;
 		case CHECK_OVERDUE:
@@ -1526,7 +1557,7 @@ public class ViewFrame extends javax.swing.JFrame {
 				model.addColumn("Copy Number", bcpyStr);
 				
 				checkOverdueTable.setModel(model);
-                                checkOverdueTable.repaint();
+                checkOverdueTable.repaint();
 
 				JOptionPane.showMessageDialog(new Frame(), "The table has "
 						+ lbw.size() + " elements.", "Have a good day",
