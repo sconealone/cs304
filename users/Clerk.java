@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
@@ -12,10 +13,12 @@ import java.util.Iterator;
 
 import tables.Book;
 import tables.BookCopy;
+import tables.BookCopyEvilTwinException;
 import tables.Borrower;
 import tables.Borrowing;
 import tables.Fine;
 import tables.HoldRequest;
+import tables.NoSuchCopyException;
 import tables.Table;
 
 /**
@@ -178,7 +181,8 @@ public class Clerk {
       }
     }
 
-  /**
+   
+   /**
    * Processes an item return.
    * 
    * Given a returned items' callNo and copyNo, the system determines the
@@ -193,41 +197,118 @@ public class Clerk {
    * @param callNo
    * @param copyNo
    * @throws SQLException
+   * @throws BookCopyEvilTwinException if this copy has been borrowed twice at the same time
+   * @throws FineRequiredException if this return cannot be processed because it requires a fine
+   * @throws NoSuchCopyException if the copy does not exist
    */
-  public void processReturn(String callNo, String copyNo) throws SQLException {
-          Book b = new Book();
-          b.setCallNumber(callNo);
-          b = b.get();
-          BookCopy bc = new BookCopy(copyNo, b, "in");
-          bc.update();
-          Borrowing bwing = new Borrowing();
+   public void processReturn(String callNo, String copyNo)
+          throws SQLException, BookCopyEvilTwinException, FineRequiredException, NoSuchCopyException 
+   {
+     processReturn(callNo, copyNo, null);
+   }
+           
+   
+  /**
+   * Processes an item return.
+   * 
+   * Given a returned items' callNo and copyNo, the system determines the
+   * borrower who had borrowed the item, registers the item as "in", and
+   * removes it from the list of library materials on loan to that borrower.
+   * If the item is overdue, a fine is assessed for the borrower and the
+   * borrower is blocked (if he/she is not already blocked). If there is a
+   * hold request for this item by another borrower, the item is registered as
+   * "on hold" and a message is send to the borrower who made the hold
+   * request.
+   * 
+   * @param callNo
+   * @param copyNo
+   * @param fine 
+   * @throws SQLException
+   * @throws BookCopyEvilTwinException if this copy has been borrowed twice at the same time
+   * @throws FineRequiredException if this return cannot be processed because it requires a fine
+   * @throws NoSuchCopyException if the copy does not exist
+   */
+  public void processReturn(String callNo, String copyNo, Integer fineAmountInCents) 
+          throws SQLException, BookCopyEvilTwinException, FineRequiredException, NoSuchCopyException 
+  {
+    Connection conn = Conn.getInstance().getConnection();
+    conn.setAutoCommit(false);
+    try
+    {
+      Book book = new Book();
+      book.setCallNumber(callNo);
+      BookCopy bookCopy = new BookCopy();
+      bookCopy.setB(book);
+      bookCopy.setCopyNo(copyNo);
+      Borrowing borrowing = new Borrowing();
+      borrowing = borrowing.getOutBorrowing(bookCopy);
+      Calendar dueDate = borrowing.getDueDate();
+      Calendar today = new GregorianCalendar();
+      boolean isOverdue = dueDate.before(today);
+      boolean fineExists = fineAmountInCents != null;
+      if (!fineExists && isOverdue)
+      {
+        throw new FineRequiredException();
+      }
+      // set borrowing in date
+      borrowing.setInDate(today);
+      borrowing.update();
 
-          bwing = (Borrowing) bwing.getOverdue(bc);
-          if (Calendar.getInstance().compareTo(bwing.getInDate()) == 1) {
-                  Fine f = new Fine();
-                  f.setAmount(100);
-                  f.setBorrowing(bwing);
-                  f.setIssuedDate(Calendar.getInstance());
-                  f.setPaidDate(null);
-                  f.insert();
+      // set book copy as in
+      bookCopy = (BookCopy) bookCopy.get();
+      bookCopy.setStatus("in");
+      bookCopy.update();
+
+      // check for holds
+      ArrayList<Table> holdRequestsForThisBook =(ArrayList<Table>) (new HoldRequest()).getAll(book);
+      int numHoldRequests = holdRequestsForThisBook.size();
+      if (numHoldRequests > 0)
+      {
+        Calendar[] issuedDates = new Calendar[numHoldRequests];
+        for (int i = 0; i < numHoldRequests; i++)
+        {
+          HoldRequest holdRequest = (HoldRequest) holdRequestsForThisBook.get(i);
+          issuedDates[i] = holdRequest.getIssueDate();
+        }
+
+        Arrays.sort(issuedDates); // in ascending order, so the first element is the earliest
+        Calendar firstHoldRequestIssuedDate = issuedDates[0];
+
+        HoldRequest earliestHoldRequest = null;
+        int holdRequestIndex = 0;
+        while (earliestHoldRequest == null && holdRequestIndex < numHoldRequests)
+        {
+          HoldRequest holdRequest = (HoldRequest) holdRequestsForThisBook.get(holdRequestIndex);
+          if (holdRequest.getIssueDate().equals(firstHoldRequestIssuedDate))
+          {
+            earliestHoldRequest = holdRequest;
           }
+          holdRequestIndex++;
+        }
+        // email user
 
-          HoldRequest hr = new HoldRequest();
-          HoldRequest finalhr = new HoldRequest();
-          finalhr.setIssueDate(Calendar.getInstance());
+        // delete the hold request
+        earliestHoldRequest.delete();
 
-          Collection<Table> lhReq = hr.getAll(b);
-          if (lhReq.size() > 0) {
-                  Iterator<Table> hrItr = lhReq.iterator();
-                  while (hrItr.hasNext()) {
-                          hr = (HoldRequest) hrItr.next();
-                          // This returned BookCopy goes to the earliest HoldRequest
-                          if ((hr.getIssueDate().compareTo(finalhr.getIssueDate())) == -1)
-                                  finalhr = hr;
-                  }
-                  bc.setStatus("on-hold");
-                  bc.update();
-          }
+        // set book copy's status to on hold
+        bookCopy.setStatus("on-hold");
+        bookCopy.update();
+      } // end if hold requests exist
+      
+      // add fine
+      if (fineExists && isOverdue)
+      {
+        Fine fine = new Fine(-1, fineAmountInCents,today,null, borrowing);
+        fine.insert();
+      }
+      conn.commit();
+    }
+    finally
+    {
+      conn.rollback();
+      conn.setAutoCommit(true);
+    }
+    
   }
 
   /**
@@ -284,7 +365,7 @@ public class Clerk {
   public static void main(String[] args) throws Exception
   {
     Clerk systemClerk = new Clerk();
-    
+   /* 
     int bid = 1;
     
     String callNumbers[] = {"test", "111", "tete"};
@@ -300,7 +381,8 @@ public class Clerk {
       }
       System.out.println();
     }
-    
+    */
+    systemClerk.processReturn("WN304 B143 2005", "C1", 2000);
     
   }
 }
