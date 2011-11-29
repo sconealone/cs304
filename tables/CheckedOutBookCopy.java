@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package tables;
 
 import java.sql.Connection;
@@ -182,42 +178,5 @@ public class CheckedOutBookCopy //extends BookCopy
     this.subjectToFilterBy = subjectToFilterBy;
   }
   
-  public static void main(String[] args) throws Exception {
-    CheckedOutBookCopy bc = new CheckedOutBookCopy();
-    String[][] table = bc.display();
-    for (int i = 0; i < table.length; i++)
-    {
-      for (int j = 0; j < table[0].length; j++)
-      {
-        System.out.print(table[i][j] + '\t');
-      }
-      System.out.println();
-    }
-    System.out.println();
-    System.out.println(bc.flagOverdue());
-    
-    table = bc.display();
-    for (int i = 0; i < table.length; i++)
-    {
-      for (int j = 0; j < table[0].length; j++)
-      {
-        System.out.print(table[i][j] + '\t');
-      }
-      System.out.println();
-    }
-    System.out.println();
-    bc.setSubjectToFilterBy("eDuCaTiON");
-    table = bc.display();
-    for (int i = 0; i < table.length; i++)
-    {
-      for (int j = 0; j < table[0].length; j++)
-      {
-        System.out.print(table[i][j] + '\t');
-      }
-      System.out.println();
-    }
-    
-    
-  }
   
 }

@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -504,66 +503,6 @@ public class Fine implements Table {
   
   }
   
-  /**
-   * For testing only
-   * @param args 
-   */
-  public static void main(String[] args) throws SQLException {
-    // get
-   
-    Fine f = new Fine();
-    /*
-     * f.setFid(2);
-    f = (Fine) f.get();
-    System.out.println("fine:\n"+f);
-    
-    f.setFid(4);
-    f.setPaidDate(new GregorianCalendar());
-    f.update();
-    
-    f.setFid(3);
-    if (f.delete())
-    {
-      // do nothing
-    }
-    else
-    {
-      System.out.println("Failed to delete fine 3");
-    }
-    
-    System.out.println((f.delete()) ? "error in delete" : "successfully failed to delete");
-    
-    System.out.println("Should see fine 4 with today's' date for paiddate"
-            + " and should see fine 3 deleted");
-     * 
-     
-    
-    f.fid = -1;
-    f.amount = 1337;
-    f.issuedDate = new GregorianCalendar();
-    f.paidDate = null;
-    f.borrowing = new Borrowing();
-    f.borrowing.setBorid(12);
-    f.insert();
-    System.out.println("expect new fid to be 6"
-            + "\nactual value is: "+f.fid);
-    */
-    
-    for (Table ff : f.getAll())
-    {
-      System.out.println(ff);
-      System.out.println("\n\n");
-    }
-    
-    String[][] fineTable = f.display();
-    for (int i = 0; i < fineTable.length; i++)
-    {
-      for (int j = 0; j < fineTable[i].length; j++)
-      {
-        System.out.print(fineTable[i][j] + '\t');
-      }
-      System.out.println();
-    }
-  }
+  
 
 }

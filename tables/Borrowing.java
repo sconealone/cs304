@@ -129,11 +129,6 @@ public class Borrowing implements Table {
 	 *         Borrowing table and every column represents a field
 	 */
 	@Override
-	// NOTE: it's probably easiest to implement display using the
-	// Borrowing(rs:ResultSet) constructor.
-	// Already finished writing display() before I realized that
-	// and it's not worth changing now, but useful to know for any
-	// future class that I need to implement display for.
 	public String[][] display() throws SQLException {
 		ArrayList<String[]> borrowingGrowable = new ArrayList<String[]>();
 
@@ -519,65 +514,4 @@ public class Borrowing implements Table {
 
 	}
 
-	public static void main(String[] args) throws SQLException, BookCopyEvilTwinException, NoSuchCopyException {
-		Borrowing b = new Borrowing();
-		/*
-		 * // display test String[][] table = b.display(); for (String[] row :
-		 * table) { for (String field : row) { System.out.print(field + " "); }
-		 * System.out.println(); }
-		 * 
-		 * // update b.borid = 30; b.borr = new Borrower(); b.borr.setBid(42);
-		 * b.bc = new BookCopy(); b.bc.setB(new Book());
-		 * b.bc.getB().setCallNumber("DJ342 C341 2003"); b.bc.setCopyNo("C1");
-		 * b.outDate = new GregorianCalendar(); b.inDate = null; b.update();
-		 * 
-		 * //delete // deleting borid 29 b.borid = 29; b.delete();
-		 * 
-		 * // trying to delete a tuple that doesn't exist // should not crash,
-		 * should print false b.borid = 31; System.out.println(b.delete());
-		 * 
-		 * // getall Collection<Table> allBorrowings = b.getAll();
-		 * Iterator<Table> i = allBorrowings.iterator(); while (i.hasNext()) {
-		 * System.out.println(((Borrowing) i.next()) + "\n"); }
-		 
-		// insert
-		b.borid = -1;
-		b.borr = new Borrower();
-		b.borr.setBid(2);
-		b.bc = new BookCopy();
-		b.bc.setB(new Book());
-		b.bc.getB().setCallNumber("MO327 O326 1990");
-		b.bc.setCopyNo("C1");
-		b.outDate = new GregorianCalendar();
-		b.inDate = null;
-
-		if (b.insert()) {
-			System.out.println("auto-generated key: " + b.borid);
-		} else {
-			System.out.println("test failed, not inserted");
-		}
-                Borrowing borrowinget = new Borrowing();
-                borrowinget.setBorid(1);
-                borrowinget = (Borrowing) borrowinget.get();
-
-                System.out.println(borrowinget);
-                
-                // testing getOutBorrowing
-                BookCopy outBookCopy = new BookCopy();
-                String outCallNumber = "hi345 p298 1989".toUpperCase();
-                String copyNo = "C1";
-                Book outBook = new Book();
-                outBook.setCallNumber(outCallNumber);
-                outBookCopy.setB(outBook);
-                outBookCopy.setCopyNo(copyNo);
-                Borrowing outBorrowing = new Borrowing();
-                outBorrowing = outBorrowing.getOutBorrowing(outBookCopy);
-                System.out.println(outBorrowing);
-                
-
-                System.out.println(borrowinget);
-                
-                Collection<Table> col = borrowinget.getOverdue();
-                System.out.println("Number of overdue books: " + col.size());*/
-	}
 }

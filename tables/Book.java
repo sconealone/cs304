@@ -67,7 +67,6 @@ public class Book implements Table {
 	@Override
 	public String[][] display() throws SQLException {
 
-		//credit to mitch for template!   
 		ArrayList<String[]> bookGrowable = new ArrayList<String[]>();
 
 		PreparedStatement ps = c.prepareStatement("SELECT * FROM Book");

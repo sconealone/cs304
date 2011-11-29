@@ -1,11 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package tables;
 
 /**
- *
+ * Indicates that there are two copies of the same book; the database
+ * is corrupted
  * @author Mitch
  */
 public class BookCopyEvilTwinException extends Exception {

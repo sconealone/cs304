@@ -5,10 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import users.Conn;
 
@@ -17,26 +15,9 @@ import users.Conn;
  * 
  * @author Christiaan Fernando
  * 
- *         Changes 25 Nov
- * 
- *         1.Changed the string constants for in, out, hold, and overdue to
- *         match what's in the database.
- * 
- *         2. Changed all attribute references to callNumber to callNumber
  */
 
 public class BookCopy implements Table {
-
-	/*
-	private final String IN = "in";
-	private final String OUT = "out";
-	private final String HOLD = "on-hold";
-	private final String OVERDUE = "overdue";
-	*/
-	
-	// These are never used.
-	// TODO Ensure status is only of these types. Either create custom
-	// exception, or try enum
 
 	// The fields for BookCopy in the table are copyNo, callNumber, status in that
 	// order.
@@ -225,23 +206,6 @@ public class BookCopy implements Table {
 	}
 
 	/**
-	 * Returns the ResultSetMetaData object for the BookCopy table.
-	 * 
-	 * Returns an object that contains the meta data for the BookCopy table.
-	 * This is an internal helper method to be used by the display method.
-	 * 
-	 * @return
-	 * @throws SQLException
-	 */
-        @Deprecated
-	public ResultSetMetaData getMeta() throws SQLException {
-		ps = c.prepareStatement("SELECT * FROM BookCopy");
-
-		rs = ps.executeQuery();
-		return rs.getMetaData();
-	}
-
-	/**
 	 * Get all BookCopy objects in the BookCopy table that match the given Book.
 	 * 
 	 * Given a Book, find all the BookCopy objects in the BookCopy table that
@@ -300,38 +264,6 @@ public class BookCopy implements Table {
             return null;
           }
         }
-
-	// DEPENDING ON CONVENTION, THIS MIGHT BE DEFUNCT
-	/**
-	 * Returns the BookCopy object corresponding with the given Book and copyNo.
-	 * 
-	 * Given a Book and a copyNo, this returns the BookCopy object in the SQL
-	 * database that match the given fields.
-	 * 
-	 * @param copyNo
-	 *            The copy number of the BookCopy object
-	 * @param b
-	 *            The Book that shares the callNumber of the BookCopy object
-	 * @return
-	 * @throws SQLException
-	 */
-        @Deprecated
-	public Table get(String copyNo, Book b) throws SQLException {
-		ps = c.prepareStatement("SELECT * FROM BookCopy WHERE copyNo = ? AND callNumber = ?");
-		ps.setString(2, b.getCallNumber());
-		ps.setString(1, copyNo);
-
-		rs = ps.executeQuery();
-
-		while (rs.next()) {
-			BookCopy bc = new BookCopy();
-			bc.setCopyNo(copyNo);
-			bc.setB(b);
-			bc.setStatus(rs.getString(3));
-			return bc;
-		}
-		return null;
-	}
 
 	/**
 	 * @return the copyNo
@@ -426,73 +358,4 @@ public class BookCopy implements Table {
         }
 
         
-  public static void main(String[] args) throws Exception {
-     /*
-    BookCopy bcget = new BookCopy();
-    Book bcgetbook = new Book();
-    bcgetbook.setCallNumber("GV345 R202 1997");
-    bcget.setB(bcgetbook);
-    bcget.setCopyNo("C1");
-    bcget = (BookCopy) bcget.get();
-    
-    System.out.println(bcget.getB().getCallNumber());
-    System.out.println(bcget.getB().getTitle());
-    System.out.println(bcget.status);
-    System.out.println(bcget.copyNo);
-    
-     
-    
-    BookCopy bcupdate = new BookCopy();
-    Book bcupdatebook = new Book();
-    bcupdatebook.setCallNumber("AK315 X383 1999");
-    bcupdate.setB(bcupdatebook);
-    bcupdate.setCopyNo("C2");
-    bcupdate.setStatus("out");
-    bcupdate.update();
-    
-    System.out.println(bcupdate);
-    
-    BookCopy bcinsert = new BookCopy();
-    Book bcinsertbook = new Book();
-    bcinsertbook.setCallNumber("WY273 P213 1986");
-    bcinsert.setB(bcinsertbook);
-    bcinsert.insert();
-    int count = 40;
-    bcinsert.setCopyNo("C"+count);
-    bcinsert.insert();
-    bcinsert.setCopyNo(null);
-    bcinsert.insert();
-    
-    
-    
-    BookCopy bcdel = new BookCopy();
-    Book bcdelbook = new Book();
-    bcdelbook.setCallNumber("WY273 P213 1986");
-    bcdel.setB(bcdelbook);
-    bcdel.setCopyNo("C40");
-    System.out.println(bcdel.delete());
-    bcdel.setCopyNo("C41");
-    
-    System.out.println(bcdel.delete());
-    
-    System.out.println(bcdel.delete());
-    */
-    System.out.println("get all");
-    BookCopy getAll = new BookCopy();
-    Collection<Table> allbcs = getAll.getAll();
-    
-    for (Table t : allbcs)
-    {
-      System.out.println(t);
-    }
-    System.out.println();
-    System.out.println("get all copies of WY273 P213 1986");
-    Book getallbook = new Book();
-    getallbook.setCallNumber("WY273 P213 1986");
-    Collection<Table> allbcsforWY = getAll.getAll(getallbook);
-    for (Table t : allbcsforWY)
-    {
-      System.out.println(t);
-    }
-  }
 }

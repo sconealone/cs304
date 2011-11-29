@@ -127,18 +127,5 @@ public class BorrowerType implements Displayable
     return table;
   }
   
-  //testing
-  public static void main(String[] args) throws SQLException{
-    BorrowerType h = new BorrowerType();
-    String[][] d = h.display();
-    for (int i = 0; i < d.length; i++)
-    {
-      for (int j = 0; j < d[0].length; j++)
-      {
-        System.out.print(d[i][j] + '\t');
-      }
-      System.out.println();
-    }
-  }
   
 }

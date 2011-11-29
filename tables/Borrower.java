@@ -640,21 +640,6 @@ public class Borrower implements Table {
           return false;
         }
         
-        /*
-        Statement stmt2 = con.createStatement();
-        String sql2 = "SELECT B.bid FROM Borrower B WHERE EXISTS "
-                + "(SELECT W.borid FROM Borrowing W, BorrowerType T "
-                + "WHERE B.bid=W.bid AND B.type=T.type AND "
-                + "DATEADD(W.outDate,T.bookTimeLimit,outDate) < Convert(datetime, Convert(int, sysdate())))";
-        ResultSet rs2 = stmt2.executeQuery(sql2);
-        if (rs2.next()) {
-            int id = rs2.getInt(1);
-            if (id == this.bid) {
-                return false;
-            }
-        }
-         * *
-         */
         
         // if Borrower's account is expired
         if (expiryDate != null && expiryDate.before(new GregorianCalendar()))
@@ -791,53 +776,5 @@ public class Borrower implements Table {
         }
         return twoDArray;
     }
-        
-  public static void main(String[] args) throws Exception {
-    /*
-     * 
-    
-    Borrower borrower = new Borrower();
-    borrower.setBid(1);
-    Book book = new Book();
-    book.setCallNumber("VW88 X392 1996");
-    HoldRequest holdRequest = new HoldRequest(borrower, book, new GregorianCalendar());
-    holdRequest.insert();
-    borrower.placeHoldRequest("VW88 X392 1996");
      
-    
-    Borrower borrower = new Borrower();
-    borrower.setBid(2 );
-    borrower = (Borrower) borrower.get();
-    System.out.println(borrower.isValid());
-     *
-     
-    
-    try
-    {
-      Borrower paidInFullBorrower = new Borrower();
-      paidInFullBorrower.setBid(34);
-      System.out.println(paidInFullBorrower.payFine(3, 6726));
-    }
-    catch (NoPaymentException e)
-    {
-     
-    }
-    
-    
-    Borrower paidInHalfBorrower = new Borrower();
-    // pay 500 of 1090
-    paidInHalfBorrower.setBid(12);
-    System.out.println(paidInHalfBorrower.payFine(4, 500));
-    
-    try
-    {
-      Borrower paidNegative = new Borrower();
-      paidNegative.setBid(97);
-      System.out.println(paidNegative.payFine(5, -6726));
-    }
-    catch (NoPaymentException e)
-    {
-      System.out.println("good caught exception "+e.getMessage());
-    }*/
-  }
 }
