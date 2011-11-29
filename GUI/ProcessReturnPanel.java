@@ -131,8 +131,7 @@ public class ProcessReturnPanel extends javax.swing.JPanel {
       sNumber.setText("");
       year.setText("");
       copyNo.setText("");
-      logArea = new JTextArea();
-      logArea.setEditable(false);
+      logArea.setText("");
     }
     
     public void clearCatalogNumber()

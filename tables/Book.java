@@ -175,7 +175,6 @@ public class Book implements Table {
             String sql = "Select * FROM Book WHERE callNumber = '" + callNumber + "'";
             ResultSet rs = stmt1.executeQuery(sql);
             if (!rs.next() ) {
-                 System.out.println("no data fr call number "+ callNumber);
                  return false;
             }
             return true;
@@ -206,7 +205,7 @@ public class Book implements Table {
 
 		Statement stmt = c.createStatement();
 		int rowCount1 = stmt.executeUpdate(sql); 
-
+                
 		for(int i=0;i<subjects.size();i++){
 		HasSubject hS = new HasSubject(subjects.get(i),callNumber);
 		}

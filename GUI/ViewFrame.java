@@ -110,7 +110,7 @@ public class ViewFrame extends javax.swing.JFrame {
                     || !abMA.getText().matches(regex1)
                     || !abPub.getText().matches(regex1)
                     || !abYear.getText().matches(regex1)
-                    || !abAA.getText().matches(regex1)
+                    //|| !abAA.getText().matches(regex1)
                     || !abSubs.getText().matches(regex1)
                     || !abSpinner.getValue().toString().matches(regex1)) {
       abOpStatus.setForeground(Color.RED);
@@ -142,7 +142,7 @@ public class ViewFrame extends javax.swing.JFrame {
     }
     // create the bopk object with user input
     Book b = new Book();
-    b.setCallNumber(abCN.getText());
+    b.setCallNumber(abCN.getText().trim().toUpperCase());
     b.setIsbn(abISBN.getText());
     b.setMainAuthor(abMA.getText());
     b.setTitle(abTitle.getText());
@@ -150,14 +150,18 @@ public class ViewFrame extends javax.swing.JFrame {
     b.setYear(Integer.parseInt(abYear.getText()));
     // add additional authors
     String aa = abAA.getText();
-    // deliniate the string into sep. objects
-    String[] aaArray = aa.split(",", 0);
-    // create the array list from string[]
     ArrayList<String> aLAA = new ArrayList<String>();
-    for (int i = 0; i < aaArray.length; i++) {
-            aLAA.add(aaArray[i]);
+    aLAA.add(b.getMainAuthor());
+    if (aa.length() >= 1)
+    {
+      // deliniate the string into sep. objects
+      String[] aaArray = aa.split(",", 0);
+      // create the array list from string[]\
+      for (int i = 0; i < aaArray.length; i++) {
+              aLAA.add(aaArray[i]);
+      }
+      // set the book objects array list of additional authors
     }
-    // set the book objects array list of additional authors
     b.setAuthors(aLAA);
     // add additional subjects
     String subs = abSubs.getText();
@@ -192,6 +196,7 @@ public class ViewFrame extends javax.swing.JFrame {
             } catch (SQLException ex) {
                     Logger.getLogger(ViewFrame.class.getName()).log(
                                     Level.SEVERE, null, ex);
+                    ex.printStackTrace();
                     System.out.println(ex.getMessage());
                     abOpStatus.setForeground(Color.red);
                     abOpStatus.setText("error: " + ex.getErrorCode());
