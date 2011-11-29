@@ -231,7 +231,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="startMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="START" type="code"/>
+                  <Connection code="START_STRING" type="code"/>
                 </Property>
               </Properties>
               <Events>
@@ -333,7 +333,7 @@
                     <Component class="javax.swing.JComboBox" name="navigationComboBox">
                       <Properties>
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                          <Connection code="new javax.swing.DefaultComboBoxModel(new String[] {&#xa;    START,&#xa;    TABLES,&#xa;    SEARCH,&#xa;    CHECK_ACCOUNT,&#xa;    HOLD_REQUEST,&#xa;    PAY_FINE,&#xa;    ADD_BORROWER,&#xa;    CHECK_OUT,&#xa;    CHECK_OVERDUE,&#xa;    PROCESS_RETURN,&#xa;    ADD_BOOK,&#xa;    ADD_COPY,&#xa;    REMOVE_BOOK,&#xa;    REMOVE_BORROWER,&#xa;    REPORT_POPULAR,&#xa;    REPORT_CHECKED_OUT&#xa;})" type="code"/>
+                          <Connection code="new javax.swing.DefaultComboBoxModel(new String[] {&#xa;    START_STRING,&#xa;    TABLES,&#xa;    SEARCH,&#xa;    CHECK_ACCOUNT,&#xa;    HOLD_REQUEST,&#xa;    PAY_FINE,&#xa;    ADD_BORROWER,&#xa;    CHECK_OUT,&#xa;    CHECK_OVERDUE,&#xa;    PROCESS_RETURN,&#xa;    ADD_BOOK,&#xa;    ADD_COPY,&#xa;    REMOVE_BOOK,&#xa;    REMOVE_BORROWER,&#xa;    REPORT_POPULAR,&#xa;    REPORT_CHECKED_OUT&#xa;})" type="code"/>
                         </Property>
                       </Properties>
                     </Component>

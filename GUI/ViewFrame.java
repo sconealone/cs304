@@ -7,13 +7,10 @@ package GUI;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Desktop;
-import java.awt.Frame;
 import java.awt.HeadlessException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -21,39 +18,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
-
-import users.BookNotInException;
 import users.Controller;
-import users.InvalidBorrowerException;
-
 import javax.swing.JSplitPane;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
-
 import tables.Book;
 import tables.BookCopy;
 import tables.BookCopyEvilTwinException;
 import tables.Borrower;
 import tables.Borrowing;
 import tables.Fine;
-import tables.HasAuthor;
-import tables.HasSubject;
 import tables.NoPaymentException;
 import tables.NoSuchCopyException;
 import tables.Table;
-import users.Conn;
 import users.FineRequiredException;
 
 /*
@@ -73,7 +59,7 @@ public class ViewFrame extends javax.swing.JFrame {
 	public ViewFrame() {
 		this.controller = new Controller(this);
 		statemap = new HashMap<String, State>();
-		statemap.put(START, State.START);
+		statemap.put(START_STRING, State.START);
 		statemap.put(TABLES, State.TABLES);
 		statemap.put(SEARCH, State.SEARCH);
 		statemap.put(CHECK_ACCOUNT, State.CHECK_ACCOUNT);
@@ -92,7 +78,7 @@ public class ViewFrame extends javax.swing.JFrame {
 		initComponents();
 		CardLayout cl_cardPanel = (CardLayout) cardPanel.getLayout();
 		state = State.START;
-		cl_cardPanel.show(cardPanel, START);
+		cl_cardPanel.show(cardPanel, START_STRING);
 		doButton.setText("Go");
                 setSize(800,600);
 	}
@@ -196,8 +182,6 @@ public class ViewFrame extends javax.swing.JFrame {
             } catch (SQLException ex) {
                     Logger.getLogger(ViewFrame.class.getName()).log(
                                     Level.SEVERE, null, ex);
-                    ex.printStackTrace();
-                    System.out.println(ex.getMessage());
                     abOpStatus.setForeground(Color.red);
                     abOpStatus.setText("error: " + ex.getErrorCode());
                     break;
@@ -708,7 +692,7 @@ checkOverdueTable.repaint();
         startComboBoxPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Choose a transaction"));
 
         navigationComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
-            START,
+            START_STRING,
             TABLES,
             SEARCH,
             CHECK_ACCOUNT,
@@ -1655,7 +1639,7 @@ checkOverdueTable.repaint();
         });
         navigationMenu.add(tableMenuItem);
 
-        startMenuItem.setText(START);
+        startMenuItem.setText(START_STRING);
         startMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navigationMenuItemActionPerformed(evt);
@@ -2383,7 +2367,7 @@ checkOverdueTable.repaint();
 			entitiesTable.repaint();
 			break;
 		case START:
-			navigationComboBox.setSelectedItem(this.START);
+			navigationComboBox.setSelectedItem(START_STRING);
 			break;
 		case SEARCH:
                         SearchTextField.setText("");
@@ -2437,8 +2421,22 @@ checkOverdueTable.repaint();
                         processReturnPanel.clear();
 			break;
 		case ADD_BOOK:
+                        abOpStatus.setBackground(Color.WHITE);
+                        abOpStatus.setForeground(Color.BLACK);
+                        abOpStatus.setText("Waiting for Input...");
+                        abPub.setText("");
+                        abSpinner.setValue(1);
+                        abAA.setText("");
+                        abCN.setText("");
+                        abISBN.setText("");
+                        abMA.setText("");
+                        abSubs.setText("");
+                        abTitle.setText("");
+                        abYear.setText("");
 			break;
 		case ADD_COPY:
+                        abcCN.setText("");
+                        abcSpinner.setValue(1);
 			break;
 		case REMOVE_BOOK:
 			removeBookPrimaryNoTextField.setText("");
@@ -2592,6 +2590,7 @@ checkOverdueTable.repaint();
 		/* Create and display the form */
 		java.awt.EventQueue.invokeLater(new Runnable() {
 
+                        @Override
 			public void run() {
 				new ViewFrame().setVisible(true);
 			}
@@ -2792,7 +2791,7 @@ checkOverdueTable.repaint();
 	}
 
 	private static final String TABLES = "View tables";
-	private static final String START = "Start";
+	private static final String START_STRING = "Start";
 	private static final String SEARCH = "Search for book";
 	private static final String CHECK_ACCOUNT = "Check account";
 	private static final String HOLD_REQUEST = "Place hold request";
