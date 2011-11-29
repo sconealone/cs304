@@ -42,14 +42,6 @@ import tables.NoSuchCopyException;
 import tables.Table;
 import users.FineRequiredException;
 
-/*
- * ViewFrame.java
- *
- * Created on 16-Nov-2011, 4:09:38 PM
- * 
- * TODO maybe changed DefaultTableModel to DefaultTableModel
- */
-
 /**
  * 
  * @author Mitch
