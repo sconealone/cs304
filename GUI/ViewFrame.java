@@ -11,6 +11,7 @@ import java.awt.HeadlessException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -40,6 +41,7 @@ import tables.Fine;
 import tables.NoPaymentException;
 import tables.NoSuchCopyException;
 import tables.Table;
+import users.Conn;
 import users.FineRequiredException;
 
 /**
@@ -75,126 +77,142 @@ public class ViewFrame extends javax.swing.JFrame {
                 setSize(800,600);
 	}
 
-  private boolean addBook() throws NumberFormatException {
-    // check user input using a regular expression
-    abOpStatus.setForeground(Color.BLACK);
-    abOpStatus.setBackground(Color.WHITE);
-    abOpStatus.setText("...");
-    String regex1 = "([0-9]+|[a-z]+|[A-Z]+|[\\s]+)+";
-    if (!abCN.getText().matches(regex1)
-                    || !abCN.getText().matches(regex1)
-                    || !abISBN.getText().matches(regex1)
-                    || !abTitle.getText().matches(regex1)
-                    || !abMA.getText().matches(regex1)
-                    || !abPub.getText().matches(regex1)
-                    || !abYear.getText().matches(regex1)
-                    //|| !abAA.getText().matches(regex1)
-                    || !abSubs.getText().matches(regex1)
-                    || !abSpinner.getValue().toString().matches(regex1)) {
-      abOpStatus.setForeground(Color.RED);
+  private boolean addBook() throws NumberFormatException, SQLException {
+    Connection connection = Conn.getInstance().getConnection();
+    boolean noExceptions = true;
+    try
+    {
+      connection.setAutoCommit(false);
+      // check user input using a regular expression
+      abOpStatus.setForeground(Color.BLACK);
       abOpStatus.setBackground(Color.WHITE);
-      abOpStatus
-                      .setText("Looks like you have bad input, please check again");
-      return true;
-    }
-    String onlyNumberRegex = "[0-9]+";
-    if (!abYear.getText().matches(onlyNumberRegex)) {
-      abOpStatus.setText("Year Must be A number");
-      abOpStatus.setBackground(Color.RED);
-      return true;
-    }
-    Book bTest = new Book();
-    bTest.setCallNumber(abCN.getText());
-    try {
-      if (bTest.checkExists()) {
-        abOpStatus.setText("Book Exists");
-        abOpStatus.setForeground(Color.red);
+      abOpStatus.setText("...");
+      String regex1 = "([0-9]+|[a-z]+|[A-Z]+|[\\s]+)+";
+      if (!abCN.getText().matches(regex1)
+                      || !abCN.getText().matches(regex1)
+                      || !abISBN.getText().matches(regex1)
+                      || !abTitle.getText().matches(regex1)
+                      || !abMA.getText().matches(regex1)
+                      || !abPub.getText().matches(regex1)
+                      || !abYear.getText().matches(regex1)
+                      //|| !abAA.getText().matches(regex1)
+                      || !abSubs.getText().matches(regex1)
+                      || !abSpinner.getValue().toString().matches(regex1)) {
+        abOpStatus.setForeground(Color.RED);
+        abOpStatus.setBackground(Color.WHITE);
+        abOpStatus
+                        .setText("Looks like you have bad input, please check again");
         return true;
       }
-    } catch (SQLException ex) {
-      Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE,
-                      null, ex);
-      abOpStatus.setText("Sql exception");
-      abOpStatus.setForeground(Color.red);
-      return true;
-    }
-    // create the bopk object with user input
-    Book b = new Book();
-    b.setCallNumber(abCN.getText().trim().toUpperCase());
-    b.setIsbn(abISBN.getText());
-    b.setMainAuthor(abMA.getText());
-    b.setTitle(abTitle.getText());
-    b.setPublisher(abPub.getText());
-    b.setYear(Integer.parseInt(abYear.getText()));
-    // add additional authors
-    String aa = abAA.getText();
-    ArrayList<String> aLAA = new ArrayList<String>();
-    aLAA.add(b.getMainAuthor());
-    if (aa.length() >= 1)
-    {
-      // deliniate the string into sep. objects
-      String[] aaArray = aa.split(",", 0);
-      // create the array list from string[]\
-      for (int i = 0; i < aaArray.length; i++) {
-              aLAA.add(aaArray[i]);
+      String onlyNumberRegex = "[0-9]+";
+      if (!abYear.getText().matches(onlyNumberRegex)) {
+        abOpStatus.setText("Year Must be A number");
+        abOpStatus.setBackground(Color.RED);
+        return true;
       }
-      // set the book objects array list of additional authors
+      Book bTest = new Book();
+      bTest.setCallNumber(abCN.getText());
+      try {
+        if (bTest.checkExists()) {
+          abOpStatus.setText("Book Exists");
+          abOpStatus.setForeground(Color.red);
+          return true;
+        }
+      } catch (SQLException ex) {
+        abOpStatus.setText("Sql exception");
+        abOpStatus.setForeground(Color.red);
+        noExceptions = false;
+        return true;
+      }
+      // create the bopk object with user input
+      Book b = new Book();
+      b.setCallNumber(abCN.getText().trim().toUpperCase());
+      b.setIsbn(abISBN.getText());
+      b.setMainAuthor(abMA.getText());
+      b.setTitle(abTitle.getText());
+      b.setPublisher(abPub.getText());
+      b.setYear(Integer.parseInt(abYear.getText()));
+      // add additional authors
+      String aa = abAA.getText();
+      ArrayList<String> aLAA = new ArrayList<String>();
+      aLAA.add(b.getMainAuthor());
+      if (aa.length() >= 1)
+      {
+        // deliniate the string into sep. objects
+        String[] aaArray = aa.split(",", 0);
+        // create the array list from string[]\
+        for (int i = 0; i < aaArray.length; i++) {
+                aLAA.add(aaArray[i]);
+        }
+        // set the book objects array list of additional authors
+      }
+      b.setAuthors(aLAA);
+      // add additional subjects
+      String subs = abSubs.getText();
+      // deliniateString
+      String[] subsArray = subs.split(",");
+      ArrayList<String> aLSubs = new ArrayList<String>();
+      // create the array list from string[]
+      for (int i = 0; i < subsArray.length; i++) {
+              aLSubs.add(subsArray[i]);
+      }
+      // set the book objects array list of subjects
+      b.setSubjects(aLSubs);
+      // try inserting the book into the database ( which also inserts the
+      // subjects and authors)
+      try {
+        b.insert();
+      } catch (SQLException ex) {
+        
+        abOpStatus.setForeground(Color.red);
+        abOpStatus.setText("Error.  Could not add Book.  Transaction cancelled: " + ex.getErrorCode());
+        return true;
+      }
+      // add book copies
+      Object copiesAmount = abSpinner.getValue();
+      int test = Integer.parseInt(copiesAmount.toString());
+      for (int i = 0; i < test; i++) {
+              try {
+                      BookCopy bC = new BookCopy("C" + Integer.toString(i), b,
+                                      "in");
+                      bC.insert();
+              } catch (SQLException ex) {
+                      noExceptions = false;
+                      abOpStatus.setForeground(Color.red);
+                      abOpStatus.setText("Error.  Could not add Book.  Transaction cancelled: " + ex.getErrorCode());
+                      break;
+              }
+      }
+      // clean up UI
+      String clear = "";
+      if (noExceptions)
+      {
+        abOpStatus.setBackground(Color.green);
+        abOpStatus.setText(abSpinner.getValue().toString()
+                        + " copies of the Book with callnumber " + abCN.getText()
+                        + " have been added! ");
+      }
+      abCN.setText(clear);
+      abISBN.setText(clear);
+      abTitle.setText(clear);
+      abMA.setText(clear);
+      abPub.setText(clear);
+      abYear.setText(clear);
+      abAA.setText(clear);
+      abSubs.setText(clear);
+      abSpinner.setValue(1);
+      
+      if (noExceptions)
+      {
+        connection.commit();
+      }
+      return false;
     }
-    b.setAuthors(aLAA);
-    // add additional subjects
-    String subs = abSubs.getText();
-    // deliniateString
-    String[] subsArray = subs.split(",");
-    ArrayList<String> aLSubs = new ArrayList<String>();
-    // create the array list from string[]
-    for (int i = 0; i < subsArray.length; i++) {
-            aLSubs.add(subsArray[i]);
+    finally
+    {
+      connection.rollback();
+      connection.setAutoCommit(true);
     }
-    // set the book objects array list of subjects
-    b.setSubjects(aLSubs);
-    // try inserting the book into the database ( which also inserts the
-    // subjects and authors)
-    try {
-      b.insert();
-    } catch (SQLException ex) {
-      Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE,
-                      null, ex);
-      abOpStatus.setForeground(Color.red);
-      abOpStatus.setText("error: " + ex.getErrorCode());
-      return true;
-    }
-    // add book copies
-    Object copiesAmount = abSpinner.getValue();
-    int test = Integer.parseInt(copiesAmount.toString());
-    for (int i = 0; i < test; i++) {
-            try {
-                    BookCopy bC = new BookCopy("C" + Integer.toString(i), b,
-                                    "in");
-                    bC.insert();
-            } catch (SQLException ex) {
-                    Logger.getLogger(ViewFrame.class.getName()).log(
-                                    Level.SEVERE, null, ex);
-                    abOpStatus.setForeground(Color.red);
-                    abOpStatus.setText("error: " + ex.getErrorCode());
-                    break;
-            }
-    }
-    // clean up UI
-    String clear = "";
-    abOpStatus.setBackground(Color.green);
-    abOpStatus.setText(abSpinner.getValue().toString()
-                    + " copies of the Book with callnumber " + abCN.getText()
-                    + " have been added! ");
-    abCN.setText(clear);
-    abISBN.setText(clear);
-    abTitle.setText(clear);
-    abMA.setText(clear);
-    abPub.setText(clear);
-    abYear.setText(clear);
-    abAA.setText(clear);
-    abSubs.setText(clear);
-    abSpinner.setValue(1);
-    return false;
   }
 
   private boolean addBorrower() throws HeadlessException {
