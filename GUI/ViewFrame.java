@@ -724,6 +724,11 @@ public class ViewFrame extends javax.swing.JFrame {
         checkOverduePanel.add(checkOverdueScrollPaneInfo, java.awt.BorderLayout.CENTER);
 
         checkOverdueButtonMessage.setText("Message Borrower");
+        checkOverdueButtonMessage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkOverdueButtonMessageActionPerformed(evt);
+            }
+        });
         checkOverduePanelMessage.add(checkOverdueButtonMessage);
 
         checkOverduePanel.add(checkOverduePanelMessage, java.awt.BorderLayout.PAGE_END);
@@ -1276,6 +1281,14 @@ public class ViewFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+        /** 
+         * Simulates sending an email
+         * @param evt 
+         */
+  private void checkOverdueButtonMessageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkOverdueButtonMessageActionPerformed
+    JOptionPane.showMessageDialog(this, "Email sent.");
+  }//GEN-LAST:event_checkOverdueButtonMessageActionPerformed
+
 	/*
 	 * Button that adds a Borrower ID, Card Number and Copy Number to a
 	 * CheckOutTable before checking out all items.
@@ -1591,8 +1604,20 @@ public class ViewFrame extends javax.swing.JFrame {
 				borr.setAddress(addBorrowerTextAddress.getText().trim());
 				borr.setPhone(addBorrowerTextPhoneNo.getText().trim());
 				borr.setEmailAddress(addBorrowerTextEmail.getText().trim());
-				borr.setSinOrStNum(Integer.parseInt(addBorrowerTextSinOrStNo
-						.getText().trim()));
+                                try
+                                {
+                                  borr.setSinOrStNum(Integer.parseInt(addBorrowerTextSinOrStNo
+                                                  .getText().trim()));
+                                  if (borr.getSinOrStNum() < 0)
+                                  {
+                                    throw new NumberFormatException();
+                                  }
+                                }
+                                catch(NumberFormatException e)
+                                {
+                                  JOptionPane.showMessageDialog(this, "Not a valid SIN or Student Number", "Error", JOptionPane.ERROR_MESSAGE);
+                                  return;
+                                }
                                 borr.setPassword(addBorrowerTextPassword.getText().trim());
                                 int expiryDate = Integer.parseInt(expiryDateTextField.getText().trim());
                                 int expiryMonth = Integer.parseInt(expiryMonthTextField.getText().trim());
@@ -2353,6 +2378,9 @@ public class ViewFrame extends javax.swing.JFrame {
                                         new String [] {"Borrower ID", "Call Number", "Copy Number"}));
 			break;
 		case CHECK_OVERDUE:
+                        checkOverdueTable.setModel(new DefaultTableModel());
+                        checkOverdueTable.repaint();
+                                
 			break;
 		case PROCESS_RETURN:
 			break;

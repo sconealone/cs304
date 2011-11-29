@@ -1129,6 +1129,9 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Message Borrower"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="checkOverdueButtonMessageActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
