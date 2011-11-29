@@ -36,6 +36,7 @@ public class Conn {
   private static Conn instance;
   private Connection conn;
   /*
+   * Check whose database you're on.  If one doesn't work, try another.
    * 
   private final String USERNAME = "ora_x9u7";
   private final String PASSWORD = "a25703091";
@@ -89,13 +90,6 @@ public class Conn {
         // handle couldn't find driver
         JOptionPane.showMessageDialog(null, "Can't find driver.\nInstall the driver.", "Error", JOptionPane.ERROR_MESSAGE);
       }
-      // somehow get the username and password
-      // get rid of the hard code
-//      String username = "ora_c7e8";
-//      String password = "a84148014";
-  
-      //jesse's database
-       //connect(username, password);
       
       //other db
       connect(USERNAME, PASSWORD);
@@ -138,27 +132,4 @@ public class Conn {
     }
   }
   
-  
-  
-  /**
-   * For testing
-   * @param args 
-   */
-  public static void main(String[] args) {
-    Connection conn = Conn.getInstance().getConnection();
-    try
-    {
-      PreparedStatement stat = conn.prepareStatement("SELECT * FROM Borrower");
-      ResultSet rs = stat.executeQuery();
-      while (rs.next())
-      {
-        System.out.println("bid = " + rs.getString(1));
-      }
-    }
-    catch (SQLException e)
-    {
-      // do nothing
-      System.out.println(e.getMessage());
-    }
-  }
 }

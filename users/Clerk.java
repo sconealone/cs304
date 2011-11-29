@@ -12,7 +12,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.swing.DefaultListModel;
 
 import tables.Book;
 import tables.BookCopy;
@@ -368,52 +367,6 @@ public class Clerk {
           return result;
   }
 
-  /**
-   * Process a fine.
-   * 
-   * If the borrower has no other outstanding fines, the borrower is unblocked
-   * and can borrow items again.
-   * 
-   * @param f
-   *            The fine to be processed
-   */
-  /* Not a Clerk user story
-  public void processFine(Fine f, int amt) {
-          int newAmt = f.getAmount() - amt;
-          if (newAmt < 0)
-                  newAmt = 0;
-          f.setAmount(newAmt);
-  }*/
 
-  /**
-   * Testing
-   * @param args 
-   */
-  public static void main(String[] args) throws Exception
-  {
-    Clerk systemClerk = new Clerk();
-   /* 
-    int bid = 1;
-    
-    String callNumbers[] = {"test", "111", "tete"};
-    String copyNumbers[] = {"C1", "C2", "C3"};
-    
-    String[][] receipt = systemClerk.checkOutItems(bid, callNumbers, copyNumbers);
-    
-    for (String[] a : receipt)
-    {
-      for (String b : a)
-      {
-        System.out.print(b + '\t');
-      }
-      System.out.println();
-    }
-    */
-    //systemClerk.processReturn("WN304 B143 2005", "C1", 2000);
-    
-    String[] callnos = {"WN304 B143 2005","TA342 F162 2002"};
-    String[] copynos = {"C1","C1"};
-    systemClerk.checkOutItems(105, callnos, copynos);
-    
-  }
+  
 }
