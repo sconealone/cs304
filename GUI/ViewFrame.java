@@ -234,17 +234,27 @@ public class ViewFrame extends javax.swing.JFrame {
         return true;
       }
       borr.setPassword(addBorrowerTextPassword.getText().trim());
-      int expiryDate = Integer.parseInt(expiryDateTextField.getText().trim());
-      int expiryMonth = Integer.parseInt(expiryMonthTextField.getText().trim());
-      expiryMonth--; // 0 is JANUARY
-      int expiryYear = Integer.parseInt(expiryYearTextField.getText().trim());
-      if (expiryDate <= 0 || expiryMonth <0 || expiryYear <=0 || expiryMonth>11 ||expiryDate > 31)
+      String expiryDateString = expiryDateTextField.getText().trim();
+      String expiryMonthString = expiryMonthTextField.getText().trim();
+      String expiryYearString = expiryYearTextField.getText().trim();
+      if (expiryDateString.length() == 0 && expiryMonthString.length() == 0 && expiryYearString.length() == 0)
       {
-        throw new NumberFormatException("Date must be positive numbers");
+        borr.setExpiryDate(null);
       }
-      Calendar expiryDateCalendar = new GregorianCalendar(expiryYear, expiryMonth, expiryDate, 23, 59);
-      DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-      borr.setExpiryDate(expiryDateCalendar);
+      else
+      {
+        int expiryDate = Integer.parseInt(expiryDateString);
+        int expiryMonth = Integer.parseInt(expiryMonthString);
+        expiryMonth--; // 0 is JANUARY
+        int expiryYear = Integer.parseInt(expiryYearString);
+        if (expiryDate <= 0 || expiryMonth <0 || expiryYear <=0 || expiryMonth>11 ||expiryDate > 31)
+        {
+          throw new NumberFormatException("Date must be positive numbers");
+        }
+        Calendar expiryDateCalendar = new GregorianCalendar(expiryYear, expiryMonth, expiryDate, 23, 59);
+        DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        borr.setExpiryDate(expiryDateCalendar);
+      }
       borr.setType((String) addBorrowerComboBoxType.getSelectedItem());
       if (!borr.insert())
       {
