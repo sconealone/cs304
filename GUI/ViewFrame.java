@@ -1730,7 +1730,7 @@ checkOverdueTable.repaint();
 	 */
 	private void manualMenuItemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_manualMenuItemActionPerformed
 		// http://docs.oracle.com/javase/tutorial/uiswing/misc/desktop.html
-		final String manualUrl = "http://www.ugrad.cs.ubc.ca/~c7e8/";
+		final String manualUrl = "http://www.ugrad.cs.ubc.ca/~c7e8/index.xhtml";
 		try {
 			Desktop desktop = null;
 			if (Desktop.isDesktopSupported()) {
