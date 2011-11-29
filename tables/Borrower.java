@@ -489,9 +489,9 @@ public class Borrower implements Table {
 
     public ArrayList<String[][]> checkAccount() throws SQLException {
         Statement stmt1 = con.createStatement();
-        String sql1 = "SELECT Borrowing.borid FROM Borrower, Book, Borrowing, BookCopy "
+        String sql1 = "SELECT DISTINCT Borrowing.borid FROM Borrower, Book, Borrowing, BookCopy "
                 + "WHERE Book.callNumber=Borrowing.callNumber AND Borrower.bid=Borrowing.bid "
-                + "AND BookCopy.callNumber=Book.callNumber AND BookCopy.status='out' AND Borrowing.bid='" + this.bid + "'";
+                + "AND BookCopy.callNumber=Book.callNumber AND (BookCopy.status='out' OR BookCopy.status = 'overdue') AND Borrowing.bid='" + this.bid + "'";
         ResultSet rsCheckedOut = stmt1.executeQuery(sql1);
         ArrayList<Borrowing> lob = new ArrayList<Borrowing>();
         while (rsCheckedOut.next()) {
@@ -503,7 +503,7 @@ public class Borrower implements Table {
         }
 
         Statement stmt2 = con.createStatement();
-        String sql2 = "SELECT Fine.fid FROM Borrower, Fine, Borrowing "
+        String sql2 = "SELECT DISTINCT Fine.fid FROM Borrower, Fine, Borrowing "
                 + "WHERE Borrower.bid=Borrowing.bid AND Borrowing.borid=Fine.borid AND Borrower.bid='" + this.bid + "'";
         ResultSet rsFines = stmt2.executeQuery(sql2);
         ArrayList<Fine> lof = new ArrayList<Fine>();
@@ -518,7 +518,7 @@ public class Borrower implements Table {
         }
 
         Statement stmt3 = con.createStatement();
-        String sql3 = "SELECT HoldRequest.hid FROM Borrower, HoldRequest "
+        String sql3 = "SELECT DISTINCT HoldRequest.hid FROM Borrower, HoldRequest "
                 + "WHERE Borrower.bid=HoldRequest.bid AND Borrower.bid='" + this.bid + "'";
         ResultSet rsHolds = stmt3.executeQuery(sql3);
         ArrayList<HoldRequest> loh = new ArrayList<HoldRequest>();

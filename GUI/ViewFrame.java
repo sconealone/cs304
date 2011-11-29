@@ -1492,7 +1492,12 @@ public class ViewFrame extends javax.swing.JFrame {
 				currentHoldsTable.repaint();
 
 				TabbedPane.repaint();
-			} catch (SQLException S) {
+			}
+                        catch (NullPointerException npe)
+                        {
+                          JOptionPane.showMessageDialog(this, "Borrower does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                        catch (SQLException S) {
 				JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+S.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			break;
