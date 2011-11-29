@@ -240,7 +240,7 @@ public class Borrower implements Table {
     @Override
     public boolean insert() throws SQLException {
 
-        java.sql.Date sqlDate = new java.sql.Date(expiryDate.getTime().getTime());
+        java.sql.Date sqlDate = (expiryDate==null) ? null : new java.sql.Date(expiryDate.getTime().getTime());
 
         PreparedStatement ps = con.prepareStatement("INSERT INTO Borrower "
                 + "(bid,password,name,address,phone,emailAddress,sinOrStNo,expiryDate,type) VALUES (bidCounter.nextval,?,?,?,?,?,?,?,?)");
