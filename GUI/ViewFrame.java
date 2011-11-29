@@ -8,6 +8,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Frame;
+import java.awt.HeadlessException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -96,6 +97,377 @@ public class ViewFrame extends javax.swing.JFrame {
                 setSize(800,600);
 	}
 
+  private boolean addBook() throws NumberFormatException {
+    // check user input using a regular expression
+    abOpStatus.setForeground(Color.BLACK);
+    abOpStatus.setBackground(Color.WHITE);
+    abOpStatus.setText("...");
+    String regex1 = "([0-9]+|[a-z]+|[A-Z]+|[\\s]+)+";
+    if (!abCN.getText().matches(regex1)
+                    || !abCN.getText().matches(regex1)
+                    || !abISBN.getText().matches(regex1)
+                    || !abTitle.getText().matches(regex1)
+                    || !abMA.getText().matches(regex1)
+                    || !abPub.getText().matches(regex1)
+                    || !abYear.getText().matches(regex1)
+                    || !abAA.getText().matches(regex1)
+                    || !abSubs.getText().matches(regex1)
+                    || !abSpinner.getValue().toString().matches(regex1)) {
+      abOpStatus.setForeground(Color.RED);
+      abOpStatus.setBackground(Color.WHITE);
+      abOpStatus
+                      .setText("Looks like you have bad input, please check again");
+      return true;
+    }
+    String onlyNumberRegex = "[0-9]+";
+    if (!abYear.getText().matches(onlyNumberRegex)) {
+      abOpStatus.setText("Year Must be A number");
+      abOpStatus.setBackground(Color.RED);
+      return true;
+    }
+    Book bTest = new Book();
+    bTest.setCallNumber(abCN.getText());
+    try {
+      if (bTest.checkExists()) {
+        abOpStatus.setText("Book Exists");
+        abOpStatus.setForeground(Color.red);
+        return true;
+      }
+    } catch (SQLException ex) {
+      Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE,
+                      null, ex);
+      abOpStatus.setText("Sql exception");
+      abOpStatus.setForeground(Color.red);
+      return true;
+    }
+    // create the bopk object with user input
+    Book b = new Book();
+    b.setCallNumber(abCN.getText());
+    b.setIsbn(abISBN.getText());
+    b.setMainAuthor(abMA.getText());
+    b.setTitle(abTitle.getText());
+    b.setPublisher(abPub.getText());
+    b.setYear(Integer.parseInt(abYear.getText()));
+    // add additional authors
+    String aa = abAA.getText();
+    // deliniate the string into sep. objects
+    String[] aaArray = aa.split(",", 0);
+    // create the array list from string[]
+    ArrayList<String> aLAA = new ArrayList<String>();
+    for (int i = 0; i < aaArray.length; i++) {
+            aLAA.add(aaArray[i]);
+    }
+    // set the book objects array list of additional authors
+    b.setAuthors(aLAA);
+    // add additional subjects
+    String subs = abSubs.getText();
+    // deliniateString
+    String[] subsArray = subs.split(",");
+    ArrayList<String> aLSubs = new ArrayList<String>();
+    // create the array list from string[]
+    for (int i = 0; i < subsArray.length; i++) {
+            aLSubs.add(subsArray[i]);
+    }
+    // set the book objects array list of subjects
+    b.setSubjects(aLSubs);
+    // try inserting the book into the database ( which also inserts the
+    // subjects and authors)
+    try {
+      b.insert();
+    } catch (SQLException ex) {
+      Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE,
+                      null, ex);
+      abOpStatus.setForeground(Color.red);
+      abOpStatus.setText("error: " + ex.getErrorCode());
+      return true;
+    }
+    // add book copies
+    Object copiesAmount = abSpinner.getValue();
+    int test = Integer.parseInt(copiesAmount.toString());
+    for (int i = 0; i < test; i++) {
+            try {
+                    BookCopy bC = new BookCopy("C" + Integer.toString(i), b,
+                                    "in");
+                    bC.insert();
+            } catch (SQLException ex) {
+                    Logger.getLogger(ViewFrame.class.getName()).log(
+                                    Level.SEVERE, null, ex);
+                    System.out.println(ex.getMessage());
+                    abOpStatus.setForeground(Color.red);
+                    abOpStatus.setText("error: " + ex.getErrorCode());
+                    break;
+            }
+    }
+    // clean up UI
+    String clear = "";
+    abOpStatus.setBackground(Color.green);
+    abOpStatus.setText(abSpinner.getValue().toString()
+                    + " copies of the Book with callnumber " + abCN.getText()
+                    + " have been added! ");
+    abCN.setText(clear);
+    abISBN.setText(clear);
+    abTitle.setText(clear);
+    abMA.setText(clear);
+    abPub.setText(clear);
+    abYear.setText(clear);
+    abAA.setText(clear);
+    abSubs.setText(clear);
+    abSpinner.setValue(1);
+    return false;
+  }
+
+  private boolean addBorrower() throws HeadlessException {
+    try {
+      Borrower borr = new Borrower();
+      borr.setName(addBorrowerTextName.getText().trim());
+      borr.setAddress(addBorrowerTextAddress.getText().trim());
+      borr.setPhone(addBorrowerTextPhoneNo.getText().trim());
+      borr.setEmailAddress(addBorrowerTextEmail.getText().trim());
+      try {
+        borr.setSinOrStNum(Integer.parseInt(addBorrowerTextSinOrStNo
+                        .getText().trim()));
+        if (borr.getSinOrStNum() < 0)
+        {
+          throw new NumberFormatException();
+        }
+      } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Not a valid SIN or Student Number", "Error", JOptionPane.ERROR_MESSAGE);
+        return true;
+      }
+      borr.setPassword(addBorrowerTextPassword.getText().trim());
+      int expiryDate = Integer.parseInt(expiryDateTextField.getText().trim());
+      int expiryMonth = Integer.parseInt(expiryMonthTextField.getText().trim());
+      expiryMonth--; // 0 is JANUARY
+      int expiryYear = Integer.parseInt(expiryYearTextField.getText().trim());
+      if (expiryDate <= 0 || expiryMonth <0 || expiryYear <=0 || expiryMonth>11 ||expiryDate > 31)
+      {
+        throw new NumberFormatException("Date must be positive numbers");
+      }
+      Calendar expiryDateCalendar = new GregorianCalendar(expiryYear, expiryMonth, expiryDate, 23, 59);
+      DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+      borr.setExpiryDate(expiryDateCalendar);
+      borr.setType((String) addBorrowerComboBoxType.getSelectedItem());
+      if (!borr.insert())
+      {
+        throw new SQLException("Insert failed.");
+      }
+      JOptionPane.showMessageDialog(this, "Borrower successfully added.\nBorrower ID "+borr.getBid()+" generated.", "Success", JOptionPane.INFORMATION_MESSAGE);
+      clearButtonActionPerformed(null);
+    }catch (SQLException e1) {
+           JOptionPane.showMessageDialog(this, "Borrower could not be added.\n"+e1.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+   }catch (NumberFormatException expiryNfe)
+    {
+      JOptionPane.showMessageDialog(this, "Date entered incorrectly.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    return false;
+  }
+
+  private boolean addCopy() throws HeadlessException, NumberFormatException {
+    Book b1 = new Book();
+    b1.setCallNumber(abcCN.getText());
+    BookCopy bC1 = new BookCopy();
+    bC1.setB(b1);
+    bC1.setStatus("in");
+    // fetch the last copy number given the above call number
+    String lastCopyNumber;
+    try {
+      lastCopyNumber = bC1.getLatestCopyNo();
+    } catch (SQLException ex) {
+      Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE,
+                      null, ex);
+      // prompt the user with popup box
+      String admin = "It seems there is something wrong with the Database. :( Contact your administrator";
+      JOptionPane.showMessageDialog(this, admin, "Manual",
+                      JOptionPane.INFORMATION_MESSAGE);
+      return true;
+    }
+    if (lastCopyNumber == null) {
+      // promptuser
+      String admin = "It looks like this book doesn't exist in database. Please add book first";
+      JOptionPane.showMessageDialog(this, admin, "Manual",
+                      JOptionPane.INFORMATION_MESSAGE);
+      return true;
+    }
+    int lastCopyNum = Integer.parseInt(lastCopyNumber.substring(1));
+    int numCopiesToAdd = Integer.parseInt(abcSpinner.getValue()
+                    .toString());
+    for (int i = 0; i < numCopiesToAdd; i++) {
+            int newCopyNum = lastCopyNum + i + 1;
+            bC1.setCopyNo("C" + newCopyNum);
+            try {
+                    bC1.insert();
+            } catch (SQLException ex) {
+                    Logger.getLogger(ViewFrame.class.getName()).log(
+                                    Level.SEVERE, null, ex);
+                    // prompt user of catastrophic error
+                    String admin1 = "It seems there is something wrong with the Database. :( Contact your administrator";
+                    JOptionPane.showMessageDialog(this, admin1, "Manual",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                    break;
+            }
+    }
+    // prompt user of success
+    String success = "Success!";
+    JOptionPane.showMessageDialog(this, success, "Manual",
+                    JOptionPane.INFORMATION_MESSAGE);
+    return false;
+  }
+
+  private void checkAccount() throws NumberFormatException, HeadlessException {
+    try {
+            String searchIdField = SearchIdField.getText();
+
+            Borrower b = new Borrower();
+            b.setBid(Integer.parseInt(searchIdField));
+            b = b.get();
+            ArrayList<String[][]> loi = b.checkAccount();
+
+            String[][] lob2D = loi.get(0);
+            String[][] lof2D = loi.get(1);
+            String[][] loh2D = loi.get(2);
+
+            String[] borHeader = lob2D[0];
+            String[][] bor2DMinusHeader = new String[lob2D.length - 1][lob2D[0].length];
+            for (int i = 0; i < lob2D.length - 1; i++) {
+                    bor2DMinusHeader[i] = lob2D[i + 1];
+            }
+
+            String[] fineHeader = lof2D[0];
+            String[][] fine2DMinusHeader = new String[lof2D.length - 1][lof2D[0].length];
+            for (int i = 0; i < lof2D.length - 1; i++) {
+                    fine2DMinusHeader[i] = lof2D[i + 1];
+            }
+
+            String[] holdHeader = loh2D[0];
+            String[][] hold2DMinusHeader = new String[loh2D.length - 1][loh2D[0].length];
+            for (int i = 0; i < loh2D.length - 1; i++) {
+                    hold2DMinusHeader[i] = loh2D[i + 1];
+            }
+
+            // print 2d array
+            DefaultTableModel uTMBorrowing = new DefaultTableModel(
+                            bor2DMinusHeader, borHeader);
+            checkedOutBooksTable.setModel(uTMBorrowing);
+            checkedOutBooksTable.repaint();
+
+            DefaultTableModel uTMFine = new DefaultTableModel(
+                            fine2DMinusHeader, fineHeader);
+            finesTable.setModel(uTMFine);
+            finesTable.repaint();
+
+            DefaultTableModel uTMHold = new DefaultTableModel(
+                            hold2DMinusHeader, holdHeader);
+            currentHoldsTable.setModel(uTMHold);
+            currentHoldsTable.repaint();
+
+            TabbedPane.repaint();
+    }
+    catch (NullPointerException npe)
+    {
+      JOptionPane.showMessageDialog(this, "Borrower does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    catch (SQLException S) {
+            JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+S.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+  }
+
+  private boolean checkOut() throws HeadlessException {
+    //get a string representation of the table
+    String[] callNos = new String[checkOutTableReceiptTable.getRowCount()];
+    String[] copyNos = new String[checkOutTableReceiptTable.getRowCount()];
+    for (int i = 0; i < callNos.length; i++) {
+            callNos[i] = (String) checkOutTableReceiptTable.getValueAt(i, 1);
+            copyNos[i] = (String) checkOutTableReceiptTable.getValueAt(i, 2);
+    }
+    String[][] results = null;
+    try {
+      results = controller.getSystemClerk().checkOutItems(Integer.parseInt((String) checkOutTableReceiptTable.getValueAt(0, 0)), callNos, copyNos);
+    } catch (Exception e2) {
+      // TODO Auto-generated catch block
+      //TODO Need to fix this
+      JOptionPane.showMessageDialog(this, e2.toString(), "Have a good day",
+              JOptionPane.ERROR_MESSAGE);
+      return true;
+    }
+    //"ITEM", "CALLNUMBER","COPYNO","TITLE","OUTDATE","DUEDATE"
+    DefaultTableModel checkOutmodel = new DefaultTableModel();
+    results = get2DArrayMinusHeader(results);
+    String[] item = new String[results.length];
+    String[] callNo = new String[results.length];
+    String[] copyNo = new String[results.length];
+    String[] title = new String[results.length];
+    String[] outDate = new String[results.length];
+    String[] dueDate = new String[results.length];
+    for (int i = 0; i < results.length; i++) {
+        int n = 0;
+        item[i] = results[i][n++];
+        callNo[i] = results[i][n++];
+        copyNo[i] = results[i][n++];
+        title[i] = results[i][n++];
+        outDate[i] = results[i][n++];
+        dueDate[i] = results[i][n++];
+    }
+    //redraw table to reflect receipt, set add button to inactive
+    checkOutmodel.addColumn("Item", item);
+    checkOutmodel.addColumn("Call Number", callNo);
+    checkOutmodel.addColumn("Copy Number", copyNo);
+    checkOutmodel.addColumn("Title", title);
+    checkOutmodel.addColumn("Out Date", outDate);
+    checkOutmodel.addColumn("Due Date", dueDate);
+    checkOutTableReceiptTable.setModel(checkOutmodel);
+    checkOutTableReceiptTable.repaint();
+    JOptionPane.showMessageDialog(this, "The Borrower checked out.", "Have a good day",
+                    JOptionPane.INFORMATION_MESSAGE);
+    return false;
+  }
+
+  private void checkOverdue() throws HeadlessException {
+    try {
+            Borrower borr = new Borrower();
+            Borrowing bwing = new Borrowing();
+            BookCopy bc = new BookCopy();
+            Collection<Table> lbw = bwing.getOverdue();
+            HashMap<Borrower, BookCopy> overdue = new HashMap<Borrower, BookCopy>();
+
+            String[] borrStr = new String[lbw.size()];
+            String[] bcpyStr = new String[lbw.size()];
+            String[] bcalStr = new String[lbw.size()];
+            int i = 0;
+
+            if (lbw.size() > 0) {
+                    Iterator<Table> bwItr = lbw.iterator();
+                    while (bwItr.hasNext()) {
+                            bwing = (Borrowing) bwItr.next();
+
+                            borr = new Borrower();
+                            borr.setBid(bwing.getBorid());
+                            borr = (Borrower) borr.get();
+
+                            bc = bwing.getBookCopy();
+                            bc.setStatus("overdue");
+                            bc.update();
+
+                            overdue.put(borr, bc);
+                            borrStr[i] = borr.getName();
+                            bcpyStr[i] = bc.getCopyNo();
+                            bcalStr[i] = bc.getB().getCallNumber();
+                            i++;
+                    }
+            }
+
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Borrower Name", borrStr);
+            model.addColumn("Call Number", bcalStr);
+            model.addColumn("Copy Number", bcpyStr);
+            
+            checkOverdueTable.setModel(model);
+checkOverdueTable.repaint();
+
+    } catch (SQLException e1) {
+            JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+  }
+
 	private String[][] get2DArrayMinusHeader(String[][] TwoDArrayToPrint) {
 		String[][] TwoDMinusHeader = new String[TwoDArrayToPrint.length - 1][TwoDArrayToPrint[0].length];
 		for (int i = 0; i < TwoDArrayToPrint.length - 1; i++) {
@@ -103,6 +475,30 @@ public class ViewFrame extends javax.swing.JFrame {
 		}
 		return TwoDMinusHeader;
 	}
+
+  private void holdRequest() throws HeadlessException {
+    try {
+            controller.getSystemBorrower()
+                            .setBid(holdRequestPanel.getBid());
+            controller.getSystemBorrower().placeHoldRequest(
+                            holdRequestPanel.getCallNumber());
+            String holdRequestSuccessMessage = "Your hold request has been placed.  You will be informed when the book is ready.";
+            JOptionPane.showMessageDialog(this, holdRequestSuccessMessage,
+                            "Success", JOptionPane.INFORMATION_MESSAGE);
+            holdRequestPanel.clear();
+    } catch (NumberFormatException nfe) {
+            String holdRequestBidErrorMessage = "Invalid account ID.\nYour account ID is the number found on your library card.";
+            JOptionPane.showMessageDialog(this, holdRequestBidErrorMessage,
+                            "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (SQLException e) {
+            String holdRequestErrorMessage = "Cannot place hold request at this time. Please try again later.\n"
+                            + e.getMessage();
+            JOptionPane.showMessageDialog(this, holdRequestErrorMessage,
+                            "Error", JOptionPane.ERROR_MESSAGE);
+    } finally {
+            controller.getSystemBorrower().setBid(-1);
+    }
+  }
 
 	/**
 	 * This method is called from within the constructor to initialize the form.
@@ -1388,31 +1784,9 @@ public class ViewFrame extends javax.swing.JFrame {
               {
 		switch (state) {
 		case TABLES:
-			try {
-				tableWithHeader = controller
-						.displayTable((String) tablesComboBox.getSelectedItem());
-			} catch (SQLException e) {
-				String msg = "Could not retrieve the table:\n" + e.getMessage();
-				JOptionPane.showMessageDialog(this, msg, "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			header = tableWithHeader[0];
-			numRows = tableWithHeader.length;
-			numRows--;
-			numCols = tableWithHeader[0].length;
-			tableWithoutHeader = new String[numRows][];
-			for (int i = 0; i < numRows; i++) {
-				tableWithoutHeader[i] = new String[numCols];
-			}
-
-			for (int i = 0; i < numRows; i++) {
-				System.arraycopy(tableWithHeader[i + 1], 0,
-						tableWithoutHeader[i], 0, numCols);
-			}
-			entitiesTable.setModel(new DefaultTableModel(tableWithoutHeader,
-					header));
-			entitiesTable.repaint();
+                        if (viewTables()) {
+                          return;
+                        }
 			break;
 		case START:
 			CardLayout cl = (CardLayout) (cardPanel.getLayout());
@@ -1424,838 +1798,75 @@ public class ViewFrame extends javax.swing.JFrame {
 			doButton.setText(buttonText);
 			break;
 		case SEARCH:
-			try {
-				String searchTextField = SearchTextField.getText();
-				String searchGetSelection = (String) SearchComboBox
-						.getSelectedItem();
-				// List<Book> lob = new ArrayList<Book>();
-
-				String[][] TwoDArrayToPrint = null;
-
-				Borrower bor = new Borrower();
-
-				if (searchGetSelection.equals("Subject")) {
-					TwoDArrayToPrint = bor.searchBookBySubject(searchTextField);
-				}
-				if (searchGetSelection.equals("Title")) {
-					TwoDArrayToPrint = bor.searchBookByTitle(searchTextField);
-				}
-				if (searchGetSelection.equals("Author")) {
-					TwoDArrayToPrint = bor.searchBookByAuthor(searchTextField);
-				}
-
-				String[] header1 = TwoDArrayToPrint[0];
-				String[][] TwoDMinusHeader = get2DArrayMinusHeader(TwoDArrayToPrint);
-
-				// print 2d array
-				DefaultTableModel uTM = new DefaultTableModel(TwoDMinusHeader,
-						header1);
-				SearchTable.setModel(uTM);
-				SearchTable.repaint();
-			} catch (SQLException S) {
-				JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+S.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-
-			}
+                        search();
 			break;
 		case CHECK_ACCOUNT:
-			try {
-				String searchIdField = SearchIdField.getText();
-
-				Borrower b = new Borrower();
-				b.setBid(Integer.parseInt(searchIdField));
-				b = b.get();
-				ArrayList<String[][]> loi = b.checkAccount();
-
-				String[][] lob2D = loi.get(0);
-				String[][] lof2D = loi.get(1);
-				String[][] loh2D = loi.get(2);
-
-				String[] borHeader = lob2D[0];
-				String[][] bor2DMinusHeader = new String[lob2D.length - 1][lob2D[0].length];
-				for (int i = 0; i < lob2D.length - 1; i++) {
-					bor2DMinusHeader[i] = lob2D[i + 1];
-				}
-
-				String[] fineHeader = lof2D[0];
-				String[][] fine2DMinusHeader = new String[lof2D.length - 1][lof2D[0].length];
-				for (int i = 0; i < lof2D.length - 1; i++) {
-					fine2DMinusHeader[i] = lof2D[i + 1];
-				}
-
-				String[] holdHeader = loh2D[0];
-				String[][] hold2DMinusHeader = new String[loh2D.length - 1][loh2D[0].length];
-				for (int i = 0; i < loh2D.length - 1; i++) {
-					hold2DMinusHeader[i] = loh2D[i + 1];
-				}
-
-				// print 2d array
-				DefaultTableModel uTMBorrowing = new DefaultTableModel(
-						bor2DMinusHeader, borHeader);
-				checkedOutBooksTable.setModel(uTMBorrowing);
-				checkedOutBooksTable.repaint();
-
-				DefaultTableModel uTMFine = new DefaultTableModel(
-						fine2DMinusHeader, fineHeader);
-				finesTable.setModel(uTMFine);
-				finesTable.repaint();
-
-				DefaultTableModel uTMHold = new DefaultTableModel(
-						hold2DMinusHeader, holdHeader);
-				currentHoldsTable.setModel(uTMHold);
-				currentHoldsTable.repaint();
-
-				TabbedPane.repaint();
-			}
-                        catch (NullPointerException npe)
-                        {
-                          JOptionPane.showMessageDialog(this, "Borrower does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                        catch (SQLException S) {
-				JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+S.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			}
+                        checkAccount();
 			break;
 		case HOLD_REQUEST:
-			try {
-				controller.getSystemBorrower()
-						.setBid(holdRequestPanel.getBid());
-				controller.getSystemBorrower().placeHoldRequest(
-						holdRequestPanel.getCallNumber());
-				String holdRequestSuccessMessage = "Your hold request has been placed.  You will be informed when the book is ready.";
-				JOptionPane.showMessageDialog(this, holdRequestSuccessMessage,
-						"Success", JOptionPane.INFORMATION_MESSAGE);
-				holdRequestPanel.clear();
-			} catch (NumberFormatException nfe) {
-				String holdRequestBidErrorMessage = "Invalid account ID.\nYour account ID is the number found on your library card.";
-				JOptionPane.showMessageDialog(this, holdRequestBidErrorMessage,
-						"Error", JOptionPane.ERROR_MESSAGE);
-			} catch (SQLException e) {
-				String holdRequestErrorMessage = "Cannot place hold request at this time. Please try again later.\n"
-						+ e.getMessage();
-				JOptionPane.showMessageDialog(this, holdRequestErrorMessage,
-						"Error", JOptionPane.ERROR_MESSAGE);
-			} finally {
-				controller.getSystemBorrower().setBid(-1);
-			}
+                        holdRequest();
 			break;
 		case PAY_FINE:
-                  Fine f = new Fine();
-                  Borrower bor = new Borrower();
-                  Integer fid = 0;
-                  double amount = 0;
-                  String msgFine = "";
-
-                  String fineIDField = payFineFidTextField.getText();
-                  String amountField = payFineAmountTextField.getText();
-                  boolean okayToContinue = true;
-                  try {
-                    fid = Integer.parseInt(fineIDField);
-                  } catch (NumberFormatException nfe) {
-                    okayToContinue = false;
-                    JOptionPane.showMessageDialog(this, "Fine ID must be a whole number.",
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                  }
-                  try {
-                    amount = Double.parseDouble(amountField);
-                  } catch (NumberFormatException nfe) {
-                    okayToContinue = false;
-                    JOptionPane.showMessageDialog(this, "Amount must be a dollar value.",
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                  }
-
-                  if (okayToContinue == true) {
-
-                    try {
-                      try {
-                        f.setFid(fid);
-                        f = (Fine) f.get();
-                        bor = f.getBorrowing().getBorrower();
-                      } catch (NullPointerException npe) {
-                        okayToContinue = false;
-                        JOptionPane.showMessageDialog(this, "The fine and/or its associated borrower do not exist.",
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                      }
-                      if (okayToContinue == true) {
-                        try {
-                          msgFine = bor.payFine(fid, (int)(amount*100));
-                        } catch (SQLException e) {
-                          okayToContinue = false;
-                          JOptionPane.showMessageDialog(this, "Payment refused.",
-                                  "Error", JOptionPane.ERROR_MESSAGE);
-                        } catch (NoPaymentException npe) {
-                          okayToContinue = false;
-                          JOptionPane.showMessageDialog(this, "Amount must be a positive amount.",
-                                  "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                        payFineMsgLabel.setText(msgFine);
-                        payFineMsgLabel.repaint();
-                      }
-                    } catch (SQLException e) {
-                      okayToContinue = false;
-                      JOptionPane.showMessageDialog(this, e.getMessage(),
-                              "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                  }
+                        payFine();
 			break;
 		case ADD_BORROWER:
-			try {
-				Borrower borr = new Borrower();
-
-				borr.setName(addBorrowerTextName.getText().trim());
-				borr.setAddress(addBorrowerTextAddress.getText().trim());
-				borr.setPhone(addBorrowerTextPhoneNo.getText().trim());
-				borr.setEmailAddress(addBorrowerTextEmail.getText().trim());
-                                try
-                                {
-                                  borr.setSinOrStNum(Integer.parseInt(addBorrowerTextSinOrStNo
-                                                  .getText().trim()));
-                                  if (borr.getSinOrStNum() < 0)
-                                  {
-                                    throw new NumberFormatException();
-                                  }
-                                }
-                                catch(NumberFormatException e)
-                                {
-                                  JOptionPane.showMessageDialog(this, "Not a valid SIN or Student Number", "Error", JOptionPane.ERROR_MESSAGE);
-                                  return;
-                                }
-                                borr.setPassword(addBorrowerTextPassword.getText().trim());
-                                int expiryDate = Integer.parseInt(expiryDateTextField.getText().trim());
-                                int expiryMonth = Integer.parseInt(expiryMonthTextField.getText().trim());
-                                expiryMonth--; // 0 is JANUARY
-                                int expiryYear = Integer.parseInt(expiryYearTextField.getText().trim());
-                                if (expiryDate <= 0 || expiryMonth <0 || expiryYear <=0 || expiryMonth>11 ||expiryDate > 31)
-                                {
-                                  throw new NumberFormatException("Date must be positive numbers");
-                                }
-                                Calendar expiryDateCalendar = new GregorianCalendar(expiryYear, expiryMonth, expiryDate, 23, 59);
-                                DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-                                borr.setExpiryDate(expiryDateCalendar);
-                                borr.setType((String) addBorrowerComboBoxType.getSelectedItem());
-				if (!borr.insert())
-                                {
-                                  throw new SQLException("Insert failed.");
-                                }
-                                JOptionPane.showMessageDialog(this, "Borrower successfully added.\nBorrower ID "+borr.getBid()+" generated.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                                clearButtonActionPerformed(null);
-			} catch (SQLException e1) {
-				JOptionPane.showMessageDialog(this, "Borrower could not be added.\n"+e1.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
-			}
-                        catch (NumberFormatException expiryNfe)
-                        {
-                          JOptionPane.showMessageDialog(this, "Date entered incorrectly.", "Error", JOptionPane.ERROR_MESSAGE);
+                        if (addBorrower()) {
+                          return;
                         }
 			break;
 		case CHECK_OUT:
-			//get a string representation of the table
-			
-			String[] callNos = new String[checkOutTableReceiptTable.getRowCount()];
-			String[] copyNos = new String[checkOutTableReceiptTable.getRowCount()];
-			
-			for (int i = 0; i < callNos.length; i++) {
-				callNos[i] = (String) checkOutTableReceiptTable.getValueAt(i, 1);
-				copyNos[i] = (String) checkOutTableReceiptTable.getValueAt(i, 2);
-			}
-			
-			String[][] results = null;
-			try {
-				results = controller.getSystemClerk().checkOutItems(Integer.parseInt((String) checkOutTableReceiptTable.getValueAt(0, 0)), callNos, copyNos);
-			} catch (Exception e2) {
-				// TODO Auto-generated catch block
-                                //TODO Need to fix this
-				JOptionPane.showMessageDialog(this, e2.toString(), "Have a good day",
-					JOptionPane.ERROR_MESSAGE);
-				break;
-			}
-			//"ITEM", "CALLNUMBER","COPYNO","TITLE","OUTDATE","DUEDATE"
-			DefaultTableModel checkOutmodel = new DefaultTableModel();
-			results = get2DArrayMinusHeader(results);
-                        
-			String[] item = new String[results.length];
-			String[] callNo = new String[results.length];
-			String[] copyNo = new String[results.length];
-			String[] title = new String[results.length];
-			String[] outDate = new String[results.length];
-			String[] dueDate = new String[results.length];
-                        
-                        for (int i = 0; i < results.length; i++) {
-                            int n = 0;
-                            item[i] = results[i][n++];
-                            callNo[i] = results[i][n++];
-                            copyNo[i] = results[i][n++];
-                            title[i] = results[i][n++];
-                            outDate[i] = results[i][n++];
-                            dueDate[i] = results[i][n++];
+                        if (checkOut()) {
+                          return;
                         }
-			
-			//redraw table to reflect receipt, set add button to inactive
-			
-			checkOutmodel.addColumn("Item", item);
-			checkOutmodel.addColumn("Call Number", callNo);
-			checkOutmodel.addColumn("Copy Number", copyNo);
-			checkOutmodel.addColumn("Title", title);
-			checkOutmodel.addColumn("Out Date", outDate);
-			checkOutmodel.addColumn("Due Date", dueDate);
-			
-			checkOutTableReceiptTable.setModel(checkOutmodel);
-			checkOutTableReceiptTable.repaint();
-			
-
-			JOptionPane.showMessageDialog(this, "The Borrower checked out.", "Have a good day",
-					JOptionPane.INFORMATION_MESSAGE);
 			
 			break;
 		case CHECK_OVERDUE:
-			try {
-				Borrower borr = new Borrower();
-				Borrowing bwing = new Borrowing();
-				BookCopy bc = new BookCopy();
-				Collection<Table> lbw = bwing.getOverdue();
-				HashMap<Borrower, BookCopy> overdue = new HashMap<Borrower, BookCopy>();
-
-				String[] borrStr = new String[lbw.size()];
-				String[] bcpyStr = new String[lbw.size()];
-				String[] bcalStr = new String[lbw.size()];
-				int i = 0;
-
-				if (lbw.size() > 0) {
-					Iterator<Table> bwItr = lbw.iterator();
-					while (bwItr.hasNext()) {
-						bwing = (Borrowing) bwItr.next();
-
-						borr = new Borrower();
-						borr.setBid(bwing.getBorid());
-						borr = (Borrower) borr.get();
-
-						bc = bwing.getBookCopy();
-						bc.setStatus("overdue");
-						bc.update();
-
-						overdue.put(borr, bc);
-						borrStr[i] = borr.getName();
-						bcpyStr[i] = bc.getCopyNo();
-						bcalStr[i] = bc.getB().getCallNumber();
-						i++;
-					}
-				}
-
-				DefaultTableModel model = new DefaultTableModel();
-				model.addColumn("Borrower Name", borrStr);
-				model.addColumn("Call Number", bcalStr);
-				model.addColumn("Copy Number", bcpyStr);
-				
-				checkOverdueTable.setModel(model);
-                checkOverdueTable.repaint();
-
-			} catch (SQLException e1) {
-				JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			}
+                       checkOverdue();
 
 			break;
 		case PROCESS_RETURN:
-                  String processReturnCallNumber = processReturnPanel.getCallNumber();
-                  String processReturnCopyNo = processReturnPanel.getCopyNo();
-                  try 
-                  {
-                    try 
-                    {
-                      controller.getSystemClerk().processReturn(processReturnCallNumber, processReturnCopyNo);
-                    } 
-                    catch (FineRequiredException processReturnFineRequiredException) 
-                    {
-                      
-                      boolean fineError = true;
-                      int fineAmountInCents = 0;
-                      int errorCounter = 0;
-                      while (fineError && errorCounter > 3) 
-                      {
-                        try 
-                        {
-
-                          String fineRequiredMessage = "This book is overdue and requires a fine\n"
-                                  + "Please enter the dollars to charge the borrower:";
-                          String processReturnFineString = JOptionPane.showInputDialog(this, fineRequiredMessage, "Error", JOptionPane.ERROR_MESSAGE);
-                          double fineInDollars = Double.parseDouble(processReturnFineString);
-                          if (fineInDollars < 0) 
-                          {
-                            throw new NoPaymentException("Fines must be greater than $0");
-                          }
-                          final int CENTS_IN_DOLLAR = 100;
-                          fineAmountInCents = (int) (fineInDollars * CENTS_IN_DOLLAR);
-                          fineError = false;
-                        } 
-                        catch (NumberFormatException fineRequiredNfe) 
-                        {
-                          String processReturnNfeMessage = "Fine amount must be a number.";
-                          JOptionPane.showMessageDialog(this, processReturnNfeMessage, "Error", JOptionPane.ERROR_MESSAGE);
-                          errorCounter++;
-                        } 
-                        catch (NoPaymentException fineRequiredNpe) 
-                        {
-                          JOptionPane.showMessageDialog(this, fineRequiredNpe.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                          errorCounter++;
-                        }
-                      } // end while error in entering the fine amount
-
-                      if (errorCounter >= 3) 
-                      {
-                        JOptionPane.showMessageDialog(this, "Too many attempts.\nTransaction cancelled.", "Error", JOptionPane.ERROR_MESSAGE);
-                        processReturnPanel.append(processReturnCallNumber + ' ' + processReturnCopyNo + " - Failed");
-                        return;
-                      }
-
-                      controller.getSystemClerk().processReturn(processReturnCallNumber, processReturnCopyNo, fineAmountInCents);
-                        
-                    } // end handling of fine
-                    // inform clerk of success
-                    processReturnPanel.append(processReturnCallNumber + ' ' + processReturnCopyNo + " - Success");
-                    processReturnPanel.clearCatalogNumber();
-                  } 
-                  catch (FineRequiredException neverThrownFineRequiredException) 
-                  {
-                    // already handled, do nothing
-                  } 
-                  catch (BookCopyEvilTwinException processReturnEvilTwinException) 
-                  {
-                    JOptionPane.showMessageDialog(this, processReturnEvilTwinException.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    processReturnPanel.append(processReturnCallNumber + ' ' + processReturnCopyNo + " - Failed");
-                  }
-                  catch (NoSuchCopyException processReturnNsce) 
-                  {
-                    JOptionPane.showMessageDialog(this, processReturnNsce.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    processReturnPanel.append(processReturnCallNumber + ' ' + processReturnCopyNo + " - Failed");
-                  }
-                  catch (SQLException processReturnsSqlException) 
-                  {
-                    String processReturnsSqlExceptionMessage = 
-                            "Return could not be processed.\n" + processReturnsSqlException.getMessage();
-                    JOptionPane.showMessageDialog(this, processReturnsSqlExceptionMessage, "Error", JOptionPane.ERROR_MESSAGE);
-                    processReturnPanel.append(processReturnCallNumber + ' ' + processReturnCopyNo + " - Failed");
+                  if (processReturn()) {
+                    return;
                   }
                   
                   
                   break;
 		case ADD_BOOK:
-			// check user input using a regular expression
-			abOpStatus.setForeground(Color.BLACK);
-			abOpStatus.setBackground(Color.WHITE);
-			abOpStatus.setText("...");
-
-			String regex1 = "([0-9]+|[a-z]+|[A-Z]+|[\\s]+)+";
-			if (!abCN.getText().matches(regex1)
-					|| !abCN.getText().matches(regex1)
-					|| !abISBN.getText().matches(regex1)
-					|| !abTitle.getText().matches(regex1)
-					|| !abMA.getText().matches(regex1)
-					|| !abPub.getText().matches(regex1)
-					|| !abYear.getText().matches(regex1)
-					|| !abAA.getText().matches(regex1)
-					|| !abSubs.getText().matches(regex1)
-					|| !abSpinner.getValue().toString().matches(regex1)) {
-				abOpStatus.setForeground(Color.RED);
-				abOpStatus.setBackground(Color.WHITE);
-				abOpStatus
-						.setText("Looks like you have bad input, please check again");
-				break;
-			}
-			String onlyNumberRegex = "[0-9]+";
-			if (!abYear.getText().matches(onlyNumberRegex)) {
-				abOpStatus.setText("Year Must be A number");
-				abOpStatus.setBackground(Color.RED);
-				break;
-			}
-
-			Book bTest = new Book();
-			bTest.setCallNumber(abCN.getText());
-			try {
-				if (bTest.checkExists()) {
-					abOpStatus.setText("Book Exists");
-					abOpStatus.setForeground(Color.red);
-					break;
-				}
-			} catch (SQLException ex) {
-				Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE,
-						null, ex);
-				abOpStatus.setText("Sql exception");
-				abOpStatus.setForeground(Color.red);
-				break;
-			}
-
-			// create the bopk object with user input
-			Book b = new Book();
-			b.setCallNumber(abCN.getText());
-			b.setIsbn(abISBN.getText());
-			b.setMainAuthor(abMA.getText());
-			b.setTitle(abTitle.getText());
-			b.setPublisher(abPub.getText());
-			b.setYear(Integer.parseInt(abYear.getText()));
-
-			// add additional authors
-			String aa = abAA.getText();
-			// deliniate the string into sep. objects
-			String[] aaArray = aa.split(",", 0);
-			// create the array list from string[]
-			ArrayList<String> aLAA = new ArrayList<String>();
-			for (int i = 0; i < aaArray.length; i++) {
-				aLAA.add(aaArray[i]);
-			}
-			// set the book objects array list of additional authors
-			b.setAuthors(aLAA);
-
-			// add additional subjects
-			String subs = abSubs.getText();
-			// deliniateString
-			String[] subsArray = subs.split(",");
-			ArrayList<String> aLSubs = new ArrayList<String>();
-			// create the array list from string[]
-			for (int i = 0; i < subsArray.length; i++) {
-				aLSubs.add(subsArray[i]);
-			}
-			// set the book objects array list of subjects
-			b.setSubjects(aLSubs);
-
-			// try inserting the book into the database ( which also inserts the
-			// subjects and authors)
-			try {
-				b.insert();
-			} catch (SQLException ex) {
-				Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE,
-						null, ex);
-				abOpStatus.setForeground(Color.red);
-				abOpStatus.setText("error: " + ex.getErrorCode());
-				break;
-			}
-
-			// add book copies
-			Object copiesAmount = abSpinner.getValue();
-			int test = Integer.parseInt(copiesAmount.toString());
-			for (int i = 0; i < test; i++) {
-				try {
-					BookCopy bC = new BookCopy("C" + Integer.toString(i), b,
-							"in");
-					bC.insert();
-				} catch (SQLException ex) {
-					Logger.getLogger(ViewFrame.class.getName()).log(
-							Level.SEVERE, null, ex);
-					System.out.println(ex.getMessage());
-					abOpStatus.setForeground(Color.red);
-					abOpStatus.setText("error: " + ex.getErrorCode());
-					break;
-				}
-			}
-			// clean up UI
-			String clear = "";
-			abOpStatus.setBackground(Color.green);
-			abOpStatus.setText(abSpinner.getValue().toString()
-					+ " copies of the Book with callnumber " + abCN.getText()
-					+ " have been added! ");
-			abCN.setText(clear);
-			abISBN.setText(clear);
-			abTitle.setText(clear);
-			abMA.setText(clear);
-			abPub.setText(clear);
-			abYear.setText(clear);
-			abAA.setText(clear);
-			abSubs.setText(clear);
-			abSpinner.setValue(1);
+                        if (addBook()) {
+                          return;
+                        }
 
 			break;
 		case ADD_COPY:
-			Book b1 = new Book();
-			b1.setCallNumber(abcCN.getText());
-			BookCopy bC1 = new BookCopy();
-			bC1.setB(b1);
-			bC1.setStatus("in");
-
-			// fetch the last copy number given the above call number
-			String lastCopyNumber;
-			try {
-				lastCopyNumber = bC1.getLatestCopyNo();
-			} catch (SQLException ex) {
-				Logger.getLogger(ViewFrame.class.getName()).log(Level.SEVERE,
-						null, ex);
-				// prompt the user with popup box
-				String admin = "It seems there is something wrong with the Database. :( Contact your administrator";
-				JOptionPane.showMessageDialog(this, admin, "Manual",
-						JOptionPane.INFORMATION_MESSAGE);
-				break;
-			}
-			if (lastCopyNumber == null) {
-				// promptuser
-				String admin = "It looks like this book doesn't exist in database. Please add book first";
-				JOptionPane.showMessageDialog(this, admin, "Manual",
-						JOptionPane.INFORMATION_MESSAGE);
-				break;
-			}
-
-			int lastCopyNum = Integer.parseInt(lastCopyNumber.substring(1));
-			int numCopiesToAdd = Integer.parseInt(abcSpinner.getValue()
-					.toString());
-
-			for (int i = 0; i < numCopiesToAdd; i++) {
-				int newCopyNum = lastCopyNum + i + 1;
-				bC1.setCopyNo("C" + newCopyNum);
-				try {
-					bC1.insert();
-				} catch (SQLException ex) {
-					Logger.getLogger(ViewFrame.class.getName()).log(
-							Level.SEVERE, null, ex);
-					// prompt user of catastrophic error
-					String admin1 = "It seems there is something wrong with the Database. :( Contact your administrator";
-					JOptionPane.showMessageDialog(this, admin1, "Manual",
-							JOptionPane.INFORMATION_MESSAGE);
-					break;
-				}
-			}
-			// prompt user of success
-			System.out.println("book copy success!");
-			String success = "Success!";
-			JOptionPane.showMessageDialog(this, success, "Manual",
-					JOptionPane.INFORMATION_MESSAGE);
+                        if (addCopy()) {
+                          return;
+                        }
 			break;
 		case REMOVE_BOOK:
-			String removeBookCallNumber = removeBookPrimaryNoTextField
-					.getText().trim().toUpperCase()
-					+ ' '
-					+ removeBookSecondaryNoTextField.getText().trim()
-							.toUpperCase()
-					+ ' '
-					+ removeBookYearTextField.getText().trim().toUpperCase();
-
-			try {
-
-				if (removeBookBookRadioButton.isSelected()) {
-
-					// confirm
-					String removeBookConfirmMessage = "Are you sure you want to remove book "
-							+ removeBookCallNumber
-							+ "?\nAll information such as copies, requests, and borrowings"
-							+ " will also be deleted.";
-					int removeBookConfirm = JOptionPane.showConfirmDialog(this,
-							removeBookConfirmMessage, "Please confirm",
-							JOptionPane.YES_NO_OPTION,
-							JOptionPane.WARNING_MESSAGE);
-
-					if (removeBookConfirm != JOptionPane.YES_OPTION) {
-						return;
-					}
-
-					if (controller.getSystemLibrarian().removeBook(
-							removeBookCallNumber)) {
-						String msg = "Book " + removeBookCallNumber
-								+ " successfully removed.";
-						JOptionPane.showMessageDialog(this, msg, "Success",
-								JOptionPane.PLAIN_MESSAGE);
-					} else {
-						String msg = "Failed to remove book "
-								+ removeBookCallNumber + ".";
-						JOptionPane.showMessageDialog(this, msg, "Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-				}
-
-				else // if remove copies radio button is selected
-				{
-					int[] copyNumbersToRemove = parseBookCopyCopyNumbers(removeBookWhichCopiesTextField
-							.getText());
-					String removeBookCopiesConfirmMessage = "Are you sure you want to remove the copies of book "
-							+ removeBookCallNumber + " with copy numbers:";
-					int length = copyNumbersToRemove.length;
-					for (int i = 0; i < length; i++) {
-						removeBookCopiesConfirmMessage += "C"
-								+ copyNumbersToRemove[i];
-						if (i != length - 1) {
-							removeBookCopiesConfirmMessage += ", ";
-						}
-					}
-					removeBookCopiesConfirmMessage += "?\nAll information such as hold requests and borrowings"
-							+ " for these copies" + " will also be deleted.";
-					int removeBookConfirm = JOptionPane.showConfirmDialog(this,
-							removeBookCopiesConfirmMessage, "Please confirm",
-							JOptionPane.YES_NO_OPTION,
-							JOptionPane.WARNING_MESSAGE);
-
-					if (removeBookConfirm != JOptionPane.YES_OPTION) {
-						return;
-					}
-
-					if (controller
-							.getSystemLibrarian()
-							.removeBookCopy(
-									removeBookCallNumber,
-									mapCopyNumberIntsToCopyNumberStrings(copyNumbersToRemove))) {
-						String msg = "Copies successfully removed.";
-						JOptionPane.showMessageDialog(this, msg, "Success",
-								JOptionPane.PLAIN_MESSAGE);
-					} else {
-						String msg = "Failed to remove copies.  None were removed.";
-						JOptionPane.showMessageDialog(this, msg, "Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					clearButtonActionPerformed(null);
-				}
-			} // end try
-			catch (SQLException e) {
-				// handle
-
-				String msg = "Deletion failed.\n";
-				msg += e.getMessage();
-				JOptionPane.showMessageDialog(this, msg, "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
+                        if (removeBook()) {
+                          return;
+                        }
 
 			break;
 		case REMOVE_BORROWER:
-			int bid = -1;
-
-			try {
-				bid = Integer.parseInt(removeBorrowerTextField.getText());
-
-				// confirm
-				String confirmRemoveBorrowerMessage = "Are you sure you want to remove borrower "
-						+ bid + "?";
-
-				int confirmRemoveBorrowerResult = JOptionPane
-						.showConfirmDialog(this, confirmRemoveBorrowerMessage,
-								"Please confirm", JOptionPane.YES_NO_OPTION,
-								JOptionPane.WARNING_MESSAGE);
-				if (confirmRemoveBorrowerResult != JOptionPane.YES_OPTION) {
-					return;
-				}
-
-				Borrower removeBorrowerBorrower = new Borrower();
-				removeBorrowerBorrower.setBid(bid);
-
-				// TODO delete does not return false if the Borrower is not
-				// deleted.
-				// Coordinate with the author of Borrower and get this fixed.
-
-				if (removeBorrowerBorrower.delete()) {
-					String msg = "Borrower with an ID of " + bid
-							+ " successfully removed from the database.";
-					JOptionPane.showMessageDialog(this, msg, "Success",
-							JOptionPane.PLAIN_MESSAGE);
-				} else {
-					String msg = "Failed to remove borrower with an ID of "
-							+ bid + ".";
-					JOptionPane.showMessageDialog(this, msg, "Error",
-							JOptionPane.ERROR_MESSAGE);
-
-				}
-			} catch (NumberFormatException nfe) {
-				String msg = "Borrower ID must be a whole number.";
-				JOptionPane.showMessageDialog(this, msg, "Error",
-						JOptionPane.ERROR_MESSAGE);
-			} catch (SQLException se) {
-				String msg = "Could not remove borrower with an ID of " + bid
-						+ " from the database:\n" + se.getMessage();
-				JOptionPane.showMessageDialog(this, msg, "Error",
-						JOptionPane.ERROR_MESSAGE);
-			} finally {
-				clearButtonActionPerformed(null);
-			}
+                        if (removeBorrower()) {
+                          return;
+                        }
 			break;
+
 		case REPORT_POPULAR:
-			int reportYear = -1;
-			int reportN = -1;
-			try {
-				// begin error checking text fields
-				boolean reportYearError = true;
-				boolean reportNError = true;
-
-				try {
-					reportYear = Integer.parseInt(popularReportYearTextField
-							.getText());
-					reportYearError = false;
-				} catch (NumberFormatException e) {
-					// do nothing
-				}
-				try {
-					reportN = Integer.parseInt(popularReportNTextField
-							.getText());
-					reportNError = false;
-				} catch (NumberFormatException e) {
-					// do nothing
-				}
-
-				if (reportYearError || reportNError) {
-					String msg = "There are errors in the following fields:\n"
-							+ ((reportYearError) ? '-' + popularReportYearSelectLabel
-									.getName() + '\n' : "")
-							+ ((reportNError) ? '-' + popularReportNSelectLabel
-									.getName() + '\n' : "")
-							+ "Please correct them and resubmit.";
-					JOptionPane.showMessageDialog(this, msg, "Input error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-
-				// end error checking text fields
-
-				tableWithHeader = controller.getSystemLibrarian()
-						.getPopularBooks(reportYear, reportN);
-			} catch (SQLException e) {
-				String msg = "Could not retrieve the table:\n" + e.getMessage();
-				JOptionPane.showMessageDialog(this, msg, "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			header = tableWithHeader[0];
-			numRows = tableWithHeader.length;
-			numRows--;
-			numCols = tableWithHeader[0].length;
-			tableWithoutHeader = new String[numRows][];
-			for (int i = 0; i < numRows; i++) {
-				tableWithoutHeader[i] = new String[numCols];
-			}
-
-			for (int i = 0; i < numRows; i++) {
-				System.arraycopy(tableWithHeader[i + 1], 0,
-						tableWithoutHeader[i], 0, numCols);
-			}
-			popularReportTable.setModel(new DefaultTableModel(
-					tableWithoutHeader, header));
-			popularReportTable.repaint();
+                        if (reportPopular()) {
+                          return;
+                        }
 			break; // END CASE POPULAR REPORT
 
 		case REPORT_CHECKED_OUT:
-			String[][] checkedOutReportWithHeader = null;
-			try {
-				if (checkedOutReportFilterCheckBox.isSelected()) {
-					String subjectToFilterBy = checkedOutReportTextField
-							.getText().trim();
-					checkedOutReportWithHeader = controller
-							.getSystemLibrarian().getCheckedOutBooksReport(
-									subjectToFilterBy);
-				} else {
-					checkedOutReportWithHeader = controller
-							.getSystemLibrarian().getCheckedOutBooksReport();
-				}
-			} catch (SQLException e) {
-				String msg = "Could not retrieve data\n" + e.getMessage();
-				JOptionPane.showMessageDialog(this, msg, "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			String[] checkedOutReportHeader = checkedOutReportWithHeader[0];
-			numRows = checkedOutReportWithHeader.length;
-			numRows--;
-			numCols = checkedOutReportWithHeader[0].length;
-			tableWithoutHeader = new String[numRows][];
-			for (int i = 0; i < numRows; i++) {
-				tableWithoutHeader[i] = new String[numCols];
-			}
-			for (int i = 0; i < numRows; i++) {
-				System.arraycopy(checkedOutReportWithHeader[i + 1], 0,
-						tableWithoutHeader[i], 0, numCols);
-			}
-			checkedOutReportTable.setModel(new DefaultTableModel(
-					tableWithoutHeader, checkedOutReportHeader));
-			checkedOutReportTable.repaint();
+                        if (reportCheckedOut()) {
+                          return;
+                        }
 			break;
 		default:
-		}
+              }// end switch
                 
           }
           catch (Exception e)
@@ -2263,6 +1874,441 @@ public class ViewFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
 	}// GEN-LAST:event_doButtonActionPerformed
+
+  private boolean reportCheckedOut() throws HeadlessException {
+    int numRows;
+    String[][] tableWithoutHeader;
+    int numCols;
+    String[][] checkedOutReportWithHeader = null;
+    try {
+      if (checkedOutReportFilterCheckBox.isSelected()) {
+              String subjectToFilterBy = checkedOutReportTextField
+                              .getText().trim();
+              checkedOutReportWithHeader = controller
+                              .getSystemLibrarian().getCheckedOutBooksReport(
+                                              subjectToFilterBy);
+      } else {
+              checkedOutReportWithHeader = controller
+                              .getSystemLibrarian().getCheckedOutBooksReport();
+      }
+    } catch (SQLException e) {
+      String msg = "Could not retrieve data\n" + e.getMessage();
+      JOptionPane.showMessageDialog(this, msg, "Error",
+                      JOptionPane.ERROR_MESSAGE);
+      return true;
+    }
+    String[] checkedOutReportHeader = checkedOutReportWithHeader[0];
+    numRows = checkedOutReportWithHeader.length;
+    numRows--;
+    numCols = checkedOutReportWithHeader[0].length;
+    tableWithoutHeader = new String[numRows][];
+    for (int i = 0; i < numRows; i++) {
+            tableWithoutHeader[i] = new String[numCols];
+    }
+    for (int i = 0; i < numRows; i++) {
+            System.arraycopy(checkedOutReportWithHeader[i + 1], 0,
+                            tableWithoutHeader[i], 0, numCols);
+    }
+    checkedOutReportTable.setModel(new DefaultTableModel(
+                    tableWithoutHeader, checkedOutReportHeader));
+    checkedOutReportTable.repaint();
+    return false;
+  }
+
+  private boolean reportPopular() throws HeadlessException {
+    String[][] tableWithHeader;
+    int numRows;
+    String[][] tableWithoutHeader;
+    int numCols;
+    String[] header;
+    int reportYear = -1;
+    int reportN = -1;
+    try {
+      // begin error checking text fields
+      boolean reportYearError = true;
+      boolean reportNError = true;
+      try {
+              reportYear = Integer.parseInt(popularReportYearTextField
+                              .getText());
+              reportYearError = false;
+      } catch (NumberFormatException e) {
+              // do nothing
+      }
+      try {
+              reportN = Integer.parseInt(popularReportNTextField
+                              .getText());
+              reportNError = false;
+      } catch (NumberFormatException e) {
+              // do nothing
+      }
+      if (reportYearError || reportNError) {
+        String msg = "There are errors in the following fields:\n"
+                        + ((reportYearError) ? '-' + popularReportYearSelectLabel
+                                        .getName() + '\n' : "")
+                        + ((reportNError) ? '-' + popularReportNSelectLabel
+                                        .getName() + '\n' : "")
+                        + "Please correct them and resubmit.";
+        JOptionPane.showMessageDialog(this, msg, "Input error",
+                        JOptionPane.ERROR_MESSAGE);
+        return true;
+      }
+      // end error checking text fields
+      tableWithHeader = controller.getSystemLibrarian()
+                      .getPopularBooks(reportYear, reportN);
+    } catch (SQLException e) {
+      String msg = "Could not retrieve the table:\n" + e.getMessage();
+      JOptionPane.showMessageDialog(this, msg, "Error",
+                      JOptionPane.ERROR_MESSAGE);
+      return true;
+    }
+    header = tableWithHeader[0];
+    numRows = tableWithHeader.length;
+    numRows--;
+    numCols = tableWithHeader[0].length;
+    tableWithoutHeader = new String[numRows][];
+    for (int i = 0; i < numRows; i++) {
+            tableWithoutHeader[i] = new String[numCols];
+    }
+    for (int i = 0; i < numRows; i++) {
+            System.arraycopy(tableWithHeader[i + 1], 0,
+                            tableWithoutHeader[i], 0, numCols);
+    }
+    popularReportTable.setModel(new DefaultTableModel(
+                    tableWithoutHeader, header));
+    popularReportTable.repaint();
+    return false;
+  }
+
+  private boolean removeBorrower() throws HeadlessException {
+    int bid = -1;
+    try {
+      bid = Integer.parseInt(removeBorrowerTextField.getText());
+      // confirm
+      String confirmRemoveBorrowerMessage = "Are you sure you want to remove borrower "
+                      + bid + "?";
+      int confirmRemoveBorrowerResult = JOptionPane
+                      .showConfirmDialog(this, confirmRemoveBorrowerMessage,
+                                      "Please confirm", JOptionPane.YES_NO_OPTION,
+                                      JOptionPane.WARNING_MESSAGE);
+      if (confirmRemoveBorrowerResult != JOptionPane.YES_OPTION) {
+        return true;
+      }
+      Borrower removeBorrowerBorrower = new Borrower();
+      removeBorrowerBorrower.setBid(bid);
+      // TODO delete does not return false if the Borrower is not
+      // deleted.
+      // Coordinate with the author of Borrower and get this fixed.
+      if (removeBorrowerBorrower.delete()) {
+              String msg = "Borrower with an ID of " + bid
+                              + " successfully removed from the database.";
+              JOptionPane.showMessageDialog(this, msg, "Success",
+                              JOptionPane.PLAIN_MESSAGE);
+      } else {
+              String msg = "Failed to remove borrower with an ID of "
+                              + bid + ".";
+              JOptionPane.showMessageDialog(this, msg, "Error",
+                              JOptionPane.ERROR_MESSAGE);
+
+      }
+    }catch (NumberFormatException nfe) {
+           String msg = "Borrower ID must be a whole number.";
+           JOptionPane.showMessageDialog(this, msg, "Error",
+                           JOptionPane.ERROR_MESSAGE);
+   }catch (SQLException se) {
+          String msg = "Could not remove borrower with an ID of " + bid
+                          + " from the database:\n" + se.getMessage();
+          JOptionPane.showMessageDialog(this, msg, "Error",
+                          JOptionPane.ERROR_MESSAGE);
+  } finally {
+      clearButtonActionPerformed(null);
+    }
+    return false;
+  }
+
+  private boolean removeBook() throws HeadlessException {
+    String removeBookCallNumber = removeBookPrimaryNoTextField
+                    .getText().trim().toUpperCase()
+                    + ' '
+                    + removeBookSecondaryNoTextField.getText().trim()
+                                    .toUpperCase()
+                    + ' '
+                    + removeBookYearTextField.getText().trim().toUpperCase();
+    try {
+      if (removeBookBookRadioButton.isSelected()) {
+        // confirm
+        String removeBookConfirmMessage = "Are you sure you want to remove book "
+                        + removeBookCallNumber
+                        + "?\nAll information such as copies, requests, and borrowings"
+                        + " will also be deleted.";
+        int removeBookConfirm = JOptionPane.showConfirmDialog(this,
+                        removeBookConfirmMessage, "Please confirm",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+        if (removeBookConfirm != JOptionPane.YES_OPTION) {
+          return true;
+        }
+        if (controller.getSystemLibrarian().removeBook(
+                        removeBookCallNumber)) {
+          String msg = "Book " + removeBookCallNumber
+                          + " successfully removed.";
+          JOptionPane.showMessageDialog(this, msg, "Success",
+                          JOptionPane.PLAIN_MESSAGE);
+        } else {
+          String msg = "Failed to remove book "
+                          + removeBookCallNumber + ".";
+          JOptionPane.showMessageDialog(this, msg, "Error",
+                          JOptionPane.ERROR_MESSAGE);
+          return true;
+        }
+      } else // if remove copies radio button is selected
+      {
+        int[] copyNumbersToRemove = parseBookCopyCopyNumbers(removeBookWhichCopiesTextField
+                        .getText());
+        String removeBookCopiesConfirmMessage = "Are you sure you want to remove the copies of book "
+                        + removeBookCallNumber + " with copy numbers:";
+        int length = copyNumbersToRemove.length;
+        for (int i = 0; i < length; i++) {
+                removeBookCopiesConfirmMessage += "C"
+                                + copyNumbersToRemove[i];
+                if (i != length - 1) {
+                        removeBookCopiesConfirmMessage += ", ";
+                }
+        }
+        removeBookCopiesConfirmMessage += "?\nAll information such as hold requests and borrowings"
+                        + " for these copies" + " will also be deleted.";
+        int removeBookConfirm = JOptionPane.showConfirmDialog(this,
+                        removeBookCopiesConfirmMessage, "Please confirm",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+        if (removeBookConfirm != JOptionPane.YES_OPTION) {
+          return true;
+        }
+        if (controller
+                        .getSystemLibrarian()
+                        .removeBookCopy(
+                                        removeBookCallNumber,
+                                        mapCopyNumberIntsToCopyNumberStrings(copyNumbersToRemove))) {
+          String msg = "Copies successfully removed.";
+          JOptionPane.showMessageDialog(this, msg, "Success",
+                          JOptionPane.PLAIN_MESSAGE);
+        } else {
+          String msg = "Failed to remove copies.  None were removed.";
+          JOptionPane.showMessageDialog(this, msg, "Error",
+                          JOptionPane.ERROR_MESSAGE);
+          return true;
+        }
+        clearButtonActionPerformed(null);
+      }
+    } // end try
+    catch (SQLException e) {
+            // handle
+
+            String msg = "Deletion failed.\n";
+            msg += e.getMessage();
+            JOptionPane.showMessageDialog(this, msg, "Error",
+                            JOptionPane.ERROR_MESSAGE);
+    }
+    return false;
+  }
+
+  private boolean processReturn() throws HeadlessException {
+    String processReturnCallNumber = processReturnPanel.getCallNumber();
+    String processReturnCopyNo = processReturnPanel.getCopyNo();
+    try {
+      try {
+        controller.getSystemClerk().processReturn(processReturnCallNumber, processReturnCopyNo);
+      } catch (FineRequiredException processReturnFineRequiredException) {
+        boolean fineError = true;
+        int fineAmountInCents = 0;
+        int errorCounter = 0;
+        while (fineError && errorCounter > 3) 
+        {
+          try 
+          {
+
+            String fineRequiredMessage = "This book is overdue and requires a fine\n"
+                    + "Please enter the dollars to charge the borrower:";
+            String processReturnFineString = JOptionPane.showInputDialog(this, fineRequiredMessage, "Error", JOptionPane.ERROR_MESSAGE);
+            double fineInDollars = Double.parseDouble(processReturnFineString);
+            if (fineInDollars < 0) 
+            {
+              throw new NoPaymentException("Fines must be greater than $0");
+            }
+            final int CENTS_IN_DOLLAR = 100;
+            fineAmountInCents = (int) (fineInDollars * CENTS_IN_DOLLAR);
+            fineError = false;
+          } 
+          catch (NumberFormatException fineRequiredNfe) 
+          {
+            String processReturnNfeMessage = "Fine amount must be a number.";
+            JOptionPane.showMessageDialog(this, processReturnNfeMessage, "Error", JOptionPane.ERROR_MESSAGE);
+            errorCounter++;
+          } 
+          catch (NoPaymentException fineRequiredNpe) 
+          {
+            JOptionPane.showMessageDialog(this, fineRequiredNpe.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            errorCounter++;
+          }
+        } // end while error in entering the fine amount
+        if (errorCounter >= 3) {
+          JOptionPane.showMessageDialog(this, "Too many attempts.\nTransaction cancelled.", "Error", JOptionPane.ERROR_MESSAGE);
+          processReturnPanel.append(processReturnCallNumber + ' ' + processReturnCopyNo + " - Failed");
+          return true;
+        }
+        controller.getSystemClerk().processReturn(processReturnCallNumber, processReturnCopyNo, fineAmountInCents);
+      } // end handling of fine
+      // inform clerk of success
+      processReturnPanel.append(processReturnCallNumber + ' ' + processReturnCopyNo + " - Success");
+      processReturnPanel.clearCatalogNumber();
+    }catch (FineRequiredException neverThrownFineRequiredException) 
+     {
+       // already handled, do nothing
+     }catch (BookCopyEvilTwinException processReturnEvilTwinException) 
+      {
+        JOptionPane.showMessageDialog(this, processReturnEvilTwinException.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        processReturnPanel.append(processReturnCallNumber + ' ' + processReturnCopyNo + " - Failed");
+      }catch (NoSuchCopyException processReturnNsce) 
+       {
+         JOptionPane.showMessageDialog(this, processReturnNsce.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+         processReturnPanel.append(processReturnCallNumber + ' ' + processReturnCopyNo + " - Failed");
+       }catch (SQLException processReturnsSqlException) 
+        {
+          String processReturnsSqlExceptionMessage = 
+                  "Return could not be processed.\n" + processReturnsSqlException.getMessage();
+          JOptionPane.showMessageDialog(this, processReturnsSqlExceptionMessage, "Error", JOptionPane.ERROR_MESSAGE);
+          processReturnPanel.append(processReturnCallNumber + ' ' + processReturnCopyNo + " - Failed");
+        }
+    return false;
+  }
+
+  private void search() throws HeadlessException {
+    try {
+            String searchTextField = SearchTextField.getText();
+            String searchGetSelection = (String) SearchComboBox
+                            .getSelectedItem();
+            // List<Book> lob = new ArrayList<Book>();
+
+            String[][] TwoDArrayToPrint = null;
+
+            Borrower bor = new Borrower();
+
+            if (searchGetSelection.equals("Subject")) {
+                    TwoDArrayToPrint = bor.searchBookBySubject(searchTextField);
+            }
+            if (searchGetSelection.equals("Title")) {
+                    TwoDArrayToPrint = bor.searchBookByTitle(searchTextField);
+            }
+            if (searchGetSelection.equals("Author")) {
+                    TwoDArrayToPrint = bor.searchBookByAuthor(searchTextField);
+            }
+
+            String[] header1 = TwoDArrayToPrint[0];
+            String[][] TwoDMinusHeader = get2DArrayMinusHeader(TwoDArrayToPrint);
+
+            // print 2d array
+            DefaultTableModel uTM = new DefaultTableModel(TwoDMinusHeader,
+                            header1);
+            SearchTable.setModel(uTM);
+            SearchTable.repaint();
+    } catch (SQLException S) {
+            JOptionPane.showMessageDialog(this, "Could not complete transaction.\n"+S.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+    }
+  }
+
+  private boolean viewTables() throws HeadlessException {
+    
+    String[][] tableWithHeader;
+    int numRows;
+    String[][] tableWithoutHeader;
+    int numCols;
+    String[] header;
+    try {
+      tableWithHeader = controller
+                      .displayTable((String) tablesComboBox.getSelectedItem());
+    } catch (SQLException e) {
+      String msg = "Could not retrieve the table:\n" + e.getMessage();
+      JOptionPane.showMessageDialog(this, msg, "Error",
+                      JOptionPane.ERROR_MESSAGE);
+      return true;
+    }
+    header = tableWithHeader[0];
+    numRows = tableWithHeader.length;
+    numRows--;
+    numCols = tableWithHeader[0].length;
+    tableWithoutHeader = new String[numRows][];
+    for (int i = 0; i < numRows; i++) {
+            tableWithoutHeader[i] = new String[numCols];
+    }
+    for (int i = 0; i < numRows; i++) {
+            System.arraycopy(tableWithHeader[i + 1], 0,
+                            tableWithoutHeader[i], 0, numCols);
+    }
+    entitiesTable.setModel(new DefaultTableModel(tableWithoutHeader,
+                    header));
+    entitiesTable.repaint();
+    return false;
+  }
+
+  private void payFine() throws HeadlessException {
+    Fine f = new Fine();
+    Borrower bor = new Borrower();
+    Integer fid = 0;
+    double amount = 0;
+    String msgFine = "";
+
+    String fineIDField = payFineFidTextField.getText();
+    String amountField = payFineAmountTextField.getText();
+    boolean okayToContinue = true;
+    try {
+      fid = Integer.parseInt(fineIDField);
+    } catch (NumberFormatException nfe) {
+      okayToContinue = false;
+      JOptionPane.showMessageDialog(this, "Fine ID must be a whole number.",
+              "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    try {
+      amount = Double.parseDouble(amountField);
+    } catch (NumberFormatException nfe) {
+      okayToContinue = false;
+      JOptionPane.showMessageDialog(this, "Amount must be a dollar value.",
+              "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    if (okayToContinue == true) {
+
+      try {
+        try {
+          f.setFid(fid);
+          f = (Fine) f.get();
+          bor = f.getBorrowing().getBorrower();
+        } catch (NullPointerException npe) {
+          okayToContinue = false;
+          JOptionPane.showMessageDialog(this, "The fine and/or its associated borrower do not exist.",
+                  "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        if (okayToContinue == true) {
+          try {
+            msgFine = bor.payFine(fid, (int)(amount*100));
+          } catch (SQLException e) {
+            okayToContinue = false;
+            JOptionPane.showMessageDialog(this, "Payment refused.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+          } catch (NoPaymentException npe) {
+            okayToContinue = false;
+            JOptionPane.showMessageDialog(this, "Amount must be a positive amount.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+          }
+          payFineMsgLabel.setText(msgFine);
+          payFineMsgLabel.repaint();
+        }
+      } catch (SQLException e) {
+        okayToContinue = false;
+        JOptionPane.showMessageDialog(this, e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
+      }
+    }
+  }
 
 	/**
 	 * Generates text for the doButton based on GUI state.
@@ -2383,6 +2429,7 @@ public class ViewFrame extends javax.swing.JFrame {
                                 
 			break;
 		case PROCESS_RETURN:
+                        processReturnPanel.clear();
 			break;
 		case ADD_BOOK:
 			break;

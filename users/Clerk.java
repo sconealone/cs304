@@ -89,7 +89,7 @@ public class Clerk {
    public String[][] checkOutItems( int bid, 
                                     String[] callNumbers, 
                                     String[] copyNos) 
-           throws SQLException, BookNotInException, InvalidBorrowerException
+           throws SQLException, BookNotInException, InvalidBorrowerException, NoSuchCopyException
    {
       Borrower borrower = new Borrower();
       borrower.setBid(bid);
@@ -110,6 +110,10 @@ public class Clerk {
             bookCopy.setB(book);
             bookCopy.setCopyNo(copyNos[i]);
             bookCopy = (BookCopy) bookCopy.get();
+            if (bookCopy == null)
+            {
+              throw new NoSuchCopyException("The book "+callNumbers[i]+' '+copyNos[i]+" does not exist.");
+            }
             if (bookCopy.getStatus().equals("in") || bookCopy.getStatus().equals("on-hold")) 
             {
               bookCopy.setStatus("out");
@@ -130,14 +134,14 @@ public class Clerk {
               }
               else
               {
-                String msg = "Could not add this borrowing.\nTransaction "
+                String msg = "Could not add this borrowing for book "+callNumbers[i]+' '+copyNos[i]+".\nTransaction "
                         + "aborted.";
                 throw new SQLException(msg);
               }
             } 
             else 
             {
-              String msg = "This book is not available to be borrowed.";
+              String msg = "This book ("+callNumbers[i]+' '+copyNos[i]+") is not available to be borrowed.";
               throw new BookNotInException(msg);
             }
           } // end for loop

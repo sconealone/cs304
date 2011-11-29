@@ -138,8 +138,8 @@ public class Borrower implements Table {
             tuple[fieldIndex] = (!rs.wasNull()) ? sinOrStNo : "null";
             fieldIndex++;
 
-            String expiryDate = rs.getString(fieldIndex + 1);
-            tuple[fieldIndex] = (!rs.wasNull()) ? df.format(expiryDate)
+            java.sql.Date expiryDate = rs.getDate(fieldIndex + 1);
+            tuple[fieldIndex] = (!rs.wasNull() && !(expiryDate == null)) ? df.format(expiryDate)
                     : "null";
             fieldIndex++;
 
@@ -186,9 +186,7 @@ public class Borrower implements Table {
 
         String sql = "DELETE FROM Borrower WHERE bid = " + bid;
         Statement stmt = con.createStatement();
-        stmt.executeQuery(sql);
-        stmt.close();
-        return true;
+        return stmt.executeUpdate(sql) == 1;
 
     }
 
