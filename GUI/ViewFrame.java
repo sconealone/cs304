@@ -384,7 +384,7 @@ public class ViewFrame extends javax.swing.JFrame {
     } catch (Exception e2) {
       // TODO Auto-generated catch block
       //TODO Need to fix this
-      JOptionPane.showMessageDialog(this, e2.toString(), "Have a good day",
+      JOptionPane.showMessageDialog(this, "This checkout could not be completed. Please verify that the borrower is valid, and that the book is available to be checked out.", "Have a good day",
               JOptionPane.ERROR_MESSAGE);
       return true;
     }
