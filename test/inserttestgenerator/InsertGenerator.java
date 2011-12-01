@@ -32,7 +32,8 @@ public class InsertGenerator {
   private ArrayList<String> usedCallNumbers;
   
   private ArrayList<Integer> indeciesOfBoridsWhereAFineShouldExist;
-  private ArrayList<Integer> boridsWhereAFindShouldExist;
+  private ArrayList<Integer> boridsWhereAFineShouldExist;
+  private ArrayList<Calendar> borrowingOutdates;
   
   /**
    * a list of lists or all the possible
@@ -53,6 +54,8 @@ public class InsertGenerator {
   public static final int PUBLISHER = 10;
   public static final int SUBJECT = 11;
   public static final int EXISTING_CALLNUMBER = 12;
+  public static final int DUE_DATE = 13;
+  public static final int BORROWING_OUTDATE = 14;
   
   private static String[] primaryNumbers;
   private static String[] secondaryNumbers;
@@ -70,7 +73,7 @@ public class InsertGenerator {
     String callnumbers = "SELECT callnumber FROM BookCopy";
     String copynos = "SELECT copyno FROM BookCopy";
     indeciesOfBoridsWhereAFineShouldExist= new ArrayList<Integer>();
-    boridsWhereAFindShouldExist = new ArrayList<Integer>();
+    boridsWhereAFineShouldExist = new ArrayList<Integer>();
     attr = new ArrayList<ArrayList<Object>>();
     usedCallNumbers = new ArrayList<String>();
     for (int i = 0; i < 10; i++)
@@ -108,6 +111,7 @@ public class InsertGenerator {
                 + j;
       }
     }
+    borrowingOutdates = new ArrayList<Calendar>();
     /*
     Conn mycon = new Conn();
     Connection con = mycon.getConn();
@@ -293,8 +297,8 @@ public class InsertGenerator {
   {
     String insert = "";
     
-    Calendar outdate = (Calendar) getRand(DATE);
-    Calendar indate = (Calendar) getRand(DATE);
+    Calendar outdate = (Calendar) getRand(DUE_DATE);
+    Calendar indate = (Calendar) getRand(DUE_DATE);
     
     if (indate.before(outdate))
     {
@@ -319,8 +323,9 @@ public class InsertGenerator {
     }
     else
     {
-      boridsWhereAFindShouldExist.add(new Integer(numBorrowings+1));
+      boridsWhereAFineShouldExist.add(new Integer(numBorrowings+1));
     }
+    borrowingOutdates.add(outdate);
     //numBorrowings+1 == borid
     
     insert += "INSERT INTO Borrowing\n";
@@ -366,26 +371,26 @@ public class InsertGenerator {
   {
     String insert = "";
     
-    Calendar issuedDate = (Calendar) getRand(DATE);
-    Calendar paidDate = (Calendar) getRand(DATE);
-    
+    Calendar issuedDate = (Calendar) getRand(BORROWING_OUTDATE);
+    Calendar paidDate = null;//(Calendar) getRand(DATE);
+    /*
     if (paidDate.before(issuedDate))
     {
       Calendar temp = paidDate;
       paidDate = issuedDate;
       issuedDate = temp;
-    }
+    }*/
     
     Format f = new SimpleDateFormat("dd-MMM-yyyy");
     String issuedDateStr = f.format(issuedDate.getTime());
-    String paidDateStr = f.format(paidDate.getTime());
+    //String paidDateStr = f.format(paidDate.getTime());
     
     // sometimes randomly make the indate null
     // 25 Nov: No fines will have a paiddate
-    if ((1 + (int)(Math.random()*10)) < 30)
+    /*if ((1 + (int)(Math.random()*10)) < 30)
     {
       paidDateStr = "NULL";
-    }
+    }*/
     int borid = ((Integer) getRand(BORID)).intValue();
     if (borid == -1)
     {
@@ -396,15 +401,7 @@ public class InsertGenerator {
     insert += "fidCounter.nextval,";
     insert += ""+ ((Integer) getRand(AMOUNT)).intValue()+",";
     insert += "to_date('"+issuedDateStr+"','DD-MON-YYYY'),";
-    if (paidDateStr.equals("NULL"))
-    {
-      insert += (paidDateStr+",");
-    }
-    else
-    {
-      
-      insert += "to_date('"+paidDateStr+"','DD-MON-YYYY'),";
-    }
+    insert += "null,";
     insert += ""+ borid;
     insert += ");\n";
     
@@ -503,12 +500,14 @@ public class InsertGenerator {
    */
   private Object getRand(int attr)
   {
-    int minYear = 1980;
+    int minYear = (attr == DUE_DATE) ?
+            2011 : 1980;
     int minDay = 1;
-    int minMonth = 1;
+    int minMonth = (attr == DUE_DATE) ?
+            7 : 0;
     int maxYear = 2011;
     int maxDay = 28;
-    int maxMonth = 12;
+    int maxMonth = 11;
     int range, randomIndex;
     
     switch (attr)
@@ -532,13 +531,13 @@ public class InsertGenerator {
         int maxcents = 10000;
         return new Integer(mincents + (int)(range(mincents,maxcents)*Math.random()));
       case BORID:
-        range = boridsWhereAFindShouldExist.size();
+        range = boridsWhereAFineShouldExist.size();
         if (range == 0)
         {
           return -1;
         }
         randomIndex = (int) (range * Math.random());
-        return boridsWhereAFindShouldExist.get(randomIndex);
+        return boridsWhereAFineShouldExist.get(randomIndex);
       case NAME:
           return makeName();
       case TITLE:
@@ -576,6 +575,16 @@ public class InsertGenerator {
         range = usedCallNumbers.size();
         randomIndex = (int) (range * Math.random());
         return usedCallNumbers.get(randomIndex);
+      case DUE_DATE:
+        year = minYear + (int) (range(minYear, maxYear)*Math.random());
+        month = minMonth + (int) (range(minMonth, maxMonth)*Math.random());
+        day = minDay + (int) (range(minDay, maxDay)*Math.random());
+        return new GregorianCalendar(year, month, day, 23, 59);
+      case BORROWING_OUTDATE:
+        range = borrowingOutdates.size();
+        randomIndex = (int) (range * Math.random());
+        return borrowingOutdates.get(randomIndex);
+        
       default:
         ArrayList<Object> possibleValuesOfAttribute = this.attr.get(attr);
         range = possibleValuesOfAttribute.size();

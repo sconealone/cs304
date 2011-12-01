@@ -87,7 +87,7 @@ public class ViewFrame extends javax.swing.JFrame {
       abOpStatus.setForeground(Color.BLACK);
       abOpStatus.setBackground(Color.WHITE);
       abOpStatus.setText("...");
-      String regex1 = "([0-9]+|[a-z]+|[A-Z]+|[\\s]+)+";
+      String regex1 = "([0-9]+|[a-z]+|[A-Z]+|[\\s]+,*)+";
       if (!abCN.getText().matches(regex1)
                       || !abCN.getText().matches(regex1)
                       || !abISBN.getText().matches(regex1)
@@ -96,8 +96,10 @@ public class ViewFrame extends javax.swing.JFrame {
                       || !abPub.getText().matches(regex1)
                       || !abYear.getText().matches(regex1)
                       //|| !abAA.getText().matches(regex1)
-                      || !abSubs.getText().matches(regex1)
-                      || !abSpinner.getValue().toString().matches(regex1)) {
+                      || abSubs.getText().trim().equals("")
+                      //|| !abSubs.getText().matches(regex1)
+                      || !abSpinner.getValue().toString().matches(regex1)) 
+              {
         abOpStatus.setForeground(Color.RED);
         abOpStatus.setBackground(Color.WHITE);
         abOpStatus
@@ -2130,7 +2132,7 @@ checkOverdueTable.repaint();
         boolean fineError = true;
         int fineAmountInCents = 0;
         int errorCounter = 0;
-        while (fineError && errorCounter > 3) 
+        while (fineError && errorCounter < 3) 
         {
           try 
           {
