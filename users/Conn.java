@@ -35,22 +35,6 @@ import javax.swing.JOptionPane;
 public class Conn {
   private static Conn instance;
   private Connection conn;
-  /*
-   * Check whose database you're on.  If one doesn't work, try another.
-   * 
-  private final String USERNAME = "ora_x9u7";
-  private final String PASSWORD = "a25703091";
-   * 
-   
-  private final String USERNAME = "ora_v2v7";
-  private final String PASSWORD = "a36988103";
-   */
-  private final String USERNAME = "ora_c7e8";
-  private final String PASSWORD = "a84148014";
-  
-  
-  private final String CONNECTURL = "jdbc:oracle:thin:@localhost:1521:ug";
-  
   /**
    * Accessor for the Conn
    * @return 
@@ -92,7 +76,7 @@ public class Conn {
       }
       
       //other db
-      connect(USERNAME, PASSWORD);
+      connect(Secret.getUsername(), Secret.getPassword());
  }
   
   private void connect(String username, String password)
@@ -107,7 +91,7 @@ public class Conn {
             JOptionPane.showMessageDialog(null, "Set up SSH tunnel and click OK when ready", "", JOptionPane.INFORMATION_MESSAGE);
           }
           attemptCount++;
-          conn = DriverManager.getConnection(CONNECTURL, username, password);
+          conn = DriverManager.getConnection(Secret.getURL(), username, password);
           return;
         } 
         catch (SQLException ex) 
@@ -122,7 +106,7 @@ public class Conn {
   {
     try 
     {
-      conn = DriverManager.getConnection(CONNECTURL, USERNAME, PASSWORD);
+      conn = DriverManager.getConnection(Secret.getURL(), Secret.getUsername(), Secret.getPassword());
       JOptionPane.showMessageDialog(null, "Successfully reconnected!\nEnjoy.", "Success", JOptionPane.INFORMATION_MESSAGE);
     } 
     catch (SQLException ex) 
